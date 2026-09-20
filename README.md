@@ -21,10 +21,10 @@ Adresse : `/admin` (par exemple `https://votre-site.netlify.app/admin`).
 - **Sans Supabase** (état par défaut) : mot de passe local `1234`. Les
   modifications restent **dans le navigateur de la personne qui les fait** :
   personne d'autre ne les voit. Utile seulement pour essayer.
-- **Avec Supabase** (à configurer une fois, voir plus bas) : chaque
-  administrateur se connecte avec son e-mail et son mot de passe, et les
-  modifications sont enregistrées en ligne : tout le monde les voit sur le site
-  quelques instants après.
+- **Avec Supabase** (à configurer une fois, voir plus bas) : un seul mot de
+  passe administrateur partagé, sans e-mail à saisir, et les modifications sont
+  enregistrées en ligne : tout le monde les voit sur le site quelques instants
+  après.
 
 Les textes et photos modifiés depuis l'admin sont stockés dans Supabase, pas
 dans ce dépôt GitHub. Le dépôt ne sert qu'aux modifications de code.
@@ -59,12 +59,12 @@ pour un nouveau projet :
 2. **SQL Editor** → coller le contenu de `supabase/schema.sql` → *Run*. Cela
    crée la table du contenu et le dossier `media` pour les photos, avec les
    bonnes règles (lecture publique, écriture réservée aux administrateurs).
-3. **Authentication → Users → Add user** : créer un compte (e-mail + mot de
-   passe, cocher *Auto Confirm User*) pour chaque personne qui doit modifier le
-   site.
+3. **Authentication → Users → Add user → Create new user** : créer le compte
+   administrateur (voir « Mot de passe administrateur » plus bas), en cochant
+   *Auto Confirm User*.
 4. **Authentication → Sign In / Providers** : désactiver les inscriptions
-   publiques (*Allow new users to sign up*), pour que seuls les comptes créés à
-   l'étape 3 puissent se connecter.
+   publiques (*Allow new users to sign up*), pour que seul le compte créé à
+   l'étape 3 puisse se connecter.
 5. **Project Settings → API Keys** : copier l'URL du projet et la clé
    *publishable* (ou `anon public`) dans `.env.production`. Pour tester en
    local, les mettre dans un fichier `.env.local` (voir `.env.example`).
@@ -72,8 +72,22 @@ pour un nouveau projet :
 Ne jamais publier la clé *secret* / `service_role` : seule la clé publique va
 dans le site.
 
-## Ajouter un administrateur
+## Mot de passe administrateur
 
-Dans Supabase : **Authentication → Users → Add user → Create new user**, avec
-son e-mail et un mot de passe, en cochant *Auto Confirm User*. Il se connecte
-ensuite sur `/admin` avec ces identifiants.
+Sur `/admin`, on ne saisit qu'un mot de passe (par exemple `1234`). En coulisse,
+le site se connecte à Supabase avec un compte partagé :
+
+- e-mail : `admin@batimedaf.netlify.app` (jamais saisi, jamais utilisé pour
+  envoyer un message) ;
+- mot de passe dans Supabase : le code saisi **suivi de** `-batimedaf`, donc
+  `1234-batimedaf` pour le code `1234` (Supabase exige au moins 6 caractères).
+
+Ces deux valeurs sont dans `src/pages/Admin.jsx` (`ADMIN_EMAIL`,
+`ADMIN_PASSWORD_SUFFIX`). **Pour changer le code** : dans Supabase,
+*Authentication → Users*, ouvrir le compte et lui donner le nouveau mot de passe
+`<nouveau code>-batimedaf`.
+
+> Attention : avec un code court comme `1234`, n'importe qui qui trouve la page
+> `/admin` peut le deviner et modifier le site. Un code plus long (8 caractères
+> ou plus, lettres et chiffres) protège beaucoup mieux : il suffit de le
+> changer dans Supabase comme ci-dessus, sans toucher au code.

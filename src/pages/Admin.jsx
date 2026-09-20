@@ -10,6 +10,14 @@ import './Admin.css'
 /* Password used when Supabase is not configured — local editing only. */
 const LOCAL_PASSWORD = '1234'
 
+/* With Supabase, everyone shares one administrator account and only types a
+   password. Supabase wants an e-mail and at least 6 characters, so both are
+   added here: the account in Supabase is ADMIN_EMAIL with the password
+   "<code typed>" + ADMIN_PASSWORD_SUFFIX (e.g. 1234-batimedaf). To change the
+   code, change that password in Supabase (Authentication → Users). */
+const ADMIN_EMAIL = 'admin@batimedaf.netlify.app'
+const ADMIN_PASSWORD_SUFFIX = '-batimedaf'
+
 /* Sidebar → content sections. */
 const PAGES = [
   { key: 'home', label: 'Accueil' },
@@ -513,7 +521,6 @@ function Node({ value, path, keyName, setPath, pushItem, removeItem, moveItem, d
 
 function Login({ onLocalUnlock }) {
   const { signIn, isSupabaseConfigured } = useContent()
-  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -529,9 +536,16 @@ function Login({ onLocalUnlock }) {
     }
 
     setBusy(true)
-    const { error: authError } = await signIn(email, password)
+    const { error: authError } = await signIn(
+      ADMIN_EMAIL,
+      password + ADMIN_PASSWORD_SUFFIX,
+    )
     setBusy(false)
-    if (authError) setError(authError)
+    if (authError) {
+      setError(
+        /invalid login/i.test(authError) ? 'Mot de passe incorrect.' : authError,
+      )
+    }
   }
 
   return (
@@ -541,22 +555,9 @@ function Login({ onLocalUnlock }) {
         <h1>Administration</h1>
         <p className="ad-login-sub">
           {isSupabaseConfigured
-            ? 'Connectez-vous avec votre compte administrateur.'
+            ? 'Entrez le mot de passe administrateur.'
             : 'Mode local : les modifications restent sur cet appareil.'}
         </p>
-
-        {isSupabaseConfigured && (
-          <label className="ad-field">
-            <span className="ad-field-label">Email</span>
-            <input
-              type="email"
-              autoComplete="username"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </label>
-        )}
 
         <label className="ad-field">
           <span className="ad-field-label">Mot de passe</span>
