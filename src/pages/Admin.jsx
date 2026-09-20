@@ -8,7 +8,7 @@ import { usePageMeta } from '../hooks/usePageMeta'
 import './Admin.css'
 
 /* Password used when Supabase is not configured — local editing only. */
-const LOCAL_PASSWORD = '123456'
+const LOCAL_PASSWORD = '1234'
 
 /* With Supabase, everyone shares one administrator account and only types the
    password. The e-mail is never asked for: it is this identifier, which never

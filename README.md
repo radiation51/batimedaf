@@ -18,7 +18,7 @@ Il faut Node 20.19 ou plus récent (22 recommandé).
 
 Adresse : `/admin` (par exemple `https://votre-site.netlify.app/admin`).
 
-- **Sans Supabase** (état par défaut) : mot de passe local `123456`. Les
+- **Sans Supabase** (état par défaut) : mot de passe local `1234`. Les
   modifications restent **dans le navigateur de la personne qui les fait** :
   personne d'autre ne les voit. Utile seulement pour essayer.
 - **Avec Supabase** (à configurer une fois, voir plus bas) : un seul mot de
