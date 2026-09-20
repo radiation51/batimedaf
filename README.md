@@ -41,16 +41,19 @@ dans ce dépôt GitHub. Le dépôt ne sert qu'aux modifications de code.
    du fichier `netlify.toml` : rien à saisir.
 2. Le site est publié. Chaque `git push` sur la branche `main` le met à jour
    automatiquement.
-3. Pour activer l'admin partagée, ajouter les deux variables ci-dessous dans
-   **Site configuration → Environment variables**, puis relancer un
-   déploiement (**Deploys → Trigger deploy**) :
+3. L'admin partagée est déjà branchée : l'adresse du projet Supabase et sa
+   clé publique sont dans le fichier `.env.production`, que Netlify lit au
+   moment du build. Rien à saisir dans Netlify. Pour utiliser un autre projet
+   Supabase, changer ces deux valeurs dans ce fichier (ou définir les mêmes
+   variables `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` dans **Site
+   configuration → Environment variables**, qui ont priorité) puis pousser ou
+   relancer un déploiement.
 
-   | Variable | Valeur |
-   | --- | --- |
-   | `VITE_SUPABASE_URL` | l'URL du projet Supabase |
-   | `VITE_SUPABASE_ANON_KEY` | la clé « anon public » du projet |
+## Configurer Supabase
 
-## Configurer Supabase (une seule fois)
+Déjà fait pour le projet `batimedaf` (table du contenu, dossier `media`, règles
+de sécurité, inscriptions publiques désactivées). Les étapes ci-dessous servent
+pour un nouveau projet :
 
 1. Créer un projet gratuit sur <https://supabase.com>.
 2. **SQL Editor** → coller le contenu de `supabase/schema.sql` → *Run*. Cela
@@ -62,9 +65,15 @@ dans ce dépôt GitHub. Le dépôt ne sert qu'aux modifications de code.
 4. **Authentication → Sign In / Providers** : désactiver les inscriptions
    publiques (*Allow new users to sign up*), pour que seuls les comptes créés à
    l'étape 3 puissent se connecter.
-5. **Project Settings → API** : copier l'URL et la clé `anon public` dans les
-   variables Netlify ci-dessus. Pour tester en local, les mettre dans un
-   fichier `.env.local` (voir `.env.example`).
+5. **Project Settings → API Keys** : copier l'URL du projet et la clé
+   *publishable* (ou `anon public`) dans `.env.production`. Pour tester en
+   local, les mettre dans un fichier `.env.local` (voir `.env.example`).
 
-Ne jamais publier la clé `service_role` : seule la clé `anon public` va dans le
-site.
+Ne jamais publier la clé *secret* / `service_role` : seule la clé publique va
+dans le site.
+
+## Ajouter un administrateur
+
+Dans Supabase : **Authentication → Users → Add user → Create new user**, avec
+son e-mail et un mot de passe, en cochant *Auto Confirm User*. Il se connecte
+ensuite sur `/admin` avec ces identifiants.
