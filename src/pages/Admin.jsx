@@ -8,15 +8,13 @@ import { usePageMeta } from '../hooks/usePageMeta'
 import './Admin.css'
 
 /* Password used when Supabase is not configured — local editing only. */
-const LOCAL_PASSWORD = '1234'
+const LOCAL_PASSWORD = '123456'
 
-/* With Supabase, everyone shares one administrator account and only types a
-   password. Supabase wants an e-mail and at least 6 characters, so both are
-   added here: the account in Supabase is ADMIN_EMAIL with the password
-   "<code typed>" + ADMIN_PASSWORD_SUFFIX (e.g. 1234-batimedaf). To change the
-   code, change that password in Supabase (Authentication → Users). */
+/* With Supabase, everyone shares one administrator account and only types the
+   password. The e-mail is never asked for: it is this identifier, which never
+   receives any message. To change the password, change it on that account in
+   Supabase (Authentication → Users). Supabase requires at least 6 characters. */
 const ADMIN_EMAIL = 'admin@batimedaf.netlify.app'
-const ADMIN_PASSWORD_SUFFIX = '-batimedaf'
 
 /* Sidebar → content sections. */
 const PAGES = [
@@ -536,10 +534,7 @@ function Login({ onLocalUnlock }) {
     }
 
     setBusy(true)
-    const { error: authError } = await signIn(
-      ADMIN_EMAIL,
-      password + ADMIN_PASSWORD_SUFFIX,
-    )
+    const { error: authError } = await signIn(ADMIN_EMAIL, password)
     setBusy(false)
     if (authError) {
       setError(

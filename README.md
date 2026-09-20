@@ -18,7 +18,7 @@ Il faut Node 20.19 ou plus récent (22 recommandé).
 
 Adresse : `/admin` (par exemple `https://votre-site.netlify.app/admin`).
 
-- **Sans Supabase** (état par défaut) : mot de passe local `1234`. Les
+- **Sans Supabase** (état par défaut) : mot de passe local `123456`. Les
   modifications restent **dans le navigateur de la personne qui les fait** :
   personne d'autre ne les voit. Utile seulement pour essayer.
 - **Avec Supabase** (à configurer une fois, voir plus bas) : un seul mot de
@@ -74,20 +74,19 @@ dans le site.
 
 ## Mot de passe administrateur
 
-Sur `/admin`, on ne saisit qu'un mot de passe (par exemple `1234`). En coulisse,
-le site se connecte à Supabase avec un compte partagé :
+Sur `/admin`, on ne saisit qu'un mot de passe, sans e-mail. En coulisse, le site
+se connecte à Supabase avec un compte partagé :
 
 - e-mail : `admin@batimedaf.netlify.app` (jamais saisi, jamais utilisé pour
-  envoyer un message) ;
-- mot de passe dans Supabase : le code saisi **suivi de** `-batimedaf`, donc
-  `1234-batimedaf` pour le code `1234` (Supabase exige au moins 6 caractères).
+  envoyer un message ; c'est seulement un identifiant) ;
+- mot de passe : celui du compte dans Supabase (au moins 6 caractères, exigence
+  de Supabase).
 
-Ces deux valeurs sont dans `src/pages/Admin.jsx` (`ADMIN_EMAIL`,
-`ADMIN_PASSWORD_SUFFIX`). **Pour changer le code** : dans Supabase,
-*Authentication → Users*, ouvrir le compte et lui donner le nouveau mot de passe
-`<nouveau code>-batimedaf`.
+L'e-mail est écrit dans `src/pages/Admin.jsx` (`ADMIN_EMAIL`). **Pour changer le
+mot de passe** : dans Supabase, *Authentication → Users*, ouvrir le compte et
+lui donner le nouveau mot de passe. Le site n'a pas besoin d'être modifié.
 
-> Attention : avec un code court comme `1234`, n'importe qui qui trouve la page
-> `/admin` peut le deviner et modifier le site. Un code plus long (8 caractères
-> ou plus, lettres et chiffres) protège beaucoup mieux : il suffit de le
-> changer dans Supabase comme ci-dessus, sans toucher au code.
+> Attention : un mot de passe simple comme `123456` se devine en quelques essais.
+> Comme le site est public, n'importe qui qui trouve la page `/admin` pourrait
+> alors modifier vos textes et photos. Un mot de passe plus long (8 caractères
+> ou plus, lettres et chiffres) protège beaucoup mieux.
