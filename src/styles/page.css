@@ -1,0 +1,339 @@
+/**
+ * Shared page primitives — the design system used across the inner pages:
+ * cream ground, Optima headings at regular weight, Rethink Sans body,
+ * numbered sticky section labels, and scroll reveals.
+ */
+
+.pg {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  background: #fff7f0;
+  overflow-x: clip;
+}
+
+.pg-wrap {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  box-sizing: border-box;
+}
+
+/* ---------- Reveals ---------- */
+
+.pg.is-ready [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--d, 0ms);
+}
+
+.pg.is-ready [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Masked line reveal ---------- */
+
+.pg-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+.pg-mask-inner {
+  display: block;
+  transform: translateY(105%);
+  animation: pg-rise 1.05s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--md, 0.25s);
+}
+
+@keyframes pg-rise {
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes pg-fade {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Blocks ---------- */
+
+.pg-block {
+  padding: 6rem 0;
+  border-bottom: 1px solid #e6ded5;
+}
+
+.pg-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.pg-eyebrow {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a0968b;
+}
+
+.pg-eyebrow--top {
+  margin-bottom: 2.75rem;
+}
+
+.pg-lead {
+  font-family: var(--heading);
+  font-size: clamp(1.4rem, 2.9vw, 2.25rem);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 2rem;
+  max-width: 30ch;
+}
+
+.pg-text {
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--ink);
+  margin: 0 0 1.25rem;
+  max-width: 60ch;
+}
+
+/* ---------- Accordion ---------- */
+
+.pg-acc {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid #e6ded5;
+}
+
+.pg-acc li {
+  border-bottom: 1px solid #e6ded5;
+}
+
+.pg-acc-head {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  padding: 1.6rem 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: padding-left 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pg-acc-head:hover,
+.pg-acc-item.is-open .pg-acc-head {
+  padding-left: 1rem;
+}
+
+.pg-acc-num {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: #b3a89b;
+  flex-shrink: 0;
+}
+
+.pg-acc-title {
+  flex: 1;
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(1.35rem, 3vw, 2.25rem);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+
+/* Plus sign that rotates into a minus when the panel opens. */
+.pg-acc-sign {
+  position: relative;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #ded5cb;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.pg-acc-sign i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 13px;
+  height: 1px;
+  background: #0a0a0a;
+  transform: translate(-50%, -50%);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.3s ease;
+}
+
+.pg-acc-sign i:last-child {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.pg-acc-item.is-open .pg-acc-sign {
+  background: #0a0a0a;
+  border-color: #0a0a0a;
+}
+
+.pg-acc-item.is-open .pg-acc-sign i {
+  background: #fff7f0;
+}
+
+.pg-acc-item.is-open .pg-acc-sign i:last-child {
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+
+/* grid-template-rows animates cleanly to auto height, unlike max-height. */
+.pg-acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pg-acc-item.is-open .pg-acc-panel {
+  grid-template-rows: 1fr;
+}
+
+.pg-acc-panel > p {
+  overflow: hidden;
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--ink);
+  max-width: 62ch;
+  opacity: 0;
+  transition: opacity 0.4s ease, padding 0.5s ease;
+}
+
+.pg-acc-item.is-open .pg-acc-panel > p {
+  opacity: 1;
+  padding: 0 0 1.9rem 4.15rem;
+}
+
+/* Unnumbered lists have no leading column to align under. */
+.pg-acc-item.is-open .pg-acc-panel > p.is-flush {
+  padding-left: 1rem;
+}
+
+/* ---------- CTA ---------- */
+
+.pg-cta {
+  background: #0a0a0a;
+  color: #fff7f0;
+  padding: 6rem 0;
+}
+
+.pg-cta-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.pg-cta-title {
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.pg-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 56px;
+  padding: 0 1.85rem;
+  border-radius: 999px;
+  background: #fff7f0;
+  color: #0a0a0a;
+  border: 1px solid #fff7f0;
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, gap 0.2s ease;
+}
+
+.pg-cta-btn:hover {
+  background: #e4e4e4;
+  gap: 0.95rem;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (min-width: 900px) {
+  .pg-split {
+    grid-template-columns: 240px 1fr;
+    gap: 4rem;
+  }
+
+  /* The section label holds its position while the copy scrolls past. */
+  .pg-split-aside {
+    position: sticky;
+    top: 7rem;
+    align-self: start;
+  }
+}
+
+@media (max-width: 640px) {
+  .pg-wrap {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .pg-block {
+    padding: 4rem 0;
+  }
+
+  .pg-acc-item.is-open .pg-acc-panel > p {
+    padding-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-mask-inner {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+
+  .pg.is-ready [data-reveal],
+  .pg.is-ready [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .pg-acc-head,
+  .pg-acc-panel,
+  .pg-acc-sign i {
+    transition: none;
+  }
+}

@@ -1,0 +1,142 @@
+.lg-head {
+  padding: 9rem 0 3.5rem;
+  border-bottom: 1px solid #e6ded5;
+}
+
+.lg-kicker {
+  margin-bottom: 1.5rem;
+}
+
+.lg-title {
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 6vw, 4.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  margin: 0 0 1rem;
+}
+
+.lg-updated {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  color: #a0968b;
+  margin: 0 0 1.5rem;
+}
+
+.lg-intro {
+  font-family: var(--sans);
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--ink);
+  max-width: 62ch;
+  margin: 0;
+}
+
+.lg-body {
+  padding: 4rem 0 6rem;
+}
+
+.lg-cols {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+/* ---------- Side nav ---------- */
+
+.lg-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid #e6ded5;
+}
+
+.lg-nav li {
+  border-bottom: 1px solid #e6ded5;
+}
+
+.lg-nav a {
+  display: block;
+  padding: 0.9rem 0;
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  color: #7c746b;
+  text-decoration: none;
+  transition: color 0.25s ease, padding-left 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lg-nav a:hover {
+  color: var(--ink);
+  padding-left: 0.5rem;
+}
+
+.lg-nav a.is-current {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- Content ---------- */
+
+.lg-section {
+  padding-bottom: 2.5rem;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid #e6ded5;
+}
+
+.lg-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.lg-section h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0 0 1.1rem;
+}
+
+.lg-num {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  color: #b3a89b;
+}
+
+.lg-section p {
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--ink);
+  max-width: 68ch;
+  margin: 0 0 0.9rem;
+}
+
+.lg-section p:last-child {
+  margin-bottom: 0;
+}
+
+@media (min-width: 900px) {
+  .lg-cols {
+    grid-template-columns: 260px 1fr;
+    gap: 4rem;
+  }
+
+  .lg-nav {
+    position: sticky;
+    top: 7rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .lg-head {
+    padding-top: 7rem;
+  }
+}

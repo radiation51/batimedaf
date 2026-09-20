@@ -1,0 +1,106 @@
+/* Only applied once JS confirms a fine pointer is present (see cc-active on
+   body) — the native cursor otherwise stays untouched everywhere, including
+   the whole /admin CMS, which never mounts this component. */
+body.cc-active,
+body.cc-active a,
+body.cc-active button {
+  cursor: none;
+}
+
+.cc-dot,
+.cc-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.cc-dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: var(--ink, #7a5238);
+  transition: opacity 0.2s ease, background-color 0.3s ease;
+}
+
+.cc-ring {
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border-radius: 50%;
+  border: 1px solid rgba(122, 82, 56, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    margin 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.cc-ring--link {
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  border-color: var(--ink, #7a5238);
+  background: rgba(122, 82, 56, 0.08);
+}
+
+.cc-dot--hidden {
+  opacity: 0;
+}
+
+.cc-ring--label {
+  width: 84px;
+  height: 84px;
+  margin: -42px 0 0 -42px;
+  background: var(--ink, #7a5238);
+  border-color: var(--ink, #7a5238);
+}
+
+.cc-label {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--cream, #fff7f0);
+  white-space: nowrap;
+}
+
+body.cc-pressed .cc-ring {
+  width: 32px;
+  height: 32px;
+  margin: -16px 0 0 -16px;
+}
+
+body.cc-hidden .cc-dot,
+body.cc-hidden .cc-ring {
+  opacity: 0;
+}
+
+/* A dot chasing the pointer is motion the user asked to avoid — keep the
+   affordance (cursor:none + native fallback) but drop the animated visuals. */
+@media (prefers-reduced-motion: reduce) {
+  .cc-dot,
+  .cc-ring {
+    display: none;
+  }
+
+  body.cc-active,
+  body.cc-active a,
+  body.cc-active button {
+    cursor: auto;
+  }
+}
+
+/* Never engage on touch/coarse pointers — belt and braces alongside the JS
+   capability check, in case the component ever mounts unconditionally. */
+@media (hover: none), (pointer: coarse) {
+  .cc-dot,
+  .cc-ring {
+    display: none;
+  }
+}

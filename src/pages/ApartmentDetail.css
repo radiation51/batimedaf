@@ -1,0 +1,424 @@
+/* Layered on top of the shared `pg-*` primitives. */
+
+/* Every block on this page shares one measure: 80% of the viewport,
+   centred, capped so it stays readable on very wide screens. */
+.ap {
+  --ap-measure: min(80vw, 1600px);
+}
+
+.ap-wrap {
+  width: var(--ap-measure);
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* ---------- Main ---------- */
+
+.ap-main {
+  /* Clears the navbar; the card opens the page. */
+  padding: 7.5rem 0 6rem;
+  border-bottom: 1px solid #e6ded5;
+}
+
+.ap-cols {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+/* ---------- Image grid ---------- */
+
+.ap-shots {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.ap-shots img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform: scale(var(--zoom, 1));
+  background: #ece5dd;
+}
+
+/* ---------- Floating info card ---------- */
+
+.ap-card {
+  min-width: 0;
+  background: #fffdfa;
+  border: 1px solid #f0e8df;
+  border-radius: 4px;
+  padding: 2rem;
+  /* Two layers: a tight contact shadow plus a wide soft one, so the card
+     reads as lifted off the page rather than outlined. */
+  box-shadow: 0 2px 6px rgba(58, 38, 24, 0.05),
+    0 24px 60px -20px rgba(58, 38, 24, 0.18);
+}
+
+.ap-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--ink);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.ap-back:hover {
+  color: #0a0a0a;
+}
+
+.ap-back-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #e6ded5;
+  transform: rotate(180deg);
+  transition: background-color 0.25s ease, border-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.ap-back:hover .ap-back-icon {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff7f0;
+}
+
+.ap-card-ref {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a0968b;
+  margin-bottom: 0.85rem;
+}
+
+.ap-card-title {
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin: 0 0 1.5rem;
+}
+
+.ap-card-lead {
+  font-family: var(--heading);
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 2rem;
+}
+
+.ap-mini-title {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a0968b;
+  margin: 0 0 0.5rem;
+}
+
+.ap-features {
+  list-style: none;
+  margin: 0 0 2.25rem;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  border-top: 1px solid #efe7de;
+}
+
+.ap-features li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  font-family: var(--sans);
+  font-size: 0.98rem;
+  color: var(--ink);
+  padding: 0.85rem 0;
+  border-bottom: 1px solid #efe7de;
+}
+
+.ap-feature-num {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: #b3a89b;
+}
+
+.ap-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.ap-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 52px;
+  padding: 0 1.6rem;
+  border-radius: 999px;
+  background: #0a0a0a;
+  color: #fff7f0;
+  border: 1px solid #0a0a0a;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease, gap 0.2s ease;
+}
+
+.ap-btn:hover {
+  gap: 0.95rem;
+  background: #241f1b;
+}
+
+.ap-btn--ghost {
+  background: transparent;
+  color: #0a0a0a;
+  border-color: #ded5cb;
+}
+
+.ap-btn--ghost:hover {
+  background: #0a0a0a;
+  border-color: #0a0a0a;
+  color: #fff7f0;
+}
+
+/* ---------- Other apartments ---------- */
+
+.ap-others {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.ap-other {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.ap-other-media {
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: #efe6dc;
+  margin-bottom: 1.1rem;
+}
+
+.ap-other-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform: scale(var(--zoom, 1));
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ap-other:hover .ap-other-media img {
+  transform: scale(calc(var(--zoom, 1) * 1.05));
+}
+
+.ap-other-type {
+  display: block;
+  font-family: var(--heading);
+  font-size: 1.6rem;
+  color: var(--ink);
+  margin-bottom: 0.3rem;
+}
+
+.ap-other-facts {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  color: #7c746b;
+  margin-bottom: 0.35rem;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (min-width: 700px) {
+  .ap-others {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem;
+  }
+}
+
+@media (min-width: 1000px) {
+  /* Images left, card right; the card follows the reader down the grid. */
+  .ap-cols {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 2.5rem;
+  }
+
+  .ap-card {
+    position: sticky;
+    top: 6.5rem;
+    padding: 2.5rem;
+  }
+
+  .ap-others {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .ap {
+    --ap-measure: calc(100% - 2.5rem);
+  }
+
+  .ap-shots {
+    gap: 0.75rem;
+  }
+
+  .ap-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ap-other-media img {
+    transition: none;
+  }
+}
+
+/* ---------- Location ---------- */
+
+.ap-place {
+  padding: 5rem 0;
+  border-bottom: 1px solid #e6ded5;
+}
+
+.ap-place-eyebrow {
+  margin-bottom: 1.25rem;
+}
+
+.ap-place-lead {
+  font-family: var(--heading);
+  font-size: clamp(1.35rem, 2.8vw, 2.15rem);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0 0 3rem;
+  max-width: 30ch;
+}
+
+.ap-place-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.ap-place-info > * + * {
+  margin-top: 2.5rem;
+}
+
+@media (min-width: 900px) {
+  .ap-place-grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 3.5rem;
+    /* The map matches the transports/nearby column's height instead of
+       sitting at its own, usually shorter, fixed ratio. */
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 640px) {
+  .ap-place {
+    padding: 3.5rem 0;
+  }
+}
+
+/* ---------- Room filter ---------- */
+
+.ap-gallery {
+  min-width: 0;
+}
+
+.ap-rooms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.ap-room {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 40px;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: 1px solid #ded5cb;
+  background: transparent;
+  color: #0a0a0a;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.ap-room:hover {
+  border-color: #0a0a0a;
+}
+
+.ap-room.is-active {
+  background: #0a0a0a;
+  border-color: #0a0a0a;
+  color: #fff7f0;
+}
+
+.ap-room-count {
+  font-size: 0.72rem;
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ap-room {
+    transition: none;
+  }
+}
+
+/* Images open the viewer, so each one is a button. */
+.ap-shot {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: zoom-in;
+}
+
+.ap-shot:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}

@@ -1,0 +1,265 @@
+.full-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.full-menu.is-open {
+  pointer-events: auto;
+}
+
+.full-menu-columns {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+.full-menu-col {
+  flex: 1 1 20%;
+  height: 100%;
+  background: var(--dark);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.full-menu.is-open .full-menu-col {
+  transform: scaleY(1);
+}
+
+.full-menu:not(.is-open) .full-menu-col {
+  transform-origin: bottom;
+}
+
+/* stagger delay: centre column first, outer columns last */
+.full-menu.is-open .full-menu-col--2 {
+  transition-delay: 0s;
+}
+.full-menu.is-open .full-menu-col--1,
+.full-menu.is-open .full-menu-col--3 {
+  transition-delay: 0.08s;
+}
+.full-menu.is-open .full-menu-col--0,
+.full-menu.is-open .full-menu-col--4 {
+  transition-delay: 0.16s;
+}
+
+/* reverse the stagger when closing so the sides retreat first */
+.full-menu:not(.is-open) .full-menu-col--0,
+.full-menu:not(.is-open) .full-menu-col--4 {
+  transition-delay: 0s;
+}
+.full-menu:not(.is-open) .full-menu-col--1,
+.full-menu:not(.is-open) .full-menu-col--3 {
+  transition-delay: 0.08s;
+}
+.full-menu:not(.is-open) .full-menu-col--2 {
+  transition-delay: 0.16s;
+}
+
+.full-menu-close {
+  position: absolute;
+  top: 1.3rem;
+  right: 2rem;
+  z-index: 1;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 247, 240, 0.4);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: rotate(-45deg);
+  transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.65, 0, 0.35, 1),
+    background-color 0.2s ease, border-color 0.2s ease;
+  transition-delay: 0s;
+}
+
+.full-menu.is-open .full-menu-close {
+  opacity: 1;
+  transform: rotate(0deg);
+  transition-delay: 0.32s;
+}
+
+.full-menu-close:hover {
+  background: rgba(255, 247, 240, 0.08);
+  border-color: #fff7f0;
+}
+
+.full-menu-close span {
+  position: absolute;
+  width: 16px;
+  height: 1px;
+  background: #fff7f0;
+}
+
+.full-menu-close span:first-child {
+  transform: rotate(45deg);
+}
+
+.full-menu-close span:last-child {
+  transform: rotate(-45deg);
+}
+
+.full-menu-content {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 7rem 2rem 3rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3rem;
+  overflow-y: auto;
+}
+
+/* ---------- Links ---------- */
+
+.full-menu-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.full-menu-links li {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  border-bottom: 1px solid rgba(255, 247, 240, 0.12);
+}
+
+.full-menu.is-open .full-menu-links li,
+.full-menu.is-open .full-menu-aside {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: calc(0.32s + var(--i) * 0.07s);
+}
+
+.full-menu-links a {
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+  padding: 0.7rem 0;
+  color: #fff7f0;
+  text-decoration: none;
+  transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.full-menu-index {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: rgba(255, 247, 240, 0.45);
+  transition: color 0.3s ease;
+}
+
+.full-menu-label {
+  font-family: var(--heading);
+  font-size: clamp(2rem, 6vw, 3.75rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  /* Slides right on hover without nudging the row's other content. */
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.full-menu-arrow {
+  margin-left: auto;
+  align-self: center;
+  opacity: 0;
+  transform: translateX(-12px);
+  transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Dim the rest of the list so the hovered item leads. */
+.full-menu-links:hover a {
+  opacity: 0.35;
+}
+
+.full-menu-links a:hover {
+  opacity: 1;
+}
+
+.full-menu-links a:hover .full-menu-label {
+  transform: translateX(16px);
+}
+
+.full-menu-links a:hover .full-menu-index {
+  color: #fff7f0;
+}
+
+.full-menu-links a:hover .full-menu-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ---------- Aside ---------- */
+
+.full-menu-aside {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.full-menu-block-title {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 247, 240, 0.45);
+  margin: 0 0 0.9rem;
+}
+
+.full-menu-contact,
+.full-menu-address,
+.full-menu-socials a {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-style: normal;
+  line-height: 1.6;
+  color: rgba(255, 247, 240, 0.8);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.full-menu-contact:hover,
+.full-menu-socials a:hover {
+  color: #fff7f0;
+}
+
+.full-menu-socials {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 800px) {
+  .full-menu-content {
+    padding: 8rem 3rem 4rem;
+    gap: 4rem;
+  }
+
+  .full-menu-aside {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 780px;
+  }
+}

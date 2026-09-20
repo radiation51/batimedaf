@@ -1,0 +1,209 @@
+/**
+ * Shared location styles: the embedded map with its address plate, and the
+ * transport / nearby lists. Used by the residence and apartment pages.
+ */
+
+/* ---------- Map ---------- */
+
+.pl-map-frame {
+  position: relative;
+  overflow: hidden;
+  background: #ece5dd;
+  aspect-ratio: 4 / 3;
+}
+
+.pl-map-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  /* Google's tiles are cool and saturated; this settles them into the cream
+     palette without hiding any detail. */
+  filter: grayscale(0.4) contrast(0.94);
+}
+
+/* Address plate under the map, reading as one object with it. */
+.pl-map-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.35rem 1.5rem;
+  background: #0a0a0a;
+  color: #fff7f0;
+}
+
+.pl-map-label {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 247, 240, 0.5);
+  margin-bottom: 0.4rem;
+}
+
+.pl-map-address {
+  font-family: var(--sans);
+  font-size: 0.98rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.pl-map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-shrink: 0;
+  height: 44px;
+  padding: 0 1.25rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 247, 240, 0.35);
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #fff7f0;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.25s ease, border-color 0.25s ease,
+    color 0.25s ease, gap 0.25s ease;
+}
+
+.pl-map-link:hover {
+  background: #fff7f0;
+  border-color: #fff7f0;
+  color: #0a0a0a;
+  gap: 0.9rem;
+}
+
+/* ---------- Lists ---------- */
+
+.rd-place-block + .rd-place-block {
+  margin-top: 2.75rem;
+}
+
+.pl-mini-title {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a0968b;
+  margin: 0 0 0.75rem;
+}
+
+.pl-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid #e6ded5;
+}
+
+.pl-list li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e6ded5;
+  font-family: var(--sans);
+}
+
+.pl-stop {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.02rem;
+  color: var(--ink);
+}
+
+/* Times align in a column of their own, so the eye can compare them. */
+.pl-time {
+  flex-shrink: 0;
+  font-size: 0.88rem;
+  color: #8a8178;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Line badges ---------- */
+
+.pl-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
+
+.pl-line-network {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #a0968b;
+  min-width: 1.5rem;
+}
+
+.pl-line-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 0.35rem;
+  border-radius: 50%;
+  /* Unknown lines: ink on cream rather than an invented colour. */
+  background: #0a0a0a;
+  color: #fff7f0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* A named mode (Bus, Tramway…) gets its own icon in a soft colour circle,
+   rather than trying to abbreviate it down to a single letter or digit. */
+.pl-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+@media (min-width: 900px) {
+  .pl-map--sticky {
+    position: sticky;
+    top: 7rem;
+  }
+
+  /* Fills whatever height its column is stretched to (matching the
+     transports/nearby text next to it) instead of a fixed ratio. */
+  .pl-map {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .pl-map-frame {
+    flex: 1 1 auto;
+    aspect-ratio: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  /* The plate stacks so the address never gets squeezed by the button. */
+  .pl-map-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .pl-map-frame {
+    aspect-ratio: 1 / 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pl-map-link {
+    transition: none;
+  }
+}

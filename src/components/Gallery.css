@@ -1,0 +1,228 @@
+.gallery {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  box-sizing: border-box;
+  /* Opaque: the hero is position:fixed and sits behind every section. */
+  background: var(--dark);
+  color: #fff7f0;
+  padding: 7rem 0;
+}
+
+.gallery-inner {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  box-sizing: border-box;
+}
+
+.gallery-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-bottom: 3rem;
+}
+
+.gallery-eyebrow {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 247, 240, 0.55);
+}
+
+.gallery-title {
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: 2.25rem;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #fff7f0;
+  margin: 0;
+  max-width: 20ch;
+}
+
+/* ---------- Infinite horizontal marquee ---------- */
+
+.gallery-marquee {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  /* Fade the strip into the background at both edges. */
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 6rem,
+    #000 calc(100% - 6rem),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 6rem,
+    #000 calc(100% - 6rem),
+    transparent 100%
+  );
+}
+
+.gallery-track {
+  display: flex;
+  width: max-content;
+  gap: var(--gallery-gap, 1.5rem);
+  animation: gallery-marquee var(--marquee-duration, 60s) linear infinite;
+  will-change: transform;
+}
+
+/* The track holds two copies, so one copy is 50% of its width — but the gap
+   between the copies is only counted once, so the shift needs half a gap
+   more than 50% to land the second copy exactly where the first started. */
+@keyframes gallery-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(-50% - (var(--gallery-gap, 1.5rem) / 2)), 0, 0);
+  }
+}
+
+/* Hovering (or keyboard-focusing) the section freezes the strip. */
+.gallery:hover .gallery-track,
+.gallery:focus-within .gallery-track {
+  animation-play-state: paused;
+}
+
+.gallery-item {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex: 0 0 auto;
+  width: clamp(240px, 26vw, 340px);
+}
+
+.gallery-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #241d18;
+}
+
+.gallery-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Falls back to centered/no-zoom for any image with no crop chosen yet. */
+  object-position: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
+  display: block;
+  transform: scale(var(--zoom, 1));
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.gallery-item:hover .gallery-media img {
+  transform: scale(calc(var(--zoom, 1) * 1.04));
+}
+
+/* ---------- Scroll reveals ---------- */
+
+.gallery.is-animated [data-reveal] {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery.is-animated [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.gallery.is-animated .gallery-title[data-reveal] {
+  transition-delay: 90ms;
+}
+
+.gallery.is-animated .gallery-marquee[data-reveal] {
+  transition-delay: 150ms;
+}
+
+.gallery-caption {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: rgba(255, 247, 240, 0.6);
+}
+
+@media (min-width: 1000px) {
+  .gallery {
+    padding: 9rem 0;
+  }
+
+  .gallery-title {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .gallery {
+    padding: 5rem 0;
+  }
+
+  .gallery-inner {
+    padding: 0 1.25rem;
+  }
+
+  .gallery-header {
+    margin-bottom: 2.25rem;
+  }
+
+  .gallery-marquee {
+    /* Narrower edge fade so more of the strip stays legible. */
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      #000 2rem,
+      #000 calc(100% - 2rem),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      #000 2rem,
+      #000 calc(100% - 2rem),
+      transparent 100%
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-media img {
+    transition: none;
+  }
+
+  .gallery-item:hover .gallery-media img {
+    transform: none;
+  }
+
+  /* Reveal instantly rather than animating anything into place. */
+  .gallery.is-animated [data-reveal],
+  .gallery.is-animated [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  /* Stop the marquee, but let the strip still be browsed by hand. */
+  .gallery-track {
+    animation: none;
+  }
+
+  .gallery-marquee {
+    overflow-x: auto;
+  }
+}

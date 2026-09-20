@@ -1,0 +1,742 @@
+.rd {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  background: #fff7f0;
+  overflow-x: clip;
+}
+
+.rd-wrap {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  box-sizing: border-box;
+}
+
+/* ---------- Reveal ---------- */
+
+.rd.is-ready [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--d, 0ms);
+}
+
+.rd.is-ready [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Hero ---------- */
+
+.rd-hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  color: #fff7f0;
+}
+
+.rd-hero-bg {
+  position: absolute;
+  inset: -10% 0 0;
+  background-size: cover;
+  /* Falls back to centered/no-zoom for any image with no crop chosen yet. */
+  background-position: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform: scale(1.08);
+  will-change: transform;
+}
+
+.rd-hero-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.55) 0%,
+    rgba(10, 10, 10, 0.25) 35%,
+    rgba(10, 10, 10, 0.8) 100%
+  );
+}
+
+.rd-hero-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 7rem 2rem 5rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.rd-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  align-self: flex-start;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: rgba(255, 247, 240, 0.8);
+  text-decoration: none;
+  transition: color 0.25s ease;
+  animation: rd-fade 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.rd-back:hover {
+  color: #fff7f0;
+}
+
+.rd-back-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 247, 240, 0.4);
+  transform: rotate(180deg);
+  transition: background-color 0.25s ease, border-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.rd-back:hover .rd-back-icon {
+  background: #fff7f0;
+  border-color: #fff7f0;
+  color: #0a0a0a;
+}
+
+.rd-hero-text {
+  margin-top: auto;
+}
+
+.rd-hero-tagline {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 247, 240, 0.75);
+  margin-bottom: 1rem;
+  animation: rd-fade 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+.rd-hero-name {
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(3rem, 11vw, 9rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin: 0 0 1.25rem;
+}
+
+/* The name rises out of a mask rather than simply fading. */
+.rd-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+.rd-mask-inner {
+  display: block;
+  transform: translateY(105%);
+  animation: rd-rise 1.05s cubic-bezier(0.22, 1, 0.36, 1) 0.25s forwards;
+}
+
+.rd-hero-place {
+  font-family: var(--sans);
+  font-size: 1rem;
+  color: rgba(255, 247, 240, 0.8);
+  margin: 0;
+  animation: rd-fade 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both;
+}
+
+.rd-scroll-cue {
+  position: absolute;
+  z-index: 1;
+  bottom: 1.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 46px;
+  background: rgba(255, 247, 240, 0.25);
+  overflow: hidden;
+}
+
+.rd-scroll-cue span {
+  position: absolute;
+  inset: 0;
+  background: #fff7f0;
+  animation: rd-cue 2.1s ease-in-out infinite;
+}
+
+@keyframes rd-rise {
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes rd-fade {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rd-cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  60%,
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* ---------- Blocks ---------- */
+
+.rd-block {
+  padding: 6rem 0;
+  border-bottom: 1px solid #e6ded5;
+}
+
+.rd-eyebrow {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a0968b;
+}
+
+.rd-eyebrow--top {
+  margin-bottom: 2.75rem;
+}
+
+.rd-lead {
+  font-family: var(--heading);
+  font-size: clamp(1.4rem, 2.9vw, 2.25rem);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 2rem;
+  max-width: 30ch;
+}
+
+.rd-text {
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--ink);
+  margin: 0 0 1.25rem;
+  max-width: 60ch;
+}
+
+/* ---------- Presentation ---------- */
+
+.rd-presentation {
+  margin-top: 3rem;
+}
+
+.rd-presentation .rd-eyebrow {
+  margin-bottom: 1rem;
+}
+
+.rd-presentation .rd-text {
+  margin-bottom: 0;
+  max-width: none;
+}
+
+/* ---------- Specs ---------- */
+
+.rd-specs {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem 2.5rem;
+}
+
+.rd-specs dt {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #a0968b;
+  margin-bottom: 0.35rem;
+}
+
+.rd-specs dd {
+  font-family: var(--heading);
+  font-size: 1.15rem;
+  color: var(--ink);
+  margin: 0;
+}
+
+/* ---------- Location ---------- */
+
+.rd-place-lead {
+  font-family: var(--heading);
+  font-size: clamp(1.5rem, 3.4vw, 2.6rem);
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin: 0 0 3.5rem;
+  max-width: none;
+}
+
+.rd-place-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+/* ---------- Apartment cards ---------- */
+
+.rd-apts-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  /* The rule that used to sit under the filter row now closes the header. */
+  padding-bottom: 2.25rem;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid #e6ded5;
+}
+
+.rd-apts-summary {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  color: #8a8178;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Cards ---------- */
+
+.rd-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.rd-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.rd-card-media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: #ece5dd;
+}
+
+.rd-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform: scale(var(--zoom, 1));
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rd-card:hover .rd-card-media img {
+  transform: scale(calc(var(--zoom, 1) * 1.05));
+}
+
+.rd-card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding-top: 1.25rem;
+}
+
+.rd-card-top {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.rd-card-type {
+  display: block;
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3vw, 2.15rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.rd-card-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  color: #7c746b;
+  padding-bottom: 1.25rem;
+}
+
+.rd-card-facts b {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* Pushed to the bottom so prices line up across a row of cards. */
+.rd-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 1.15rem;
+  border-top: 1px solid #e6ded5;
+  transition: border-color 0.35s ease;
+}
+
+.rd-card:hover .rd-card-foot {
+  border-color: #0a0a0a;
+}
+
+.rd-card-cta {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.rd-card-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid #ded5cb;
+  color: #0a0a0a;
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+    color 0.3s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rd-card:hover .rd-card-arrow {
+  background: #0a0a0a;
+  border-color: #0a0a0a;
+  color: #fff7f0;
+  transform: translateX(4px);
+}
+
+.rd-card:focus-visible {
+  outline: 2px solid #0a0a0a;
+  outline-offset: 4px;
+}
+
+/* ---------- CTA ---------- */
+
+.rd-cta {
+  background: #0a0a0a;
+  color: #fff7f0;
+  padding: 6rem 0;
+}
+
+.rd-cta-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.rd-cta-title {
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.rd-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 56px;
+  padding: 0 1.85rem;
+  border-radius: 999px;
+  background: #fff7f0;
+  color: #0a0a0a;
+  border: 1px solid #fff7f0;
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, gap 0.2s ease;
+}
+
+.rd-cta-btn:hover {
+  background: #e4e4e4;
+  gap: 0.95rem;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (min-width: 700px) {
+  .rd-specs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+.rd-map-col {
+  min-width: 0;
+}
+
+@media (min-width: 900px) {
+  .rd-map-col {
+    position: sticky;
+    top: 7rem;
+  }
+
+  .rd-place-layout {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 4rem;
+    /* The map matches the transports/nearby column's height instead of
+       sitting at its own, usually shorter, fixed ratio. */
+    align-items: stretch;
+  }
+
+  .rd-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3rem 2rem;
+  }
+}
+
+@media (min-width: 1100px) {
+  .rd-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3rem 2rem;
+  }
+
+  .rd-card-type {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .rd-wrap,
+  .rd-hero-inner {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .rd-block {
+    padding: 4rem 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rd-hero-bg {
+    transform: scale(calc(var(--zoom, 1) * 1.02)) !important;
+  }
+
+  .rd-mask-inner,
+  .rd-back,
+  .rd-hero-tagline,
+  .rd-hero-place {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+
+  .rd-scroll-cue span {
+    animation: none;
+  }
+
+  .rd.is-ready [data-reveal],
+  .rd.is-ready [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .rd-card-media img,
+  .rd-card-arrow,
+  .rd-card-foot {
+    transition: none;
+  }
+
+  .rd-card:hover .rd-card-media img,
+  .rd-card:hover .rd-card-arrow {
+    transform: none;
+  }
+}
+
+/* ---------- Gallery: infinite horizontal marquee ---------- */
+
+.rd-gallery {
+  /* The strip is full-bleed, so the section keeps only vertical padding. */
+  overflow: hidden;
+}
+
+.rd-marquee {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  /* Fade the strip into the cream ground at both edges. */
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 6rem,
+    #000 calc(100% - 6rem),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 6rem,
+    #000 calc(100% - 6rem),
+    transparent 100%
+  );
+}
+
+.rd-track {
+  display: flex;
+  width: max-content;
+  gap: var(--rd-gap, 1.5rem);
+  animation: rd-marquee var(--rd-marquee-duration, 70s) linear infinite;
+  will-change: transform;
+}
+
+/* The track holds two copies, so one copy is 50% of its width — but the gap
+   between the copies is counted only once, so the shift needs half a gap
+   more than 50% to land the second copy exactly where the first started. */
+@keyframes rd-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(-50% - (var(--rd-gap, 1.5rem) / 2)), 0, 0);
+  }
+}
+
+/* Hovering — or tabbing into — the strip freezes it, so an image can
+   actually be looked at and clicked. */
+.rd-marquee:hover .rd-track,
+.rd-marquee:focus-within .rd-track {
+  animation-play-state: paused;
+}
+
+.rd-slide {
+  margin: 0;
+  flex: 0 0 auto;
+  width: clamp(240px, 26vw, 340px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.rd-slide figcaption {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #6b6259;
+}
+
+.rd-shot {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: #ece5dd;
+  cursor: zoom-in;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+}
+
+.rd-shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform: scale(var(--zoom, 1));
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rd-shot:hover img {
+  transform: scale(calc(var(--zoom, 1) * 1.04));
+}
+
+.rd-shot:focus-visible {
+  outline: 2px solid #0a0a0a;
+  outline-offset: 3px;
+}
+
+/* ---------- Responsive additions ---------- */
+
+@media (min-width: 700px) {
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rd-shot img {
+    transition: none;
+  }
+
+  /* Stop the strip, but let it still be browsed by hand. */
+  .rd-track {
+    animation: none;
+  }
+
+  .rd-marquee {
+    overflow-x: auto;
+  }
+
+}
+
+@media (max-width: 640px) {
+  .rd-marquee {
+    /* Narrower edge fade so more of the strip stays legible. */
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      #000 2rem,
+      #000 calc(100% - 2rem),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      #000 2rem,
+      #000 calc(100% - 2rem),
+      transparent 100%
+    );
+  }
+}
+

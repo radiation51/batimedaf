@@ -1,0 +1,5 @@
+/* Reserves the scroll distance the position:fixed hero occupies, so the
+   sections that follow slide over it instead of starting below it. */
+.hero-spacer {
+  height: 100svh;
+}

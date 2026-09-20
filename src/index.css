@@ -1,0 +1,92 @@
+/**
+ * Global tokens and resets.
+ * Optima carries every title; Rethink Sans carries body copy.
+ */
+
+:root {
+  /* Optima ships with macOS/iOS; the fallbacks keep the same humanist feel
+     elsewhere until a licensed webfont is added. */
+  --heading: 'Optima', 'Optima nova', 'Candara', 'Gill Sans',
+    'Gill Sans MT', 'Segoe UI', sans-serif;
+  --sans: 'Rethink Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+
+  --cream: #fff7f0;
+  /* The warm near-black shared by the gallery, the full menu and the footer. */
+  --dark: #17120f;
+  /* Titles and main copy. Dark bands keep their own #0a0a0a ground. */
+  --ink: #7a5238;
+  --muted: #8a8178;
+  --line: #e4e4e4;
+
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.5;
+  /* The fixed hero must never be revealed by an overscroll bounce. */
+  overscroll-behavior-y: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--heading);
+  font-weight: 400;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+/* ---------- Scrollbar ---------- */
+
+/* Hidden entirely — the page still scrolls normally by wheel, trackpad,
+   touch and keyboard; only the visible track/thumb is removed. */
+html {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* old Edge/IE */
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none; /* Chrome, Safari, new Edge */
+}

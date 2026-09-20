@@ -1,0 +1,214 @@
+.loc {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  box-sizing: border-box;
+  /* Opaque: the hero is position:fixed and sits behind every section. */
+  background: #fff7f0;
+  padding: 7rem 0;
+}
+
+.loc-wrap {
+  width: min(80vw, 1600px);
+  margin: 0 auto;
+}
+
+/* ---------- Reveals ---------- */
+
+.loc.is-ready [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--d, 0ms);
+}
+
+.loc.is-ready [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Head ---------- */
+
+.loc-eyebrow {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8a8178;
+  margin-bottom: 0.9rem;
+}
+
+.loc-title {
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 3rem;
+}
+
+/* ---------- Layout ---------- */
+
+.loc-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+.loc-info > * + * {
+  margin-top: 2.5rem;
+}
+
+/* ---------- Details ---------- */
+
+.loc-details {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.75rem 2rem;
+}
+
+.loc-details dt {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #a0968b;
+  margin-bottom: 0.45rem;
+}
+
+.loc-details dd {
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 0;
+}
+
+.loc-details a {
+  text-decoration: none;
+  border-bottom: 1px solid #ded5cb;
+  padding-bottom: 1px;
+  transition: border-color 0.25s ease;
+}
+
+.loc-details a:hover {
+  border-color: var(--ink);
+}
+
+/* Address and hours are authored with newlines. */
+.loc-pre {
+  white-space: pre-line;
+}
+
+/* ---------- Residences ---------- */
+
+.loc-mini-title {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a0968b;
+  margin: 0 0 0.75rem;
+}
+
+.loc-residences {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid #e6ded5;
+}
+
+.loc-residences li {
+  border-bottom: 1px solid #e6ded5;
+}
+
+.loc-residences a {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 0;
+  text-decoration: none;
+  color: inherit;
+  transition: padding-left 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.loc-residences a:hover {
+  padding-left: 0.75rem;
+}
+
+.loc-res-name {
+  font-family: var(--heading);
+  font-size: 1.35rem;
+  color: var(--ink);
+}
+
+.loc-res-place {
+  flex: 1;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  color: #8a8178;
+}
+
+.loc-res-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #ded5cb;
+  color: #0a0a0a;
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.loc-residences a:hover .loc-res-arrow {
+  background: #0a0a0a;
+  border-color: #0a0a0a;
+  color: #fff7f0;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (min-width: 900px) {
+  .loc-grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 3.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .loc {
+    padding: 5rem 0;
+  }
+
+  .loc-wrap {
+    width: calc(100% - 2.5rem);
+  }
+
+  .loc-details {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loc.is-ready [data-reveal],
+  .loc.is-ready [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .loc-residences a,
+  .loc-res-arrow {
+    transition: none;
+  }
+}

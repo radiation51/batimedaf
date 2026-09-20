@@ -1,0 +1,489 @@
+.ab {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  background: #fff7f0;
+  overflow-x: clip;
+}
+
+.ab-wrap {
+  width: min(80vw, 1600px);
+  margin: 0 auto;
+}
+
+.ab-eyebrow,
+.ab-kicker {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a0968b;
+}
+
+/* ---------- Reveals ---------- */
+
+.ab.is-ready [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--d, 0ms);
+}
+
+.ab.is-ready [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- I. Ouverture: no background image, text only ---------- */
+
+.ab-open {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  background: #fff7f0;
+}
+
+.ab-open-inner {
+  padding: 8rem 0 6rem;
+}
+
+.ab-open .ab-kicker {
+  margin-bottom: 2rem;
+  opacity: 0;
+}
+
+.ab-open .ab-kicker.is-visible {
+  opacity: 1;
+}
+
+.ab-open-title {
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(3rem, 9vw, 8.5rem);
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0 0 2.5rem;
+}
+
+/* Each line rises out of its own mask. */
+.ab-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+
+.ab-mask-inner {
+  display: block;
+  transform: translateY(105%);
+  animation: ab-rise 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--md, 0.25s);
+}
+
+@keyframes ab-rise {
+  to {
+    transform: translateY(0);
+  }
+}
+
+.ab-open-sub {
+  font-family: var(--sans);
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  line-height: 1.6;
+  color: var(--ink);
+  max-width: 42ch;
+  margin: 0 0 4rem;
+}
+
+.ab-scroll-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #a0968b;
+}
+
+.ab-scroll-line {
+  position: relative;
+  display: inline-block;
+  width: 1px;
+  height: 34px;
+  background: #ded5cb;
+  overflow: hidden;
+}
+
+.ab-scroll-line span {
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  animation: ab-cue 2.1s ease-in-out infinite;
+}
+
+@keyframes ab-cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  60%,
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* ---------- IV. Portrait ---------- */
+
+.ab-portrait {
+  padding: 6.5rem 0;
+  background: var(--dark);
+  color: #fff7f0;
+}
+
+.ab-portrait-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.ab-portrait-media {
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: #ece5dd;
+}
+
+.ab-portrait-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform: scale(var(--zoom, 1));
+}
+
+.ab-portrait-copy .ab-eyebrow {
+  color: rgba(255, 247, 240, 0.55);
+  margin-bottom: 1.25rem;
+}
+
+.ab-portrait-title {
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 3.4vw, 2.5rem);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: #fff7f0;
+  margin: 0 0 1.25rem;
+  max-width: 18ch;
+}
+
+.ab-portrait-copy p {
+  font-family: var(--sans);
+  font-size: 1.02rem;
+  line-height: 1.75;
+  color: rgba(255, 247, 240, 0.82);
+  max-width: 48ch;
+  margin: 0;
+}
+
+/* ---------- V. Chiffres ---------- */
+
+.ab-figures {
+  padding: 6rem 0;
+  border-bottom: 1px solid #e6ded5;
+}
+
+.ab-figures-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.5rem 1.5rem;
+}
+
+.ab-figure-value {
+  display: block;
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.ab-figure-label {
+  display: block;
+  margin-top: 0.6rem;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8a8178;
+}
+
+/* ---------- III. Réalisations ---------- */
+
+.ab-showcase {
+  padding: 7rem 0;
+  background: var(--dark);
+  color: #fff7f0;
+}
+
+.ab-showcase-kicker {
+  color: rgba(255, 247, 240, 0.55);
+}
+
+.ab-showcase-title {
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 4.2vw, 3.25rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #fff7f0;
+  margin: 1rem 0 3.5rem;
+  max-width: 18ch;
+}
+
+.ab-showcase-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+}
+
+.ab-showcase-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.ab-showcase-media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background: #241d18;
+  margin-bottom: 1.5rem;
+}
+
+.ab-showcase-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform: scale(calc(var(--zoom, 1) * 1.02));
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ab-showcase-card:hover .ab-showcase-media img {
+  transform: scale(calc(var(--zoom, 1) * 1.08));
+}
+
+.ab-showcase-body {
+  display: block;
+}
+
+.ab-showcase-num {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: rgba(255, 247, 240, 0.5);
+  margin-bottom: 0.6rem;
+}
+
+.ab-showcase-name {
+  display: block;
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 3.6vw, 2.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #fff7f0;
+  margin-bottom: 0.5rem;
+}
+
+.ab-showcase-tagline {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.98rem;
+  color: rgba(255, 247, 240, 0.7);
+  margin-bottom: 1.25rem;
+}
+
+.ab-showcase-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.ab-showcase-meta span {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: rgba(255, 247, 240, 0.8);
+  border: 1px solid rgba(255, 247, 240, 0.28);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+}
+
+.ab-showcase-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #fff7f0;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid rgba(255, 247, 240, 0.5);
+  transition: gap 0.3s ease, border-color 0.3s ease;
+}
+
+.ab-showcase-card:hover .ab-showcase-cta {
+  gap: 0.95rem;
+  border-color: #fff7f0;
+}
+
+/* ---------- VI. Méthode ---------- */
+
+.ab-method {
+  padding: 6.5rem 0;
+}
+
+.ab-rules {
+  list-style: none;
+  margin: 2.75rem 0 0;
+  padding: 0;
+  border-top: 1px solid #e6ded5;
+}
+
+.ab-rules li {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 0.5rem 1.5rem;
+  padding: 2rem 0;
+  border-bottom: 1px solid #e6ded5;
+}
+
+.ab-rule-num {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: #b3a89b;
+  padding-top: 0.5rem;
+}
+
+.ab-rules h3 {
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(1.4rem, 3vw, 2.15rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0 0 0.6rem;
+}
+
+.ab-rules p {
+  grid-column: 2;
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--ink);
+  max-width: 62ch;
+  margin: 0;
+}
+
+/* ---------- VII. Sortie ---------- */
+
+.ab-cta {
+  background: var(--dark);
+  color: #fff7f0;
+  padding: 6rem 0;
+}
+
+.ab-cta-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.ab-cta-title {
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.ab-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 56px;
+  padding: 0 1.85rem;
+  border-radius: 999px;
+  background: #fff7f0;
+  color: #0a0a0a;
+  border: 1px solid #fff7f0;
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, gap 0.2s ease;
+}
+
+.ab-cta-btn:hover {
+  background: #e4e4e4;
+  gap: 0.95rem;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (min-width: 900px) {
+  .ab-portrait-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 4.5rem;
+  }
+
+  .ab-figures-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .ab-showcase-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 899px) {
+  .ab-wrap {
+    width: calc(100% - 2.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ab-mask-inner {
+    animation: none;
+    transform: none;
+  }
+
+  .ab-scroll-line span {
+    animation: none;
+  }
+
+  .ab.is-ready [data-reveal],
+  .ab.is-ready [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+}

@@ -1,0 +1,83 @@
+/* Same column language as the full-screen menu, reused for route changes. */
+
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 200; /* above the navbar (150) */
+  display: flex;
+  pointer-events: none;
+}
+
+/* Block interaction while the page is being swapped underneath. */
+.page-transition.is-cover,
+.page-transition.is-reveal {
+  pointer-events: auto;
+}
+
+.pt-col {
+  flex: 1 1 20%;
+  height: 100%;
+  background: var(--dark);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ---------- Cover: centre column leads, edges follow ---------- */
+
+.page-transition.is-cover .pt-col {
+  transform: scaleY(1);
+}
+
+.page-transition.is-cover .pt-col--2 {
+  transition-delay: 0s;
+}
+
+.page-transition.is-cover .pt-col--1,
+.page-transition.is-cover .pt-col--3 {
+  transition-delay: 0.08s;
+}
+
+.page-transition.is-cover .pt-col--0,
+.page-transition.is-cover .pt-col--4 {
+  transition-delay: 0.16s;
+}
+
+/* ---------- Reveal: retracts downwards, edges first ---------- */
+
+/* Origin flips to the bottom while the column is still full height, so the
+   switch is invisible and the wipe keeps travelling the same direction. */
+.page-transition.is-reveal .pt-col {
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+.page-transition.is-reveal .pt-col--0,
+.page-transition.is-reveal .pt-col--4 {
+  transition-delay: 0s;
+}
+
+.page-transition.is-reveal .pt-col--1,
+.page-transition.is-reveal .pt-col--3 {
+  transition-delay: 0.08s;
+}
+
+.page-transition.is-reveal .pt-col--2 {
+  transition-delay: 0.16s;
+}
+
+/* Idle matches the end state of the reveal exactly, so resetting the phase
+   changes no property and nothing animates back in. transform-origin is not
+   transitioned, so it can flip back to the top for the next cover unseen
+   (the column is at scaleY(0) either way). */
+.page-transition.is-idle .pt-col {
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt-col {
+    transition-duration: 0.01ms;
+    transition-delay: 0s !important;
+  }
+}

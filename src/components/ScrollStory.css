@@ -1,0 +1,324 @@
+.story {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  /* Opaque backdrop: the hero is position:fixed and sits behind every
+     section, so this section must never be see-through. */
+  background: #fff7f0;
+}
+
+/* The panel opens as the section rises toward the top of the viewport:
+   `--expand` runs 0 → 1 and is written by the scroll handler. */
+.story-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: calc(70% + 30% * var(--expand, 0));
+  margin: 0 auto;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: #fff7f0;
+  /* Smooths the gap between rAF samples without lagging behind the scroll. */
+  transition: width 0.12s linear;
+  will-change: width;
+}
+
+/* ---------- Background layer ---------- */
+
+.story-bg-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.story-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  /* Falls back to centered/no-zoom for any image with no crop chosen yet. */
+  background-position: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
+  will-change: transform, opacity;
+}
+
+.story-bg--enter {
+  animation: story-bg-in 1.1s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+
+.story-bg--exit {
+  animation: story-bg-out 1.1s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+
+/* Each keyframe's scale multiplies the admin's own --zoom, so a picture
+   zoomed in the crop tool stays zoomed in through the transition instead of
+   the animation resetting it to scale(1). */
+@keyframes story-bg-in {
+  from {
+    opacity: 0;
+    transform: scale(calc(var(--zoom, 1) * 1.08)) translateX(1.5%);
+  }
+  to {
+    opacity: 1;
+    transform: scale(var(--zoom, 1)) translateX(0);
+  }
+}
+
+/* The entering image paints on top of this one, so the outgoing image holds
+   full opacity until it is covered. Fading both at once would drop the
+   composite alpha to ~75% mid-transition and reveal the fixed hero behind. */
+@keyframes story-bg-out {
+  0% {
+    opacity: 1;
+    transform: scale(var(--zoom, 1)) translateX(0);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(calc(var(--zoom, 1) * 0.96)) translateX(-1.5%);
+  }
+}
+
+/* ---------- Overlay ---------- */
+
+.story-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.15) 0%,
+    rgba(10, 10, 10, 0.2) 40%,
+    rgba(10, 10, 10, 0.75) 100%
+  );
+}
+
+/* ---------- Content ---------- */
+
+.story-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem 6rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #fff7f0;
+  text-align: left;
+}
+
+/* Masks own a fixed height (derived from their own font-size), so the content
+   block never resizes or shifts when a slide's line count changes. Both the
+   entering and exiting text are absolutely positioned inside. */
+.roll-mask {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.roll-mask--title {
+  font-size: 2.5rem;
+  /* Reserve room for the longest title. Raise --story-title-lines if your
+     copy wraps further, or the extra lines will be clipped. */
+  height: calc(var(--story-title-lines, 2) * 1.1em);
+}
+
+.roll-mask--description {
+  font-size: 1rem;
+  height: calc(var(--story-description-lines, 4) * 1.55em);
+  margin-top: 1.25rem;
+}
+
+.roll-text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0;
+  font-size: inherit;
+  will-change: transform, opacity;
+}
+
+/* Title sits at the bottom of its mask and the description at the top of its
+   own, so the visual gap between them stays identical on every slide. */
+.roll-mask--title .roll-text {
+  bottom: 0;
+}
+
+.roll-mask--description .roll-text {
+  top: 0;
+}
+
+.roll-mask--title .roll-text--exit {
+  animation: roll-out 0.65s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+
+.roll-mask--title .roll-text--enter {
+  animation: roll-in 0.65s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* The description trails the title by a beat — never simultaneous. */
+.roll-mask--description .roll-text--exit {
+  animation: roll-out 0.65s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  animation-delay: 0.15s;
+}
+
+.roll-mask--description .roll-text--enter {
+  animation: roll-in 0.65s cubic-bezier(0.76, 0, 0.24, 1);
+  animation-delay: 0.15s;
+}
+
+@keyframes roll-out {
+  from {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes roll-in {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+}
+
+.story-title {
+  font-family: var(--heading);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  max-width: 16ch;
+}
+
+.story-description {
+  font-family: var(--sans);
+  line-height: 1.55;
+  max-width: 46ch;
+  color: rgba(255, 247, 240, 0.85);
+}
+
+/* ---------- Progress dots ---------- */
+
+.story-progress {
+  position: absolute;
+  z-index: 2;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.story-progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 247, 240, 0.4);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.story-progress-dot.is-active {
+  background: #fff7f0;
+  transform: scale(1.4);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (min-width: 768px) {
+  .roll-mask--title {
+    font-size: 3.25rem;
+  }
+
+  .roll-mask--description {
+    font-size: 1.05rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .roll-mask--title {
+    font-size: 4.25rem;
+  }
+
+  .roll-mask--description {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .story-content {
+    padding: 0 1.25rem 4rem;
+  }
+
+  .story-progress {
+    right: 1.1rem;
+  }
+
+  .story-bg--enter {
+    animation-name: story-bg-in-mobile;
+  }
+
+  .story-bg--exit {
+    animation-name: story-bg-out-mobile;
+  }
+}
+
+@keyframes story-bg-in-mobile {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes story-bg-out-mobile {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-bg--enter,
+  .story-bg--exit,
+  .roll-text--enter,
+  .roll-text--exit {
+    animation-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 899px) {
+  /* Too little width to give any away on a phone. */
+  .story-sticky {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story-sticky {
+    transition: none;
+  }
+}

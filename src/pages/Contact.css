@@ -1,0 +1,259 @@
+/* ---------- Top: form reachable without scrolling ---------- */
+
+.ct-top {
+  padding: 8.5rem 0 5rem;
+  border-bottom: 1px solid #e6ded5;
+}
+
+.ct-cols {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.ct-kicker {
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: pg-fade 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+}
+
+.ct-title {
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(2.35rem, 5.5vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  margin: 0 0 1.25rem;
+}
+
+.ct-sub {
+  font-family: var(--sans);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+  max-width: 42ch;
+  margin: 0 0 2.75rem;
+  opacity: 0;
+  animation: pg-fade 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards;
+}
+
+.ct-details {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.75rem 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e6ded5;
+}
+
+.ct-details dt {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #a0968b;
+  margin-bottom: 0.45rem;
+}
+
+.ct-details dd {
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 0;
+}
+
+.ct-details a {
+  text-decoration: none;
+  border-bottom: 1px solid #ded5cb;
+  padding-bottom: 1px;
+  transition: border-color 0.25s ease;
+}
+
+.ct-details a:hover {
+  border-color: #0a0a0a;
+}
+
+/* Address and hours are authored with newlines. */
+.ct-pre {
+  white-space: pre-line;
+}
+
+/* ---------- Form ---------- */
+
+.ct-form-card {
+  background: #fffdfa;
+  border: 1px solid #e6ded5;
+  padding: 2rem;
+}
+
+.ct-form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.ct-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+.ct-field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.ct-field label {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8a8178;
+}
+
+.ct-field input,
+.ct-field select,
+.ct-field textarea {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 1rem;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #ded5cb;
+  border-radius: 0;
+  padding: 0.6rem 0;
+  transition: border-color 0.25s ease;
+  /* Safari otherwise rounds and shades the controls. */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.ct-field textarea {
+  resize: vertical;
+  min-height: 7rem;
+  line-height: 1.6;
+}
+
+.ct-field select {
+  /* Restore an affordance lost with appearance:none. */
+  background-image: linear-gradient(45deg, transparent 50%, #8a8178 50%),
+    linear-gradient(135deg, #8a8178 50%, transparent 50%);
+  background-position: right 6px center, right 1px center;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 1.5rem;
+}
+
+.ct-field input:focus,
+.ct-field select:focus,
+.ct-field textarea:focus {
+  outline: none;
+  border-color: #0a0a0a;
+}
+
+.ct-submit {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 56px;
+  padding: 0 1.85rem;
+  margin-top: 0.5rem;
+  border-radius: 999px;
+  background: #0a0a0a;
+  color: #fff7f0;
+  border: 1px solid #0a0a0a;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, gap 0.2s ease;
+}
+
+.ct-submit:hover {
+  background: #241f1b;
+  gap: 0.95rem;
+}
+
+.ct-legal {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: #8a8178;
+  margin: 0;
+}
+
+/* ---------- Sent state ---------- */
+
+.ct-sent h2 {
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: 2rem;
+  margin: 0 0 0.75rem;
+}
+
+.ct-sent p {
+  font-family: var(--sans);
+  color: var(--ink);
+  line-height: 1.7;
+  margin: 0 0 1.75rem;
+}
+
+.ct-reset {
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #ded5cb;
+  padding: 0 0 0.3rem;
+  cursor: pointer;
+  color: #0a0a0a;
+  transition: border-color 0.25s ease;
+}
+
+.ct-reset:hover {
+  border-color: #0a0a0a;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (min-width: 620px) {
+  .ct-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1000px) {
+  .ct-cols {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 5rem;
+  }
+
+  .ct-form-card {
+    padding: 2.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .ct-top {
+    padding-top: 7rem;
+  }
+
+  .ct-details {
+    grid-template-columns: 1fr;
+  }
+
+  .ct-form-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-kicker,
+  .ct-sub {
+    animation: none;
+    opacity: 1;
+  }
+}

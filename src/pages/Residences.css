@@ -1,0 +1,267 @@
+.residences {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100vh;
+  background: #0a0a0a;
+  box-sizing: border-box;
+}
+
+/* Present for search engines and screen readers; the panels carry the
+   visible titles. */
+.residences-heading {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Sits above both panels so it stays reachable whichever half is hovered. */
+.residences-back {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 10;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 247, 240, 0.35);
+  background: rgba(10, 10, 10, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fff7f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: background-color 0.25s ease, border-color 0.25s ease,
+    color 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.residences-back:hover {
+  background: #fff7f0;
+  border-color: #fff7f0;
+  color: #0a0a0a;
+  transform: translateX(-3px);
+}
+
+.residences-back:focus-visible {
+  outline: 2px solid #fff7f0;
+  outline-offset: 3px;
+}
+
+.residences-split {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.residence-panel {
+  position: relative;
+  flex: 1 1 50%;
+  min-height: 50vh;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  text-decoration: none;
+  color: #fff7f0;
+  isolation: isolate;
+  transition: flex-grow 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.residence-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  /* Falls back to centered/no-zoom for any image with no crop chosen yet. */
+  background-position: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform: scale(calc(var(--zoom, 1) * 1.02));
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.residence-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.25) 0%,
+    rgba(10, 10, 10, 0.35) 45%,
+    rgba(10, 10, 10, 0.82) 100%
+  );
+  transition: opacity 0.6s ease;
+}
+
+.residence-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 2.5rem 1.75rem 3rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.residence-tagline {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 247, 240, 0.65);
+  margin-bottom: 0.75rem;
+}
+
+.residence-name {
+  font-family: var(--heading);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.9rem;
+}
+
+.residence-description {
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 40ch;
+  color: rgba(255, 247, 240, 0.8);
+  margin: 0 0 1.35rem;
+}
+
+.residence-meta {
+  list-style: none;
+  margin: 0 0 1.75rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+}
+
+.residence-meta li {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: rgba(255, 247, 240, 0.75);
+  border: 1px solid rgba(255, 247, 240, 0.35);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+}
+
+.residence-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid rgba(255, 247, 240, 0.5);
+  transition: gap 0.3s ease, border-color 0.3s ease;
+}
+
+/* ---------- Split-screen behaviour ---------- */
+
+@media (min-width: 900px) {
+  .residences-back {
+    top: 2rem;
+    left: 2rem;
+  }
+
+  .residences-split {
+    flex-direction: row;
+    height: 100vh;
+  }
+
+  .residence-panel {
+    min-height: 100vh;
+    /* A hairline between the two halves. */
+    border-right: 1px solid rgba(255, 247, 240, 0.12);
+  }
+
+  .residence-panel:last-child {
+    border-right: none;
+  }
+
+  .residence-content {
+    padding: 3rem 3rem 4rem;
+  }
+
+  /* Copy stays out of the way until the half is hovered. */
+  .residence-description,
+  .residence-meta {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .residence-meta {
+    transition-delay: 0.06s;
+  }
+}
+
+/* Hover expands one half and lets the other recede. Guarded by `hover`
+   so touch devices never get stuck in a hovered state. */
+@media (min-width: 900px) and (hover: hover) {
+  .residences-split:hover .residence-panel {
+    flex-grow: 0.8;
+  }
+
+  .residences-split:hover .residence-panel:hover {
+    flex-grow: 1.4;
+  }
+
+  .residence-panel:hover .residence-bg {
+    transform: scale(calc(var(--zoom, 1) * 1.08));
+  }
+
+  .residence-panel:hover .residence-overlay {
+    opacity: 0.75;
+  }
+
+  .residence-panel:hover .residence-description,
+  .residence-panel:hover .residence-meta {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .residence-panel:hover .residence-cta {
+    gap: 0.85rem;
+    border-color: #fff7f0;
+  }
+}
+
+/* Keyboard users get the same reveal as hover. */
+.residence-panel:focus-visible {
+  outline: 2px solid #fff7f0;
+  outline-offset: -6px;
+}
+
+.residence-panel:focus-visible .residence-description,
+.residence-panel:focus-visible .residence-meta {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .residence-panel,
+  .residence-bg,
+  .residence-overlay,
+  .residence-description,
+  .residence-meta {
+    transition: none;
+  }
+
+  .residence-panel:hover .residence-bg {
+    transform: scale(calc(var(--zoom, 1) * 1.02));
+  }
+}
