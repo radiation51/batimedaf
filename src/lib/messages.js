@@ -1,7 +1,7 @@
 import { supabase, MESSAGES_TABLE } from './supabase'
 
 /**
- * Messages sent from the contact form, read in the admin's "Messages" page.
+ * Messages sent from the contact form, read in the admin's "Demandes" page.
  *
  * With Supabase they go to the `contact_messages` table: visitors may add a
  * row but never read one back (see supabase/schema.sql). Without it they stay
@@ -29,7 +29,7 @@ function explain(error) {
     return 'Base de données injoignable. Si le projet Supabase est en pause, relancez-le depuis supabase.com.'
   }
   if (error.code === 'PGRST205' || error.code === '42P01') {
-    return 'La table des messages n’existe pas encore : exécutez supabase/schema.sql dans Supabase.'
+    return 'La table des demandes n’existe pas encore : exécutez supabase/schema.sql dans Supabase.'
   }
   return error.message
 }

@@ -18,23 +18,25 @@ Il faut Node 20.19 ou plus récent (22 recommandé).
 
 Adresse : `/admin` (par exemple `https://votre-site.netlify.app/admin`).
 
-Une fois connecté, on arrive sur la page **Messages** : les demandes envoyées
-depuis le formulaire de la page Contact (nom, e-mail, téléphone, sujet,
-message, et l’appartement ou la résidence concernés quand le visiteur vient
-d’un bouton « Organiser une visite »). Un point bleu signale les nouveaux
-messages ; on peut répondre par e-mail, appeler, marquer comme traité ou
-supprimer.
+Une fois connecté, on arrive sur la page **Demandes** : les prises de contact
+envoyées depuis le formulaire de la page Contact (nom, e-mail, téléphone,
+sujet, message, et l’appartement ou la résidence concernés quand le visiteur
+vient d’un bouton « Organiser une visite »). Un point bleu signale les
+nouvelles demandes ; on peut répondre par e-mail, appeler, marquer comme
+traitée ou supprimer.
 
 Le bouton **Modification du site** ouvre la page **Modification** : le site
 lui-même, tel que les visiteurs le voient, où tout se modifie sur place
-(« ← Messages » pour revenir).
+(« ← Demandes » pour revenir).
 
 - **Un texte** : le survoler l’encadre, cliquer dessus ouvre une petite fenêtre
-  pour le réécrire ; le site se met à jour pendant la frappe. Dans une liste
+  pour le réécrire ; le site se met à jour pendant la frappe. `Entrée` passe à
+  la ligne (le retour à la ligne apparaît aussi sur le site), et **Terminé**
+  ferme la fenêtre en enregistrant tout ; la croix ferme sans enregistrer. Dans une liste
   (questions, prestations, critères…), la même fenêtre permet de dupliquer,
   déplacer ou supprimer l’élément.
 - **Une image** : cliquer dessus ouvre le panneau photo (changer l’image,
-  recadrer, zoomer) ; pour une galerie ou un diaporama, on y ajoute, déplace
+  recadrer, zoomer ; **Terminé** enregistre) ; pour une galerie ou un diaporama, on y ajoute, déplace
   et retire aussi les photos.
 - **Changer de page** : la liste dans la barre du bas, ou simplement les liens du
   site. Le mode **Naviguer** utilise le site normalement (onglets, menus…)
@@ -59,11 +61,11 @@ restent dans le code (`src/i18n/`).
   enregistrées en ligne : tout le monde les voit sur le site quelques instants
   après.
 
-Les textes et photos modifiés depuis l'admin, comme les messages reçus, sont
+Les textes et photos modifiés depuis l'admin, comme les demandes reçues, sont
 stockés dans Supabase, pas dans ce dépôt GitHub. Le dépôt ne sert qu'aux
 modifications de code.
 
-> Les messages ont besoin de la table `contact_messages`. Sur un projet
+> Les demandes ont besoin de la table `contact_messages`. Sur un projet
 > Supabase créé avant son ajout, réexécuter `supabase/schema.sql` dans le
 > **SQL Editor** : le fichier peut être relancé sans risque, il ne touche pas
 > au contenu déjà enregistré.

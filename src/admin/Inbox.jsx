@@ -5,17 +5,17 @@ import { usePageMeta } from '../hooks/usePageMeta'
 import './Inbox.css'
 
 /**
- * The admin's home page: requests sent from the site's contact form.
- * "Modification" opens the visual editor.
+ * The admin's home page, "Demandes": requests sent from the site's contact
+ * form. "Modification du site" opens the visual editor.
  */
 
-// New messages show up without reloading the page.
+// New requests show up without reloading the page.
 const REFRESH_MS = 60_000
 
 const FILTERS = [
   ['todo', 'À traiter', (m) => !m.is_done],
-  ['done', 'Traités', (m) => m.is_done],
-  ['all', 'Tous', () => true],
+  ['done', 'Traitées', (m) => m.is_done],
+  ['all', 'Toutes', () => true],
 ]
 
 const timeFormat = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit' })
@@ -46,7 +46,7 @@ function Inbox({ onSignOut }) {
   const [openId, setOpenId] = useState(null)
 
   const unread = messages?.filter((m) => !m.is_read).length ?? 0
-  usePageMeta({ title: unread ? `(${unread}) Messages` : 'Messages' })
+  usePageMeta({ title: unread ? `(${unread}) Demandes` : 'Demandes' })
 
   const load = useCallback(async () => {
     try {
@@ -88,7 +88,7 @@ function Inbox({ onSignOut }) {
   }
 
   const remove = async (message) => {
-    if (!window.confirm(`Supprimer définitivement le message de ${message.name} ?`)) return
+    if (!window.confirm(`Supprimer définitivement la demande de ${message.name} ?`)) return
     setOpenId(null)
     setMessages((list) => list.filter((m) => m.id !== message.id))
     try {
@@ -126,13 +126,13 @@ function Inbox({ onSignOut }) {
       <main className="ib-main">
         <div className="ib-top">
           <div>
-            <h1>Messages</h1>
+            <h1>Demandes</h1>
             <p className="ib-sub">
-              Les demandes envoyées depuis la page Contact du site.
+              Prises de contact et demandes de visite reçues depuis le site.
               {unread > 0 && (
                 <strong>
                   {' '}
-                  {unread} nouveau{unread > 1 ? 'x' : ''}.
+                  {unread} nouvelle{unread > 1 ? 's' : ''}.
                 </strong>
               )}
             </p>
@@ -142,7 +142,7 @@ function Inbox({ onSignOut }) {
           </button>
         </div>
 
-        <div className="ib-filters" role="tablist" aria-label="Filtrer les messages">
+        <div className="ib-filters" role="tablist" aria-label="Filtrer les demandes">
           {FILTERS.map(([key, label, test]) => (
             <button
               key={key}
@@ -170,8 +170,8 @@ function Inbox({ onSignOut }) {
             {messages !== null && shown.length === 0 && (
               <li className="ib-empty">
                 {filter === 'todo'
-                  ? 'Aucun message à traiter.'
-                  : 'Aucun message ici pour l’instant.'}
+                  ? 'Aucune demande à traiter.'
+                  : 'Aucune demande ici pour l’instant.'}
               </li>
             )}
             {shown.map((m) => (
@@ -202,7 +202,7 @@ function Inbox({ onSignOut }) {
                   className="ib-back"
                   onClick={() => setOpenId(null)}
                 >
-                  ← Tous les messages
+                  ← Toutes les demandes
                 </button>
 
                 <p className="ib-detail-date">{fullFormat.format(new Date(current.created_at))}</p>
@@ -243,7 +243,7 @@ function Inbox({ onSignOut }) {
                   <a
                     className="ib-primary"
                     href={`mailto:${current.email}?subject=${encodeURIComponent(
-                      `Re: ${current.subject || 'Votre message'}`,
+                      `Re: ${current.subject || 'Votre demande'}`,
                     )}`}
                   >
                     Répondre par e-mail
@@ -258,7 +258,7 @@ function Inbox({ onSignOut }) {
                     className="ib-secondary"
                     onClick={() => change(current.id, { is_done: !current.is_done })}
                   >
-                    {current.is_done ? 'Remettre à traiter' : 'Marquer comme traité'}
+                    {current.is_done ? 'Remettre à traiter' : 'Marquer comme traitée'}
                   </button>
                   <button
                     type="button"
@@ -271,7 +271,7 @@ function Inbox({ onSignOut }) {
               </>
             ) : (
               <p className="ib-placeholder">
-                Sélectionnez un message pour le lire.
+                Sélectionnez une demande pour la consulter.
               </p>
             )}
           </section>

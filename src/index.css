@@ -50,6 +50,13 @@ body {
   overscroll-behavior-y: none;
 }
 
+/* A line break typed in the admin shows as one on the site. Spaces still
+   collapse. Set on the app root, not body: index.html's own whitespace
+   around #root would otherwise turn into blank lines. */
+#root {
+  white-space: pre-line;
+}
+
 h1,
 h2,
 h3,

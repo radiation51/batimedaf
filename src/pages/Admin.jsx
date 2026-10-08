@@ -86,7 +86,7 @@ function Login({ onLocalUnlock }) {
 /* ---------------- Admin ---------------- */
 
 /**
- * Login, then the Messages page (contact requests). From there, the
+ * Login, then the "Demandes" page (contact requests). From there, the
  * "Modification" page shows the site itself, edited in place.
  */
 function Admin() {

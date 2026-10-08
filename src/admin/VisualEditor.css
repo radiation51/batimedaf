@@ -234,6 +234,13 @@
   margin-bottom: 1.1rem;
 }
 
+.ve-drawer-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
 .ve-drawer-kicker {
   font-size: 0.7rem;
   font-weight: 700;

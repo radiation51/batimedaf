@@ -65,7 +65,7 @@ create policy "media_delete"
   using (bucket_id = 'media');
 
 -- ---------------------------------------------------------------------------
--- Messages sent from the contact form, read in the admin's Messages page.
+-- Messages sent from the contact form, read in the admin's Demandes page.
 -- ---------------------------------------------------------------------------
 
 create table if not exists public.contact_messages (

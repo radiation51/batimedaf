@@ -335,7 +335,7 @@ function placePopover(node, rect) {
   node.style.transform = `translate(${left}px, ${top}px)`
 }
 
-function TextEditor({ selection, onClose, onSelect }) {
+function TextEditor({ selection, onClose, onDone, onSelect }) {
   const { content, setPath, insertItem, removeItem, moveItem } = useContent()
   const path = useMemo(() => parsePath(selection.key), [selection.key])
   const value = valueAt(content, path)
@@ -369,6 +369,12 @@ function TextEditor({ selection, onClose, onSelect }) {
       setPath(path, value.filter((line) => line.trim()))
     }
     onClose()
+  }
+
+  // "Terminé" closes and saves; × and Échap only close.
+  const done = () => {
+    close()
+    onDone()
   }
 
   const list = listContext(content, path)
@@ -484,7 +490,12 @@ function TextEditor({ selection, onClose, onSelect }) {
             </button>
           </div>
         )}
-        <button type="button" className="ve-done" onClick={close}>
+        <button
+          type="button"
+          className="ve-done"
+          onClick={done}
+          title="Fermer et enregistrer"
+        >
           Terminé
         </button>
       </div>
@@ -500,7 +511,7 @@ function setIn(target, path, value) {
   node[path[path.length - 1]] = value
 }
 
-function ImagePanel({ selection, onClose, onSelect }) {
+function ImagePanel({ selection, onClose, onDone, onSelect }) {
   const { content, setPath, insertItem, removeItem, moveItem } = useContent()
   const path = parsePath(selection.key)
   const value = valueAt(content, path)
@@ -558,9 +569,22 @@ function ImagePanel({ selection, onClose, onSelect }) {
           </span>
           <h2 className="ve-drawer-title">{labelFor(path)}</h2>
         </div>
-        <button type="button" className="ve-x" onClick={onClose} aria-label="Fermer">
-          ×
-        </button>
+        <div className="ve-drawer-actions">
+          <button
+            type="button"
+            className="ve-done"
+            onClick={() => {
+              onClose()
+              onDone()
+            }}
+            title="Fermer et enregistrer"
+          >
+            Terminé
+          </button>
+          <button type="button" className="ve-x" onClick={onClose} aria-label="Fermer">
+            ×
+          </button>
+        </div>
       </div>
 
       {hasImageShape(value) && (
@@ -681,11 +705,12 @@ function Toolbar({
   hasSelection,
   deletion,
   onDelete,
+  onSave,
+  justSaved,
 }) {
   const {
     content,
     dirty,
-    save,
     discard,
     reset,
     undo,
@@ -700,14 +725,6 @@ function Toolbar({
     removeApartment,
   } = useContent()
   const [menuOpen, setMenuOpen] = useState(false)
-  // Without Supabase there is no save round-trip to report: confirm briefly.
-  const [justSaved, setJustSaved] = useState(false)
-
-  useEffect(() => {
-    if (!justSaved) return
-    const timer = setTimeout(() => setJustSaved(false), 2500)
-    return () => clearTimeout(timer)
-  }, [justSaved])
 
   const groups = useMemo(() => pageGroups(content), [content])
   const known = groups.some((g) => g.pages.some(([p]) => p === page.pathname))
@@ -742,15 +759,15 @@ function Toolbar({
           if (
             dirty &&
             !window.confirm(
-              'Des modifications ne sont pas enregistrées. Revenir aux messages quand même ?',
+              'Des modifications ne sont pas enregistrées. Revenir aux demandes quand même ?',
             )
           ) {
             e.preventDefault()
           }
         }}
-        title="Revenir aux messages"
+        title="Revenir aux demandes"
       >
-        ← Messages
+        ← Demandes
       </Link>
       <span className="ve-bar-brand">Modification</span>
 
@@ -884,10 +901,7 @@ function Toolbar({
         type="button"
         className="ve-save"
         disabled={!dirty}
-        onClick={() => {
-          save()
-          setJustSaved(true)
-        }}
+        onClick={onSave}
         title="Ctrl + S"
       >
         Enregistrer
@@ -976,6 +990,29 @@ function Editor({ onSignOut }) {
     setPage(fallbackFor(content, page.pathname))
   }
 
+  // Without Supabase there is no save round-trip to report: confirm briefly.
+  const [justSaved, setJustSaved] = useState(false)
+  const [saveRequest, setSaveRequest] = useState(0)
+  const handledSave = useRef(0)
+  const requestSave = useCallback(() => setSaveRequest((n) => n + 1), [])
+
+  // Saving runs after the render that applies the edits made along with the
+  // request (blank lines a list drops on "Terminé"), so they are stored too.
+  useEffect(() => {
+    if (saveRequest === handledSave.current) return
+    handledSave.current = saveRequest
+    if (dirty) {
+      save()
+      setJustSaved(true)
+    }
+  }, [saveRequest, dirty, save])
+
+  useEffect(() => {
+    if (!justSaved) return
+    const timer = setTimeout(() => setJustSaved(false), 2500)
+    return () => clearTimeout(timer)
+  }, [justSaved])
+
   const goTo = useCallback((pathname, search = '') => {
     setSelected(null)
     setHovered(null)
@@ -999,7 +1036,7 @@ function Editor({ onSignOut }) {
   // Read by the document listeners, which are bound once.
   const live = useRef({})
   useLayoutEffect(() => {
-    live.current = { mode, content, dirty, save, goTo, undo, redo, deleteSelected }
+    live.current = { mode, content, requestSave, goTo, undo, redo, deleteSelected }
   })
 
   /* Classes for the editor's styles: see VisualEditor.css. */
@@ -1121,7 +1158,7 @@ function Editor({ onSignOut }) {
 
       if (command && key === 's') {
         e.preventDefault()
-        if (live.current.dirty) live.current.save()
+        live.current.requestSave()
       } else if (command && key === 'z' && !e.shiftKey) {
         e.preventDefault()
         live.current.undo()
@@ -1207,6 +1244,7 @@ function Editor({ onSignOut }) {
           key={selection.key}
           selection={selection}
           onClose={() => setSelected(null)}
+          onDone={requestSave}
           onSelect={select}
         />
       )}
@@ -1215,6 +1253,7 @@ function Editor({ onSignOut }) {
         <ImagePanel
           selection={selection}
           onClose={() => setSelected(null)}
+          onDone={requestSave}
           onSelect={select}
         />
       )}
@@ -1234,6 +1273,8 @@ function Editor({ onSignOut }) {
         hasSelection={Boolean(selection)}
         deletion={deletion}
         onDelete={deleteSelected}
+        onSave={requestSave}
+        justSaved={justSaved}
       />
     </>
   )
