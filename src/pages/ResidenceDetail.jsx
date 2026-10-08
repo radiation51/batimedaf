@@ -7,6 +7,7 @@ import { PlaceMap, TransportList, NearbyList } from '../components/Place'
 import { useReveal } from '../hooks/useReveal'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { normalizeImage, imageVars } from '../lib/imageStyle'
+import { useEdit, useResidencePath } from '../content/editable'
 import './ResidenceDetail.css'
 
 const Arrow = ({ size = 15 }) => (
@@ -26,6 +27,8 @@ function ResidenceDetail() {
   const { slug } = useParams()
   const residence = useLocalizedResidence(slug)
   const t = useUI()
+  const residencePath = useResidencePath(slug)
+  const edit = useEdit(residencePath)
 
   // Called before the early return below: hooks must run on every render.
   usePageMeta({
@@ -90,6 +93,7 @@ function ResidenceDetail() {
             backgroundImage: `url(${normalizeImage(residence.image).src})`,
             ...imageVars(residence.image),
           }}
+          {...edit('image')}
         />
         <div className="rd-hero-veil" />
 
@@ -102,13 +106,19 @@ function ResidenceDetail() {
           </Link>
 
           <div className="rd-hero-text">
-            <span className="rd-hero-tagline">{residence.tagline}</span>
+            <span className="rd-hero-tagline" {...edit('tagline')}>
+              {residence.tagline}
+            </span>
             <h1 className="rd-hero-name">
               <span className="rd-mask">
-                <span className="rd-mask-inner">{residence.name}</span>
+                <span className="rd-mask-inner" {...edit('name')}>
+                  {residence.name}
+                </span>
               </span>
             </h1>
-            <p className="rd-hero-place">{residence.location}</p>
+            <p className="rd-hero-place" {...edit('location')}>
+              {residence.location}
+            </p>
           </div>
         </div>
 
@@ -120,14 +130,19 @@ function ResidenceDetail() {
       {/* ---------- Amenities ---------- */}
       <section className="rd-block" id="prestations" data-nav-tone="light">
         <div className="rd-wrap">
-          <Amenities items={residence.features} />
+          <Amenities
+            items={residence.features}
+            editPath={[...residencePath, 'features']}
+          />
 
           {residence.presentation && (
             <div className="rd-presentation" data-reveal>
               <span className="rd-eyebrow" data-reveal>
                 {t.prestationsEyebrow}
               </span>
-              <p className="rd-text">{residence.presentation}</p>
+              <p className="rd-text" {...edit('presentation')}>
+                {residence.presentation}
+              </p>
             </div>
           )}
         </div>
@@ -165,23 +180,41 @@ function ResidenceDetail() {
                       alt=""
                       loading="lazy"
                       style={imageVars(apartment.image)}
+                      {...edit('apartments', i, 'image')}
                     />
                   </span>
 
                   <span className="rd-card-body">
                     <span className="rd-card-top">
-                      <span className="rd-card-type">{apartment.type}</span>
+                      <span
+                        className="rd-card-type"
+                        {...edit('apartments', i, 'type')}
+                      >
+                        {apartment.type}
+                      </span>
                     </span>
 
                     <span className="rd-card-facts">
                       {Number(apartment.surface) > 0 && (
-                        <span>
+                        <span {...edit('apartments', i, 'surface')}>
                           <b>{apartment.surface}</b> m²
                         </span>
                       )}
-                      {apartment.floor && <span>{apartment.floor}</span>}
-                      {apartment.orientation && <span>{apartment.orientation}</span>}
-                      {apartment.outdoor && <span>{apartment.outdoor}</span>}
+                      {apartment.floor && (
+                        <span {...edit('apartments', i, 'floor')}>
+                          {apartment.floor}
+                        </span>
+                      )}
+                      {apartment.orientation && (
+                        <span {...edit('apartments', i, 'orientation')}>
+                          {apartment.orientation}
+                        </span>
+                      )}
+                      {apartment.outdoor && (
+                        <span {...edit('apartments', i, 'outdoor')}>
+                          {apartment.outdoor}
+                        </span>
+                      )}
                     </span>
 
                     <span className="rd-card-foot">
@@ -205,25 +238,35 @@ function ResidenceDetail() {
             {t.localisationEyebrow}
           </span>
 
-          <p className="rd-place-lead" data-reveal>
+          <p className="rd-place-lead" data-reveal {...edit('place', 'summary')}>
             {residence.place.summary}
           </p>
 
           <div className="rd-place-layout">
             {/* The map holds its position while the lists scroll past it. */}
             <div className="rd-map-col" data-reveal>
-              <PlaceMap address={residence.place.address} title={residence.name} />
+              <PlaceMap
+                address={residence.place.address}
+                title={residence.name}
+                editPath={[...residencePath, 'place', 'address']}
+              />
             </div>
 
             <div className="rd-place-info">
               <div className="rd-place-block" data-reveal style={{ '--d': '80ms' }}>
                 <h3 className="pl-mini-title">{t.transports}</h3>
-                <TransportList transports={residence.place.transports} />
+                <TransportList
+                  transports={residence.place.transports}
+                  editPath={[...residencePath, 'place', 'transports']}
+                />
               </div>
 
               <div className="rd-place-block" data-reveal style={{ '--d': '160ms' }}>
                 <h3 className="pl-mini-title">{t.nearby}</h3>
-                <NearbyList items={residence.place.nearby} />
+                <NearbyList
+                  items={residence.place.nearby}
+                  editPath={[...residencePath, 'place', 'nearby']}
+                />
               </div>
             </div>
           </div>
@@ -249,7 +292,7 @@ function ResidenceDetail() {
                 return (
                   <figure
                     className="rd-slide"
-                    key={`${copy}-${shotImg.src}`}
+                    key={`${copy}-${i}`}
                     aria-hidden={copy === 1 ? 'true' : undefined}
                   >
                     <button
@@ -266,9 +309,10 @@ function ResidenceDetail() {
                         loading="lazy"
                         decoding="async"
                         style={imageVars(shot.image)}
+                        {...edit('gallery', i, 'image')}
                       />
                     </button>
-                    <figcaption>{shot.alt}</figcaption>
+                    <figcaption {...edit('gallery', i, 'alt')}>{shot.alt}</figcaption>
                   </figure>
                 )
               }),

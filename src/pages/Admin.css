@@ -1,4 +1,5 @@
-/* The admin panel runs outside the site chrome and uses its own shell. */
+/* Login screen, plus the form fields shared with the visual editor's
+   image panel (ImageField). The editor itself: admin/VisualEditor.css. */
 
 .ad,
 .ad-login {
@@ -67,175 +68,6 @@
   color: #a3301f;
 }
 
-/* ---------- Shell ---------- */
-
-.ad {
-  display: grid;
-  grid-template-columns: 1fr;
-  min-height: 100svh;
-  background: #f6f1eb;
-}
-
-.ad-side {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  padding: 1.75rem 1.25rem;
-  background: #0a0a0a;
-  color: #fff7f0;
-}
-
-.ad-brand {
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  color: #fff7f0;
-  text-decoration: none;
-}
-
-.ad-nav {
-  display: grid;
-  gap: 0.15rem;
-  align-content: start;
-}
-
-.ad-nav-btn {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0.7rem 0.85rem;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: rgba(255, 247, 240, 0.65);
-  font-size: 0.92rem;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.ad-nav-btn:hover {
-  background: rgba(255, 247, 240, 0.08);
-  color: #fff7f0;
-}
-
-.ad-nav-btn.is-active {
-  background: #fff7f0;
-  color: #0a0a0a;
-  font-weight: 600;
-}
-
-.ad-nav-parent {
-  font-weight: 600;
-  color: #fff7f0;
-}
-
-.ad-caret {
-  width: 7px;
-  height: 7px;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(45deg);
-  transition: transform 0.25s ease;
-}
-
-.ad-nav-parent.is-open .ad-caret {
-  transform: rotate(-135deg);
-}
-
-.ad-sub {
-  list-style: none;
-  margin: 0.15rem 0 0.5rem;
-  padding: 0 0 0 0.85rem;
-  border-left: 1px solid rgba(255, 247, 240, 0.15);
-  display: grid;
-  gap: 0.1rem;
-}
-
-.ad-nav-sub {
-  font-size: 0.88rem;
-}
-
-.ad-side-foot {
-  margin-top: auto;
-  display: grid;
-  gap: 0.6rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(255, 247, 240, 0.15);
-}
-
-.ad-status,
-.ad-mode {
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  color: rgba(255, 247, 240, 0.55);
-}
-
-.ad-status--saving {
-  color: #e8c37a;
-}
-
-.ad-status--saved {
-  color: #7fc79b;
-}
-
-.ad-status--error {
-  color: #e58b7b;
-}
-
-/* ---------- Main ---------- */
-
-.ad-main {
-  padding: 2rem 1.5rem 5rem;
-  max-width: 860px;
-}
-
-.ad-head {
-  margin-bottom: 2rem;
-}
-
-.ad-head h1 {
-  font-family: var(--heading);
-  font-weight: 400;
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
-  margin: 0 0 0.4rem;
-}
-
-.ad-head p {
-  font-size: 0.95rem;
-  color: #7c746b;
-  margin: 0;
-}
-
-/* ---------- Tabs ---------- */
-
-.ad-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.75rem;
-}
-
-.ad-tab {
-  height: 40px;
-  padding: 0 1.1rem;
-  border-radius: 999px;
-  border: 1px solid #ded5cb;
-  background: transparent;
-  font-size: 0.9rem;
-  color: #0a0a0a;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease,
-    border-color 0.2s ease;
-}
-
-.ad-tab.is-active {
-  background: #0a0a0a;
-  border-color: #0a0a0a;
-  color: #fff7f0;
-}
-
 /* ---------- Fields ---------- */
 
 .ad-field {
@@ -278,16 +110,6 @@
   border-color: #0a0a0a;
 }
 
-.ad-check {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.ad-check input {
-  width: auto;
-}
-
 .ad-image-row {
   display: flex;
   align-items: center;
@@ -308,53 +130,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-/* ---------- Groups & lists ---------- */
-
-.ad-group {
-  border: 1px solid #e6ded5;
-  border-radius: 10px;
-  background: #fffdfa;
-  padding: 1.25rem;
-  margin: 0 0 1.25rem;
-  min-width: 0;
-}
-
-.ad-group--top {
-  border: none;
-  background: transparent;
-  padding: 0;
-}
-
-.ad-group legend {
-  padding: 0 0.5rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #a0968b;
-}
-
-.ad-list-item {
-  border: 1px solid #ece3da;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 0.85rem;
-  background: #fdf9f4;
-}
-
-.ad-list-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.75rem;
-}
-
-.ad-list-num {
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  color: #b3a89b;
 }
 
 /* ---------- Buttons ---------- */
@@ -379,115 +154,6 @@
 .ad-primary:disabled {
   opacity: 0.6;
   cursor: default;
-}
-
-.ad-ghost {
-  height: 40px;
-  padding: 0 1.1rem;
-  border-radius: 999px;
-  background: transparent;
-  border: 1px solid currentColor;
-  color: inherit;
-  font-size: 0.85rem;
-  cursor: pointer;
-  opacity: 0.75;
-  transition: opacity 0.2s ease;
-}
-
-.ad-ghost:hover {
-  opacity: 1;
-}
-
-.ad-side .ad-ghost {
-  color: rgba(255, 247, 240, 0.7);
-}
-
-.ad-add {
-  height: 38px;
-  padding: 0 1rem;
-  border-radius: 999px;
-  border: 1px dashed #c8bcae;
-  background: transparent;
-  color: #0a0a0a;
-  font-size: 0.88rem;
-  cursor: pointer;
-  transition: border-color 0.2s ease, color 0.2s ease;
-}
-
-.ad-add:hover {
-  border-color: #0a0a0a;
-  color: #0a0a0a;
-}
-
-.ad-remove {
-  border: none;
-  background: none;
-  font-size: 0.8rem;
-  color: #a3301f;
-  cursor: pointer;
-  padding: 0;
-}
-
-.ad-remove:hover {
-  text-decoration: underline;
-}
-
-.ad-list-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.ad-move {
-  border: 1px solid #ded5cb;
-  background: #fff;
-  border-radius: 5px;
-  width: 1.6rem;
-  height: 1.6rem;
-  line-height: 1;
-  font-size: 0.85rem;
-  color: #4a4038;
-  cursor: pointer;
-}
-
-.ad-move:hover:not(:disabled) {
-  border-color: #0a0a0a;
-  color: #0a0a0a;
-}
-
-.ad-move:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-
-.ad-apt-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
-}
-
-.ad-apt-actions .ad-ghost {
-  color: #0a0a0a;
-}
-
-/* ---------- Responsive ---------- */
-
-@media (min-width: 900px) {
-  .ad {
-    grid-template-columns: 260px 1fr;
-  }
-
-  .ad-side {
-    position: sticky;
-    top: 0;
-    height: 100svh;
-    padding: 2rem 1.5rem;
-  }
-
-  .ad-main {
-    padding: 3rem 3rem 6rem;
-  }
 }
 
 /* ---------- Image upload ---------- */
@@ -628,11 +294,4 @@
   color: #7c746b;
   min-width: 3.2em;
   text-align: right;
-}
-
-.ad-storage-warning {
-  margin: 0 0 0.25rem;
-  font-size: 0.78rem;
-  line-height: 1.45;
-  color: #e58b7b;
 }

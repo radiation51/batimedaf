@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocalizedContent, useUI } from '../i18n/useLocalizedContent'
 import { normalizeImage, imageVars } from '../lib/imageStyle'
+import { useEdit } from '../content/editable'
 import './Hero.css'
 
 const SLIDE_MS = 5000
@@ -9,6 +10,7 @@ function Hero() {
   const content = useLocalizedContent()
   const t = useUI()
   const hero = content.home.hero
+  const edit = useEdit(['home', 'hero'])
   const slides = hero.images?.length ? hero.images : [hero.image].filter(Boolean)
 
   const parallaxRef = useRef(null)
@@ -78,6 +80,7 @@ function Hero() {
             <div
               key={i}
               className={`hero-slide${i === active ? ' is-active' : ''}`}
+              {...(hero.images?.length ? edit('images', i) : edit('image'))}
               style={{
                 backgroundImage: `url(${img.src})`,
                 ...imageVars(img),
@@ -108,13 +111,23 @@ function Hero() {
       )}
 
       <div className="hero-content">
-        <h1 className="hero-title">{hero.title}</h1>
-        <p className="hero-description">{hero.description}</p>
+        <h1 className="hero-title" {...edit('title')}>{hero.title}</h1>
+        <p className="hero-description" {...edit('description')}>
+          {hero.description}
+        </p>
         <div className="hero-actions">
-          <button type="button" className="hero-btn hero-btn--primary">
+          <button
+            type="button"
+            className="hero-btn hero-btn--primary"
+            {...edit('primaryCta')}
+          >
             {hero.primaryCta}
           </button>
-          <button type="button" className="hero-btn hero-btn--secondary">
+          <button
+            type="button"
+            className="hero-btn hero-btn--secondary"
+            {...edit('secondaryCta')}
+          >
             {hero.secondaryCta}
           </button>
         </div>

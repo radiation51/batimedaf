@@ -1,4 +1,11 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 const STORAGE_KEY = 'batimedaf:lang'
 const LanguageContext = createContext(null)
@@ -33,6 +40,19 @@ export function LanguageProvider({ children }) {
     <LanguageContext.Provider value={{ lang, setLang, toggleLang }}>
       {children}
     </LanguageContext.Provider>
+  )
+}
+
+const noop = () => {}
+
+/**
+ * Pins a subtree to one language. The admin's visual editor shows French:
+ * the only language the admin edits.
+ */
+export function FixedLanguage({ lang, children }) {
+  const value = useMemo(() => ({ lang, setLang: noop, toggleLang: noop }), [lang])
+  return (
+    <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>
   )
 }
 

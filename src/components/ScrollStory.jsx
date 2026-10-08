@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocalizedContent } from '../i18n/useLocalizedContent'
 import { normalizeImage, imageVars } from '../lib/imageStyle'
+import { useEdit } from '../content/editable'
 import './ScrollStory.css'
 
 const TEXT_TRANSITION_MS = 650
@@ -10,6 +11,7 @@ const BG_TRANSITION_MS = 1100
 function ScrollStory() {
   const content = useLocalizedContent()
   const slides = content.home.story.slides
+  const edit = useEdit(['home', 'story', 'slides'])
 
   const sectionRef = useRef(null)
   const [activeIndex, setActiveIndex] = useState(0)
@@ -90,7 +92,9 @@ function ScrollStory() {
     return () => clearTimeout(timeoutRef.current)
   }, [activeIndex])
 
-  const slide = slides[activeIndex]
+  // Clamped: the admin can delete the slide that is on screen.
+  const shownIndex = Math.min(activeIndex, slides.length - 1)
+  const slide = slides[shownIndex]
   const prevSlide = previousIndex !== null ? slides[previousIndex] : null
 
   return (
@@ -116,6 +120,7 @@ function ScrollStory() {
           <div
             className="story-bg story-bg--enter"
             key={`bg-${activeIndex}`}
+            {...edit(shownIndex, 'image')}
             style={{
               backgroundImage: `url(${normalizeImage(slide.image).src})`,
               ...imageVars(slide.image),
@@ -139,6 +144,7 @@ function ScrollStory() {
             <h2
               className="story-title roll-text roll-text--enter"
               key={`title-${activeIndex}`}
+              {...edit(shownIndex, 'title')}
             >
               {slide.title}
             </h2>
@@ -157,6 +163,7 @@ function ScrollStory() {
             <p
               className="story-description roll-text roll-text--enter"
               key={`desc-${activeIndex}`}
+              {...edit(shownIndex, 'description')}
             >
               {slide.description}
             </p>

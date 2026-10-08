@@ -7,6 +7,7 @@ import { useReveal } from '../hooks/useReveal'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { normalizeImage, imageVars } from '../lib/imageStyle'
 import '../styles/page.css'
+import { useEdit, useResidencePath } from '../content/editable'
 import './ApartmentDetail.css'
 
 // Internal sentinel for "no filter" — decoupled from the translated label
@@ -29,6 +30,8 @@ function ApartmentDetail() {
   const { slug, apartmentId } = useParams()
   const match = useLocalizedApartment(slug, apartmentId)
   const t = useUI()
+  const residencePath = useResidencePath(slug)
+  const edit = useEdit()
 
   // Hooks run before the early return: their order must never change.
   usePageMeta({
@@ -58,6 +61,14 @@ function ApartmentDetail() {
   const { residence, apartment } = match
   const others = residence.apartments.filter((a) => a.id !== apartment.id)
 
+  // Content paths, for the admin editor's click-to-edit tags.
+  const apartmentPath = (id) => [
+    ...residencePath,
+    'apartments',
+    residence.apartments.findIndex((a) => a.id === id),
+  ]
+  const ownPath = apartmentPath(apartment.id)
+
   // The apartment ships one photograph; the residence gallery fills out the
   // strip. A per-apartment `gallery` takes precedence when the data has one.
   // The apartment ships one photograph; the residence gallery fills out the
@@ -69,7 +80,10 @@ function ApartmentDetail() {
   )
   const shots = (
     apartment.gallery?.length > 0
-      ? apartment.gallery
+      ? apartment.gallery.map((shot, i) => ({
+          ...shot,
+          editPath: [...ownPath, 'gallery', i, 'image'],
+        }))
       : [
           ...(inGallery
             ? []
@@ -78,9 +92,13 @@ function ApartmentDetail() {
                   image: apartment.image,
                   alt: `${apartment.type} — ${residence.name}`,
                   category: t.categoryLivingRoom,
+                  editPath: [...ownPath, 'image'],
                 },
               ]),
-          ...residence.gallery,
+          ...residence.gallery.map((shot, i) => ({
+            ...shot,
+            editPath: [...residencePath, 'gallery', i, 'image'],
+          })),
         ]
   ).map((shot) => ({ ...shot, category: shot.category ?? t.other }))
 
@@ -127,7 +145,7 @@ function ApartmentDetail() {
               {visibleShots.map((shot, i) => {
                 const shotImg = normalizeImage(shot.image)
                 return (
-                  <li key={shotImg.src}>
+                  <li key={i}>
                     <button
                       type="button"
                       className="ap-shot"
@@ -141,6 +159,7 @@ function ApartmentDetail() {
                         loading="lazy"
                         decoding="async"
                         style={imageVars(shot.image)}
+                        {...edit(...shot.editPath)}
                       />
                     </button>
                   </li>
@@ -158,19 +177,25 @@ function ApartmentDetail() {
               {t.backToResidence}
             </Link>
 
-            <span className="ap-card-ref">{residence.name}</span>
+            <span className="ap-card-ref" {...edit(...residencePath, 'name')}>
+              {residence.name}
+            </span>
             <h1 className="ap-card-title">
               <span className="pg-mask">
-                <span className="pg-mask-inner">{apartment.type}</span>
+                <span className="pg-mask-inner" {...edit(...ownPath, 'type')}>
+                  {apartment.type}
+                </span>
               </span>
             </h1>
 
-            <p className="ap-card-lead">{apartment.description}</p>
+            <p className="ap-card-lead" {...edit(...ownPath, 'description')}>
+              {apartment.description}
+            </p>
 
             <h2 className="ap-mini-title">{t.amenities}</h2>
             <ul className="ap-features">
               {apartment.features.map((feature, i) => (
-                <li key={feature}>
+                <li key={i} {...edit(...ownPath, 'features', i)}>
                   <span className="ap-feature-num">
                     {String(i + 1).padStart(2, '0')}
                   </span>
@@ -199,24 +224,38 @@ function ApartmentDetail() {
             {t.localisation}
           </span>
 
-          <p className="ap-place-lead" data-reveal>
+          <p
+            className="ap-place-lead"
+            data-reveal
+            {...edit(...residencePath, 'place', 'summary')}
+          >
             {residence.place.summary}
           </p>
 
           <div className="ap-place-grid">
             <div data-reveal>
-              <PlaceMap address={residence.place.address} title={residence.name} />
+              <PlaceMap
+                address={residence.place.address}
+                title={residence.name}
+                editPath={[...residencePath, 'place', 'address']}
+              />
             </div>
 
             <div className="ap-place-info">
               <div data-reveal style={{ '--d': '80ms' }}>
                 <h2 className="pl-mini-title">{t.transports}</h2>
-                <TransportList transports={residence.place.transports} />
+                <TransportList
+                  transports={residence.place.transports}
+                  editPath={[...residencePath, 'place', 'transports']}
+                />
               </div>
 
               <div data-reveal style={{ '--d': '160ms' }}>
                 <h2 className="pl-mini-title">{t.nearby}</h2>
-                <NearbyList items={residence.place.nearby} />
+                <NearbyList
+                  items={residence.place.nearby}
+                  editPath={[...residencePath, 'place', 'nearby']}
+                />
               </div>
             </div>
           </div>
@@ -243,9 +282,15 @@ function ApartmentDetail() {
                         src={normalizeImage(other.image).src}
                         alt=""
                         style={imageVars(other.image)}
+                        {...edit(...apartmentPath(other.id), 'image')}
                       />
                     </span>
-                    <span className="ap-other-type">{other.type}</span>
+                    <span
+                      className="ap-other-type"
+                      {...edit(...apartmentPath(other.id), 'type')}
+                    >
+                      {other.type}
+                    </span>
                     <span className="ap-other-facts">
                       {[Number(other.surface) > 0 && `${other.surface} m²`, other.outdoor]
                         .filter(Boolean)

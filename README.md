@@ -18,6 +18,27 @@ Il faut Node 20.19 ou plus récent (22 recommandé).
 
 Adresse : `/admin` (par exemple `https://votre-site.netlify.app/admin`).
 
+Une fois connecté, on arrive sur la page **Modification** : le site lui-même,
+tel que les visiteurs le voient, où tout se modifie sur place.
+
+- **Un texte** : le survoler l’encadre, cliquer dessus ouvre une petite fenêtre
+  pour le réécrire ; le site se met à jour pendant la frappe. Dans une liste
+  (questions, prestations, critères…), la même fenêtre permet de dupliquer,
+  déplacer ou supprimer l’élément.
+- **Une image** : cliquer dessus ouvre le panneau photo (changer l’image,
+  recadrer, zoomer) ; pour une galerie ou un diaporama, on y ajoute, déplace
+  et retire aussi les photos.
+- **Changer de page** : la liste dans la barre du bas, ou simplement les liens du
+  site. Le mode **Naviguer** utilise le site normalement (onglets, menus…)
+  sans rien modifier.
+- **Enregistrer** publie toutes les modifications d’un coup (aussi
+  `Ctrl + S`) ; **Annuler** les abandonne. Rien n’est visible en ligne avant
+  l’enregistrement.
+
+Seuls les contenus gérés par l’admin se modifient ainsi : les textes fixes de
+l’interface (menu, pied de page, boutons communs) et la version anglaise
+restent dans le code (`src/i18n/`).
+
 - **Sans Supabase** (état par défaut) : mot de passe local `1234`. Les
   modifications restent **dans le navigateur de la personne qui les fait** :
   personne d'autre ne les voit. Utile seulement pour essayer.

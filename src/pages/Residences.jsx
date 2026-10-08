@@ -2,12 +2,14 @@ import { Link } from 'react-router-dom'
 import { useLocalizedContent, useUI } from '../i18n/useLocalizedContent'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { normalizeImage, imageVars } from '../lib/imageStyle'
+import { useEdit } from '../content/editable'
 import './Residences.css'
 
 function Residences() {
   const content = useLocalizedContent()
   const t = useUI()
   const RESIDENCES = content.residences
+  const edit = useEdit(['residences'])
 
   usePageMeta({
     title: t.ourResidencesHeading,
@@ -31,7 +33,7 @@ function Residences() {
       </Link>
 
       <div className="residences-split">
-        {RESIDENCES.map((residence) => (
+        {RESIDENCES.map((residence, i) => (
           <Link
             key={residence.slug}
             to={`/residence/${residence.slug}`}
@@ -44,17 +46,26 @@ function Residences() {
                 backgroundImage: `url(${normalizeImage(residence.image).src})`,
                 ...imageVars(residence.image),
               }}
+              {...edit(i, 'image')}
             />
             <div className="residence-overlay" />
 
             <div className="residence-content">
-              <span className="residence-tagline">{residence.tagline}</span>
-              <h2 className="residence-name">{residence.name}</h2>
-              <p className="residence-description">{residence.description}</p>
+              <span className="residence-tagline" {...edit(i, 'tagline')}>
+                {residence.tagline}
+              </span>
+              <h2 className="residence-name" {...edit(i, 'name')}>
+                {residence.name}
+              </h2>
+              <p className="residence-description" {...edit(i, 'description')}>
+                {residence.description}
+              </p>
 
               <ul className="residence-meta">
-                {residence.meta.map((item) => (
-                  <li key={item}>{item}</li>
+                {residence.meta.map((item, j) => (
+                  <li key={j} {...edit(i, 'meta', j)}>
+                    {item}
+                  </li>
                 ))}
               </ul>
 

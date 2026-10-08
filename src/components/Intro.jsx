@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocalizedContent } from '../i18n/useLocalizedContent'
+import { useEdit } from '../content/editable'
 import './Intro.css'
 
 function Intro() {
   const content = useLocalizedContent()
   const intro = content.home.intro
+  const edit = useEdit(['home', 'intro'])
   const sectionRef = useRef(null)
   const [progress, setProgress] = useState(0)
   const words = intro.description.split(' ')
@@ -54,9 +56,11 @@ function Intro() {
     <section className="intro" ref={sectionRef} data-nav-tone="light">
       <div className="intro-sticky">
         <div className="intro-inner">
-          <div className="intro-logo">{intro.logo}</div>
+          <div className="intro-logo" {...edit('logo')}>
+            {intro.logo}
+          </div>
 
-          <p className="intro-description">
+          <p className="intro-description" {...edit('description')}>
             {words.map((word, i) => {
               // Strictly sequential wipe: one word colours at a time.
               const wordProgress = Math.min(

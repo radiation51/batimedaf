@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { PlaceMap } from './Place'
 import { useLocalizedContent, useUI } from '../i18n/useLocalizedContent'
 import { useReveal } from '../hooks/useReveal'
+import { useEdit } from '../content/editable'
 import './Location.css'
 
 const Arrow = ({ size = 16 }) => (
@@ -21,6 +22,7 @@ function Location() {
   const t = useUI()
   const contact = content.contact
   const residences = content.residences
+  const edit = useEdit([])
 
   const { ref, ready } = useReveal([contact.address])
   // The address is authored on two lines; the map query wants one.
@@ -49,16 +51,23 @@ function Location() {
             <dl className="loc-details" data-reveal style={{ '--d': '160ms' }}>
               <div>
                 <dt>{t.offices}</dt>
-                <dd className="loc-pre">{contact.address}</dd>
+                <dd className="loc-pre" {...edit('contact', 'address')}>
+                  {contact.address}
+                </dd>
               </div>
               <div>
                 <dt>{t.hours}</dt>
-                <dd className="loc-pre">{contact.hours}</dd>
+                <dd className="loc-pre" {...edit('contact', 'hours')}>
+                  {contact.hours}
+                </dd>
               </div>
               <div>
                 <dt>{t.phone}</dt>
                 <dd>
-                  <a href={`tel:${contact.phone.replace(/\s/g, '')}`}>
+                  <a
+                    href={`tel:${contact.phone.replace(/\s/g, '')}`}
+                    {...edit('contact', 'phone')}
+                  >
                     {contact.phone}
                   </a>
                 </dd>
@@ -66,7 +75,9 @@ function Location() {
               <div>
                 <dt>{t.email}</dt>
                 <dd>
-                  <a href={`mailto:${contact.email}`}>{contact.email}</a>
+                  <a href={`mailto:${contact.email}`} {...edit('contact', 'email')}>
+                    {contact.email}
+                  </a>
                 </dd>
               </div>
             </dl>
@@ -74,11 +85,18 @@ function Location() {
             <div className="loc-block" data-reveal style={{ '--d': '220ms' }}>
               <h3 className="loc-mini-title">{t.ourResidences}</h3>
               <ul className="loc-residences">
-                {residences.map((residence) => (
+                {residences.map((residence, i) => (
                   <li key={residence.slug}>
                     <Link to={`/residence/${residence.slug}`}>
-                      <span className="loc-res-name">{residence.name}</span>
-                      <span className="loc-res-place">{residence.location}</span>
+                      <span className="loc-res-name" {...edit('residences', i, 'name')}>
+                        {residence.name}
+                      </span>
+                      <span
+                        className="loc-res-place"
+                        {...edit('residences', i, 'location')}
+                      >
+                        {residence.location}
+                      </span>
                       <span className="loc-res-arrow">
                         <Arrow size={15} />
                       </span>

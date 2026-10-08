@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocalizedContent } from '../i18n/useLocalizedContent'
 import { normalizeImage, imageVars } from '../lib/imageStyle'
+import { useEdit } from '../content/editable'
 import './Gallery.css'
 
 function Gallery() {
   const content = useLocalizedContent()
   const { eyebrow, title, images } = content.home.gallery
+  const edit = useEdit(['home', 'gallery'])
 
   const sectionRef = useRef(null)
   // The hidden start state is only applied once JS is running, so the gallery
@@ -53,10 +55,10 @@ function Gallery() {
     >
       <div className="gallery-inner">
         <header className="gallery-header">
-          <span className="gallery-eyebrow" data-reveal>
+          <span className="gallery-eyebrow" data-reveal {...edit('eyebrow')}>
             {eyebrow}
           </span>
-          <h2 className="gallery-title" data-reveal>
+          <h2 className="gallery-title" data-reveal {...edit('title')}>
             {title}
           </h2>
         </header>
@@ -67,12 +69,12 @@ function Gallery() {
             animation shifts it by exactly one copy and restarts. */}
         <div className="gallery-track">
           {[0, 1].map((copy) =>
-            images.map((item) => {
+            images.map((item, i) => {
               const img = normalizeImage(item.image)
               return (
                 <figure
                   className="gallery-item"
-                  key={`${copy}-${img.src}`}
+                  key={`${copy}-${i}`}
                   aria-hidden={copy === 1 ? 'true' : undefined}
                 >
                   <div className="gallery-media">
@@ -82,10 +84,14 @@ function Gallery() {
                       loading="lazy"
                       decoding="async"
                       style={imageVars(item.image)}
+                      {...edit('images', i, 'image')}
                     />
                   </div>
                   {item.caption && (
-                    <figcaption className="gallery-caption">
+                    <figcaption
+                      className="gallery-caption"
+                      {...edit('images', i, 'caption')}
+                    >
                       {item.caption}
                     </figcaption>
                   )}

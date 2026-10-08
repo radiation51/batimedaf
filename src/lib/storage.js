@@ -1,4 +1,5 @@
 import { supabase, MEDIA_BUCKET } from './supabase'
+import { prepareImage, dataUriBytes, formatBytes } from './image'
 
 /**
  * Uploads pictures from the admin panel to Supabase Storage.
@@ -70,4 +71,47 @@ export async function uploadImage(dataUri, originalName = 'image') {
   const { data } = supabase.storage.from(MEDIA_BUCKET).getPublicUrl(path)
   if (!data?.publicUrl) throw new Error('URL publique indisponible.')
   return data.publicUrl
+}
+
+/* Past this, a single picture eats a meaningful share of the ~5 MB
+   localStorage budget the whole site shares. */
+const HEAVY_IMAGE_BYTES = 700 * 1024
+
+/**
+ * Turns a picked file into an image `src`: downscaled, then sent to the
+ * bucket when there is one. Resolves to `{ src, note, error }`, where
+ * `error` says why the picture was kept inline after a failed upload.
+ * Throws when the file is not a usable image.
+ */
+export async function storeImage(file) {
+  // Always downscale first: it keeps the upload small, and it is the only
+  // thing standing between a phone photo and the localStorage quota when
+  // there is no bucket to send it to.
+  const { dataUri, width, height } = await prepareImage(file)
+  const bytes = dataUriBytes(dataUri)
+  const size = `${width ? `${width}×${height} · ` : ''}${formatBytes(bytes)}`
+
+  if (canUseStorage()) {
+    try {
+      const url = await uploadImage(dataUri, file.name)
+      return { src: url, note: `${file.name} · ${size} · envoyé sur Supabase` }
+    } catch (uploadError) {
+      // Keep the picture rather than losing the edit, and say what
+      // happened: inline images are only visible to this browser.
+      return {
+        src: dataUri,
+        note: `${file.name} · ${size} · conservé localement`,
+        error: `Envoi Supabase impossible : ${uploadError.message}`,
+      }
+    }
+  }
+
+  return {
+    src: dataUri,
+    note:
+      `${file.name} · ${size}` +
+      (bytes > HEAVY_IMAGE_BYTES
+        ? ' — image lourde, le stockage local est limité.'
+        : ''),
+  }
 }

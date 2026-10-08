@@ -13,6 +13,7 @@ import {
   Tree,
   Warehouse,
 } from '@phosphor-icons/react'
+import { useEdit } from '../content/editable'
 import './Amenities.css'
 
 /**
@@ -44,13 +45,14 @@ const MATCHERS = [
 const iconFor = (label) =>
   MATCHERS.find(([pattern]) => pattern.test(label))?.[1] ?? Sparkle
 
-function Amenities({ items }) {
+function Amenities({ items, editPath = null }) {
+  const edit = useEdit(editPath)
   return (
     <ul className="am">
       {items.map((item, i) => {
         const Icon = iconFor(item)
         return (
-          <li key={item} data-reveal style={{ '--d': `${i * 90}ms` }}>
+          <li key={i} data-reveal style={{ '--d': `${i * 90}ms` }}>
             <span className="am-icon" aria-hidden="true">
               {/* Decorative ring, drawn in by CSS behind the glyph. */}
               <svg className="am-ring" viewBox="0 0 52 52">
@@ -58,7 +60,9 @@ function Amenities({ items }) {
               </svg>
               <Icon size={32} weight="light" />
             </span>
-            <span className="am-label">{item}</span>
+            <span className="am-label" {...edit(i)}>
+              {item}
+            </span>
           </li>
         )
       })}

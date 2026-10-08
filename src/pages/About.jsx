@@ -4,6 +4,7 @@ import { useLocalizedContent, useUI } from '../i18n/useLocalizedContent'
 import { useReveal, useCountUp } from '../hooks/useReveal'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { normalizeImage, imageVars } from '../lib/imageStyle'
+import { useEdit } from '../content/editable'
 import './About.css'
 
 const Arrow = ({ size = 16 }) => (
@@ -20,10 +21,15 @@ const Arrow = ({ size = 16 }) => (
 
 function Figure({ figure, active, index }) {
   const value = useCountUp(figure.value, active)
+  const edit = useEdit(['about', 'figures', index])
   return (
     <div className="ab-figure" data-reveal style={{ '--d': `${index * 90}ms` }}>
-      <span className="ab-figure-value">{value.toLocaleString('fr-FR')}</span>
-      <span className="ab-figure-label">{figure.label}</span>
+      <span className="ab-figure-value" {...edit('value')}>
+        {value.toLocaleString('fr-FR')}
+      </span>
+      <span className="ab-figure-label" {...edit('label')}>
+        {figure.label}
+      </span>
     </div>
   )
 }
@@ -33,6 +39,8 @@ function About() {
   const t = useUI()
   const c = content.about
   const residences = content.residences
+  const edit = useEdit(['about'])
+  const editRoot = useEdit()
 
   usePageMeta({ title: t.nav.about, description: c.intro })
 
@@ -69,16 +77,17 @@ function About() {
       {/* ---------- I. Ouverture — texte seul, aucune image ---------- */}
       <header className="ab-open" data-nav-tone="light">
         <div className="ab-wrap ab-open-inner">
-          <span className="ab-kicker" data-reveal>
+          <span className="ab-kicker" data-reveal {...edit('kicker')}>
             {c.kicker}
           </span>
 
           <h1 className="ab-open-title">
             {c.titleLines.map((line, i) => (
-              <span className="ab-mask" key={line}>
+              <span className="ab-mask" key={i}>
                 <span
                   className="ab-mask-inner"
                   style={{ '--md': `${0.25 + i * 0.12}s` }}
+                  {...edit('titleLines', i)}
                 >
                   {line}
                 </span>
@@ -108,10 +117,10 @@ function About() {
 
           <ol className="ab-rules">
             {c.principles.map((principle, i) => (
-              <li key={principle.title} data-reveal style={{ '--d': `${i * 90}ms` }}>
+              <li key={i} data-reveal style={{ '--d': `${i * 90}ms` }}>
                 <span className="ab-rule-num">0{i + 1}</span>
-                <h3>{principle.title}</h3>
-                <p>{principle.text}</p>
+                <h3 {...edit('principles', i, 'title')}>{principle.title}</h3>
+                <p {...edit('principles', i, 'text')}>{principle.text}</p>
               </li>
             ))}
           </ol>
@@ -143,15 +152,28 @@ function About() {
                     alt=""
                     loading="lazy"
                     style={imageVars(residence.image)}
+                    {...editRoot('residences', i, 'image')}
                   />
                 </span>
                 <span className="ab-showcase-body">
                   <span className="ab-showcase-num">0{i + 1}</span>
-                  <span className="ab-showcase-name">{residence.name}</span>
-                  <span className="ab-showcase-tagline">{residence.tagline}</span>
+                  <span
+                    className="ab-showcase-name"
+                    {...editRoot('residences', i, 'name')}
+                  >
+                    {residence.name}
+                  </span>
+                  <span
+                    className="ab-showcase-tagline"
+                    {...editRoot('residences', i, 'tagline')}
+                  >
+                    {residence.tagline}
+                  </span>
                   <span className="ab-showcase-meta">
-                    {residence.meta.map((item) => (
-                      <span key={item}>{item}</span>
+                    {residence.meta.map((item, j) => (
+                      <span key={j} {...editRoot('residences', i, 'meta', j)}>
+                        {item}
+                      </span>
                     ))}
                   </span>
                   <span className="ab-showcase-cta">
@@ -174,6 +196,7 @@ function About() {
               alt=""
               loading="lazy"
               style={imageVars(c.image)}
+              {...edit('image')}
             />
           </div>
           <div className="ab-portrait-copy">
@@ -194,7 +217,7 @@ function About() {
       <section className="ab-figures" ref={figuresRef} data-nav-tone="light">
         <div className="ab-wrap ab-figures-grid">
           {c.figures.map((figure, i) => (
-            <Figure key={figure.label} figure={figure} index={i} active={figuresActive} />
+            <Figure key={i} figure={figure} index={i} active={figuresActive} />
           ))}
         </div>
       </section>
@@ -202,7 +225,7 @@ function About() {
       {/* ---------- VI. Sortie ---------- */}
       <section className="ab-cta" data-nav-tone="dark">
         <div className="ab-wrap ab-cta-inner">
-          <h2 className="ab-cta-title" data-reveal>
+          <h2 className="ab-cta-title" data-reveal {...edit('ctaTitle')}>
             {c.ctaTitle}
           </h2>
           <Link
@@ -210,6 +233,7 @@ function About() {
             to="/residence"
             data-reveal
             style={{ '--d': '120ms' }}
+            {...edit('ctaLabel')}
           >
             {c.ctaLabel}
             <Arrow />

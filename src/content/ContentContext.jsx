@@ -34,6 +34,124 @@ function applyPath(root, path, value) {
   return clone
 }
 
+const listAt = (root, path) => path.reduce((acc, k) => acc[k], root)
+
+/**
+ * Every edit the admin can make, bound to the state that holds the tree:
+ * the stored content, or the visual editor's unsaved draft.
+ */
+function createMutations(update) {
+  return {
+    updateSection: (section, patch) =>
+      update((prev) => ({
+        ...prev,
+        [section]: { ...prev[section], ...patch },
+      })),
+
+    /**
+     * Sets a value anywhere in the tree from a path such as
+     * ['home', 'hero', 'title'] or ['about', 'milestones', 2, 'year'].
+     */
+    setPath: (path, value) => update((prev) => applyPath(prev, path, value)),
+
+    pushItem: (path, item) =>
+      update((prev) => applyPath(prev, path, [...listAt(prev, path), item])),
+
+    /** Inserts `item` so that it ends up at `index`. */
+    insertItem: (path, index, item) =>
+      update((prev) => {
+        const next = [...listAt(prev, path)]
+        next.splice(index, 0, item)
+        return applyPath(prev, path, next)
+      }),
+
+    removeItem: (path, index) =>
+      update((prev) =>
+        applyPath(
+          prev,
+          path,
+          listAt(prev, path).filter((_, i) => i !== index),
+        ),
+      ),
+
+    /** Swaps the item at `index` with its neighbour at `index + delta`. */
+    moveItem: (path, index, delta) =>
+      update((prev) => {
+        const list = listAt(prev, path)
+        const target = index + delta
+        if (target < 0 || target >= list.length) return prev
+        const next = [...list]
+        ;[next[index], next[target]] = [next[target], next[index]]
+        return applyPath(prev, path, next)
+      }),
+
+    updateResidence: (slug, patch) =>
+      update((prev) => ({
+        ...prev,
+        residences: prev.residences.map((r) =>
+          r.slug === slug ? { ...r, ...patch } : r,
+        ),
+      })),
+
+    updateApartment: (slug, id, patch) =>
+      update((prev) => ({
+        ...prev,
+        residences: prev.residences.map((r) =>
+          r.slug !== slug
+            ? r
+            : {
+                ...r,
+                apartments: r.apartments.map((a) =>
+                  a.id === id ? { ...a, ...patch } : a,
+                ),
+              },
+        ),
+      })),
+
+    addApartment: (slug) => {
+      const id = `nouveau-${Date.now().toString(36)}`
+      update((prev) => ({
+        ...prev,
+        residences: prev.residences.map((r) =>
+          r.slug !== slug
+            ? r
+            : {
+                ...r,
+                apartments: [
+                  ...r.apartments,
+                  {
+                    id,
+                    reference: 'NOUVEAU',
+                    type: '3 pièces',
+                    surface: 70,
+                    floor: '1ᵉʳ étage',
+                    orientation: 'Sud',
+                    outdoor: 'Balcon',
+                    price: 500000,
+                    status: 'Disponible',
+                    image: r.image,
+                    description: 'Description à compléter.',
+                    features: ['Prestation à compléter'],
+                  },
+                ],
+              },
+        ),
+      }))
+      return id
+    },
+
+    removeApartment: (slug, id) =>
+      update((prev) => ({
+        ...prev,
+        residences: prev.residences.map((r) =>
+          r.slug !== slug
+            ? r
+            : { ...r, apartments: r.apartments.filter((a) => a.id !== id) },
+        ),
+      })),
+  }
+}
+
 /** Local copy: the offline cache, and the whole store when Supabase is off. */
 function loadLocal() {
   try {
@@ -146,118 +264,7 @@ export function ContentProvider({ children }) {
 
   /* ---------------- Mutations ---------------- */
 
-  const updateSection = useCallback((section, patch) => {
-    setContent((prev) => ({
-      ...prev,
-      [section]: { ...prev[section], ...patch },
-    }))
-  }, [])
-
-  /**
-   * Sets a value anywhere in the tree from a path such as
-   * ['home', 'hero', 'title'] or ['about', 'milestones', 2, 'year'].
-   */
-  const setPath = useCallback((path, value) => {
-    setContent((prev) => applyPath(prev, path, value))
-  }, [])
-
-  const pushItem = useCallback((path, item) => {
-    setContent((prev) => {
-      const list = path.reduce((acc, k) => acc[k], prev)
-      return applyPath(prev, path, [...list, item])
-    })
-  }, [])
-
-  const removeItem = useCallback((path, index) => {
-    setContent((prev) => {
-      const list = path.reduce((acc, k) => acc[k], prev)
-      return applyPath(
-        prev,
-        path,
-        list.filter((_, i) => i !== index),
-      )
-    })
-  }, [])
-
-  /** Swaps the item at `index` with its neighbour at `index + delta`. */
-  const moveItem = useCallback((path, index, delta) => {
-    setContent((prev) => {
-      const list = path.reduce((acc, k) => acc[k], prev)
-      const target = index + delta
-      if (target < 0 || target >= list.length) return prev
-      const next = [...list]
-      ;[next[index], next[target]] = [next[target], next[index]]
-      return applyPath(prev, path, next)
-    })
-  }, [])
-
-  const updateResidence = useCallback((slug, patch) => {
-    setContent((prev) => ({
-      ...prev,
-      residences: prev.residences.map((r) =>
-        r.slug === slug ? { ...r, ...patch } : r,
-      ),
-    }))
-  }, [])
-
-  const updateApartment = useCallback((slug, id, patch) => {
-    setContent((prev) => ({
-      ...prev,
-      residences: prev.residences.map((r) =>
-        r.slug !== slug
-          ? r
-          : {
-              ...r,
-              apartments: r.apartments.map((a) =>
-                a.id === id ? { ...a, ...patch } : a,
-              ),
-            },
-      ),
-    }))
-  }, [])
-
-  const addApartment = useCallback((slug) => {
-    const id = `nouveau-${Date.now().toString(36)}`
-    setContent((prev) => ({
-      ...prev,
-      residences: prev.residences.map((r) =>
-        r.slug !== slug
-          ? r
-          : {
-              ...r,
-              apartments: [
-                ...r.apartments,
-                {
-                  id,
-                  reference: 'NOUVEAU',
-                  type: '3 pièces',
-                  surface: 70,
-                  floor: '1ᵉʳ étage',
-                  orientation: 'Sud',
-                  outdoor: 'Balcon',
-                  price: 500000,
-                  status: 'Disponible',
-                  image: r.image,
-                  description: 'Description à compléter.',
-                  features: ['Prestation à compléter'],
-                },
-              ],
-            },
-      ),
-    }))
-    return id
-  }, [])
-
-  const removeApartment = useCallback((slug, id) => {
-    setContent((prev) => ({
-      ...prev,
-      residences: prev.residences.map((r) =>
-        r.slug !== slug
-          ? r
-          : { ...r, apartments: r.apartments.filter((a) => a.id !== id) },
-      ),
-    }))
-  }, [])
+  const mutations = useMemo(() => createMutations(setContent), [])
 
   const replaceAll = useCallback((next) => setContent(next), [])
 
@@ -296,15 +303,7 @@ export function ContentProvider({ children }) {
       isSupabaseConfigured,
       signIn,
       signOut,
-      updateSection,
-      setPath,
-      pushItem,
-      removeItem,
-      moveItem,
-      updateResidence,
-      updateApartment,
-      addApartment,
-      removeApartment,
+      ...mutations,
       replaceAll,
       reset,
     }),
@@ -316,18 +315,59 @@ export function ContentProvider({ children }) {
       session,
       signIn,
       signOut,
-      updateSection,
-      setPath,
-      pushItem,
-      removeItem,
-      moveItem,
-      updateResidence,
-      updateApartment,
-      addApartment,
-      removeApartment,
+      mutations,
       replaceAll,
       reset,
     ],
+  )
+
+  return (
+    <ContentContext.Provider value={value}>{children}</ContentContext.Provider>
+  )
+}
+
+/**
+ * Wraps the admin's visual editor: everything inside reads and edits a draft
+ * copy of the content, and nothing reaches the site (or Supabase) until
+ * `save()` hands the draft to the real store.
+ */
+export function DraftContentProvider({ children }) {
+  const stored = useContext(ContentContext)
+  const [draft, setDraft] = useState(stored.content)
+  // The stored content the draft started from: an edit makes them differ.
+  const [base, setBase] = useState(stored.content)
+  const dirty = draft !== base
+
+  // While nothing is pending, follow the store, e.g. the Supabase read
+  // finishing after the editor opened on the local copy.
+  if (!dirty && stored.content !== base) {
+    setBase(stored.content)
+    setDraft(stored.content)
+  }
+
+  const mutations = useMemo(() => createMutations(setDraft), [])
+  const { replaceAll: commit } = stored
+
+  const save = useCallback(() => {
+    commit(draft)
+    setBase(draft)
+  }, [commit, draft])
+
+  const discard = useCallback(() => setDraft(base), [base])
+  const reset = useCallback(() => setDraft(DEFAULT_CONTENT), [])
+
+  const value = useMemo(
+    () => ({
+      ...stored,
+      ...mutations,
+      content: draft,
+      replaceAll: setDraft,
+      reset,
+      dirty,
+      save,
+      discard,
+    }),
+    [stored, mutations, draft, reset, dirty, save, discard],
   )
 
   return (

@@ -5,6 +5,7 @@ import { useLocalizedContent, useUI } from '../i18n/useLocalizedContent'
 import { useReveal } from '../hooks/useReveal'
 import { usePageMeta } from '../hooks/usePageMeta'
 import '../styles/page.css'
+import { useEdit } from '../content/editable'
 import './Contact.css'
 
 const EMPTY = {
@@ -19,6 +20,7 @@ function Contact() {
   const content = useLocalizedContent()
   const t = useUI()
   const c = content.contact
+  const edit = useEdit(['contact'])
   const [params] = useSearchParams()
 
   usePageMeta({ title: t.nav.contact, description: c.sub })
@@ -50,34 +52,48 @@ function Contact() {
       <section className="ct-top" data-nav-tone="light">
         <div className="pg-wrap ct-cols">
           <div className="ct-aside">
-            <span className="pg-eyebrow ct-kicker">{c.kicker}</span>
+            <span className="pg-eyebrow ct-kicker" {...edit('kicker')}>
+              {c.kicker}
+            </span>
             <h1 className="ct-title">
               <span className="pg-mask">
-                <span className="pg-mask-inner">{c.title}</span>
+                <span className="pg-mask-inner" {...edit('title')}>
+                  {c.title}
+                </span>
               </span>
             </h1>
-            <p className="ct-sub">{c.sub}</p>
+            <p className="ct-sub" {...edit('sub')}>
+              {c.sub}
+            </p>
 
             <dl className="ct-details">
               <div>
                 <dt>{t.phone}</dt>
                 <dd>
-                  <a href={`tel:${c.phone.replace(/\s/g, '')}`}>{c.phone}</a>
+                  <a href={`tel:${c.phone.replace(/\s/g, '')}`} {...edit('phone')}>
+                    {c.phone}
+                  </a>
                 </dd>
               </div>
               <div>
                 <dt>{t.email}</dt>
                 <dd>
-                  <a href={`mailto:${c.email}`}>{c.email}</a>
+                  <a href={`mailto:${c.email}`} {...edit('email')}>
+                    {c.email}
+                  </a>
                 </dd>
               </div>
               <div>
                 <dt>{t.address}</dt>
-                <dd className="ct-pre">{c.address}</dd>
+                <dd className="ct-pre" {...edit('address')}>
+                  {c.address}
+                </dd>
               </div>
               <div>
                 <dt>{t.hours}</dt>
-                <dd className="ct-pre">{c.hours}</dd>
+                <dd className="ct-pre" {...edit('hours')}>
+                  {c.hours}
+                </dd>
               </div>
             </dl>
           </div>
@@ -142,9 +158,10 @@ function Contact() {
                     id="ct-subject"
                     value={form.subject}
                     onChange={set('subject')}
+                    {...edit('subjects')}
                   >
-                    {c.subjects.map((subject) => (
-                      <option key={subject} value={subject}>
+                    {c.subjects.map((subject, i) => (
+                      <option key={i} value={subject}>
                         {subject}
                       </option>
                     ))}
@@ -186,12 +203,12 @@ function Contact() {
       <section className="pg-block" data-nav-tone="light">
         <div className="pg-wrap pg-split">
           <div className="pg-split-aside">
-            <span className="pg-eyebrow" data-reveal>
+            <span className="pg-eyebrow" data-reveal {...edit('faqTitle')}>
               {c.faqTitle}
             </span>
           </div>
           <div>
-            <Accordion items={c.faq} />
+            <Accordion items={c.faq} editPath={['contact', 'faq']} />
           </div>
         </div>
       </section>

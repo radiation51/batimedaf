@@ -4,6 +4,7 @@
  */
 import { Bus, CarSimple, Subway, Tram } from '@phosphor-icons/react'
 import { useUI } from '../i18n/useLocalizedContent'
+import { useEdit } from '../content/editable'
 import './Place.css'
 
 const Arrow = ({ size = 15 }) => (
@@ -111,16 +112,28 @@ export function LineBadge({ line }) {
   )
 }
 
-export function TransportList({ transports }) {
+/* `editPath` on the lists and the map: where their text lives in the
+   content, for the admin editor. */
+
+export function TransportList({ transports, editPath = null }) {
+  const edit = useEdit(editPath)
   return (
     <ul className="pl-list pl-transports">
-      {transports.map((transport) => {
+      {transports.map((transport, i) => {
         const [stop, time] = splitDetail(transport.detail)
         return (
-          <li key={transport.line}>
-            <LineBadge line={transport.line} />
-            <span className="pl-stop">{stop}</span>
-            {time && <span className="pl-time">{time}</span>}
+          <li key={i}>
+            <span {...edit(i, 'line')}>
+              <LineBadge line={transport.line} />
+            </span>
+            <span className="pl-stop" {...edit(i, 'detail')}>
+              {stop}
+            </span>
+            {time && (
+              <span className="pl-time" {...edit(i, 'detail')}>
+                {time}
+              </span>
+            )}
           </li>
         )
       })}
@@ -128,15 +141,22 @@ export function TransportList({ transports }) {
   )
 }
 
-export function NearbyList({ items }) {
+export function NearbyList({ items, editPath = null }) {
+  const edit = useEdit(editPath)
   return (
     <ul className="pl-list pl-nearby">
-      {items.map((item) => {
+      {items.map((item, i) => {
         const [name, time] = splitDetail(item)
         return (
-          <li key={item}>
-            <span className="pl-stop">{name}</span>
-            {time && <span className="pl-time">{time}</span>}
+          <li key={i}>
+            <span className="pl-stop" {...edit(i)}>
+              {name}
+            </span>
+            {time && (
+              <span className="pl-time" {...edit(i)}>
+                {time}
+              </span>
+            )}
           </li>
         )
       })}
@@ -145,8 +165,9 @@ export function NearbyList({ items }) {
 }
 
 /** Embedded map plus the address plate that sits under it. */
-export function PlaceMap({ address, title }) {
+export function PlaceMap({ address, title, editPath = null }) {
   const t = useUI()
+  const edit = useEdit(editPath)
   const query = encodeURIComponent(address)
 
   return (
@@ -164,7 +185,9 @@ export function PlaceMap({ address, title }) {
       <div className="pl-map-card">
         <div>
           <span className="pl-map-label">{t.address}</span>
-          <p className="pl-map-address">{address}</p>
+          <p className="pl-map-address" {...edit()}>
+            {address}
+          </p>
         </div>
         <a
           className="pl-map-link"

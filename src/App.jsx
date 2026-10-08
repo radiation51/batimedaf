@@ -4,15 +4,8 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import PageTransition from './components/PageTransition'
 import CustomCursor from './components/CustomCursor'
-import Home from './pages/Home'
-import Residences from './pages/Residences'
-import ResidenceDetail from './pages/ResidenceDetail'
-import ApartmentDetail from './pages/ApartmentDetail'
-import About from './pages/About'
-import Contact from './pages/Contact'
-import Collaboration from './pages/Collaboration'
 import Admin from './pages/Admin'
-import Legal from './pages/Legal'
+import { siteRoutes } from './siteRoutes'
 import './App.css'
 
 // Must stay in step with PageTransition.css: 0.5s travel + 0.16s max stagger.
@@ -71,18 +64,9 @@ function App() {
       {!isAdmin && <CustomCursor />}
       {!hideChrome && <Navbar />}
       <Routes location={displayLocation}>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/collaboration" element={<Collaboration />} />
-        <Route path="/legal/:doc" element={<Legal />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/residence" element={<Residences />} />
-        <Route path="/residence/:slug" element={<ResidenceDetail />} />
-        <Route
-          path="/residence/:slug/:apartmentId"
-          element={<ApartmentDetail />}
-        />
+        {siteRoutes}
+        {/* The visual editor previews the site pages below /admin. */}
+        <Route path="/admin/*" element={<Admin />} />
       </Routes>
       {!hideChrome && <Footer />}
     </>
