@@ -1,0 +1,112 @@
+.hap-head {
+  margin-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.hap-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: var(--col-gap);
+  row-gap: 4rem;
+  align-items: start;
+}
+
+/* The middle plate sits lower: three photographs read as a sequence, not a
+   row of identical tiles. */
+.hap-item:nth-child(3n + 2) {
+  margin-top: clamp(3rem, 7vw, 6.5rem);
+}
+
+.hap-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.hap-media {
+  aspect-ratio: 4 / 5;
+  /* The section is already paper-deep: a loading plate stays visible. */
+  background: var(--paper);
+}
+
+.hap-media img {
+  transition: opacity 0.3s ease;
+}
+
+.hap-link:hover .hap-media img {
+  opacity: 0.88;
+}
+
+.hap-body {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.25rem;
+  padding-top: 1.35rem;
+}
+
+.hap-num {
+  padding-top: 0.55rem;
+  color: var(--ink-faint);
+}
+
+.hap-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.hap-name {
+  transition: color 0.2s ease;
+}
+
+.hap-link:hover .hap-name {
+  color: var(--clay);
+}
+
+.hap-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  font-size: 0.8125rem;
+  color: var(--ink-faint);
+}
+
+.hap-desc {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  max-width: 40ch;
+}
+
+.hap-cta {
+  margin-top: 0.4rem;
+}
+
+.hap-cta svg {
+  transition: transform 0.3s var(--ease);
+}
+
+.hap-link:hover .hap-cta {
+  color: var(--clay);
+}
+
+.hap-link:hover .hap-cta svg {
+  transform: translateX(3px);
+}
+
+@media (max-width: 899px) {
+  .hap-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hap-item:nth-child(3n + 2) {
+    margin-top: 0;
+  }
+
+  .hap-media {
+    aspect-ratio: 4 / 3;
+  }
+}

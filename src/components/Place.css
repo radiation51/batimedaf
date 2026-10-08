@@ -1,144 +1,116 @@
-/**
- * Shared location styles: the embedded map with its address plate, and the
- * transport / nearby lists. Used by the residence and apartment pages.
- */
-
 /* ---------- Map ---------- */
 
 .pl-map-frame {
   position: relative;
-  overflow: hidden;
-  background: #ece5dd;
   aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--paper-deep);
 }
 
 .pl-map-frame iframe {
-  display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   border: 0;
-  /* Google's tiles are cool and saturated; this settles them into the cream
-     palette without hiding any detail. */
-  filter: grayscale(0.4) contrast(0.94);
 }
 
-/* Address plate under the map, reading as one object with it. */
 .pl-map-card {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 1.5rem;
-  padding: 1.35rem 1.5rem;
-  background: #0a0a0a;
-  color: #fff7f0;
+  gap: 1rem 2rem;
+  padding-top: 1.1rem;
 }
 
 .pl-map-label {
   display: block;
-  font-family: var(--sans);
-  font-size: 0.68rem;
-  font-weight: 600;
+  margin-bottom: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 247, 240, 0.5);
-  margin-bottom: 0.4rem;
+  color: var(--ink-soft);
 }
 
 .pl-map-address {
-  font-family: var(--sans);
-  font-size: 0.98rem;
-  line-height: 1.4;
-  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  line-height: 1.35;
 }
 
 .pl-map-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  flex-shrink: 0;
-  height: 44px;
-  padding: 0 1.25rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 247, 240, 0.35);
-  font-family: var(--sans);
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: #fff7f0;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: background-color 0.25s ease, border-color 0.25s ease,
-    color 0.25s ease, gap 0.25s ease;
+  gap: 0.6rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.35em;
+  transition: color 0.2s ease;
 }
 
 .pl-map-link:hover {
-  background: #fff7f0;
-  border-color: #fff7f0;
-  color: #0a0a0a;
-  gap: 0.9rem;
+  color: var(--clay);
 }
 
 /* ---------- Lists ---------- */
 
-.rd-place-block + .rd-place-block {
-  margin-top: 2.75rem;
-}
-
 .pl-mini-title {
+  display: block;
+  margin: 0 0 1.1rem;
   font-family: var(--sans);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #a0968b;
-  margin: 0 0 0.75rem;
+  color: var(--ink-soft);
 }
 
 .pl-list {
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid #e6ded5;
+  display: grid;
+  gap: 0.15rem;
 }
 
 .pl-list li {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 1rem;
-  padding: 1rem 0;
-  border-bottom: 1px solid #e6ded5;
-  font-family: var(--sans);
+  padding: 0.65rem 0;
+}
+
+.pl-nearby li {
+  grid-template-columns: 1fr auto;
 }
 
 .pl-stop {
-  flex: 1;
-  min-width: 0;
-  font-size: 1.02rem;
-  color: var(--ink);
+  line-height: 1.4;
 }
 
-/* Times align in a column of their own, so the eye can compare them. */
 .pl-time {
-  flex-shrink: 0;
-  font-size: 0.88rem;
-  color: #8a8178;
-  font-variant-numeric: tabular-nums;
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--clay);
+  white-space: nowrap;
 }
 
-/* ---------- Line badges ---------- */
-
+/* A numbered line: its network, then the line in its official colour. */
 .pl-line {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  flex-shrink: 0;
 }
 
 .pl-line-network {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #a0968b;
-  min-width: 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink-soft);
 }
 
 .pl-line-badge {
@@ -148,62 +120,25 @@
   min-width: 26px;
   height: 26px;
   padding: 0 0.35rem;
-  border-radius: 50%;
-  /* Unknown lines: ink on cream rather than an invented colour. */
-  background: #0a0a0a;
-  color: #fff7f0;
-  font-size: 0.82rem;
-  font-weight: 700;
-  line-height: 1;
+  background: var(--ink);
+  color: var(--on-dark);
+  font-size: 0.8125rem;
+  font-weight: 600;
 }
 
-/* A named mode (Bus, Tramway…) gets its own icon in a soft colour circle,
-   rather than trying to abbreviate it down to a single letter or digit. */
-.pl-mode-badge {
+/* A mode of transport: a hairline glyph and its name. */
+.pl-mode {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
-  flex-shrink: 0;
+  background: rgba(143, 74, 48, 0.1);
+  color: var(--clay);
 }
 
-@media (min-width: 900px) {
-  .pl-map--sticky {
-    position: sticky;
-    top: 7rem;
-  }
-
-  /* Fills whatever height its column is stretched to (matching the
-     transports/nearby text next to it) instead of a fixed ratio. */
-  .pl-map {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-
-  .pl-map-frame {
-    flex: 1 1 auto;
-    aspect-ratio: auto;
-  }
-}
-
-@media (max-width: 560px) {
-  /* The plate stacks so the address never gets squeezed by the button. */
-  .pl-map-card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .pl-map-frame {
-    aspect-ratio: 1 / 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pl-map-link {
-    transition: none;
-  }
+.pl-mode-name {
+  min-width: 4.5rem;
+  font-weight: 500;
 }

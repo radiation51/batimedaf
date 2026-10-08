@@ -61,39 +61,76 @@ export const DEFAULT_CONTENT = {
         },
       ],
     },
-    gallery: {
+    /* The apartments the home page presents, as `slug/id`: the cards read
+       everything else from the residence, so an edit there shows here too. */
+    apartments: {
+      eyebrow: 'Nos appartements',
+      title: 'Du F4 au Duplex, de 130 à 333 m².',
+      list: ['le-bosquet/f4-garden', 'le-bosquet/duplex', 'le-bosquet/d-41'],
+    },
+    reel: {
       eyebrow: 'Galerie',
-      title: 'Nos appartements',
+      title: 'Une visite en images.',
       images: [
         {
-          image: img('/images/home/gallery-1-sejour.jpg'),
-          alt: "Séjour lumineux d'un appartement Batimedaf",
-          caption: 'Séjour — Le Bosquet',
+          image: img('/images/library/duplex/02-double-hauteur-1.jpg'),
+          alt: 'Séjour en double hauteur du Duplex',
+          caption: 'Duplex — Séjour en double hauteur',
         },
         {
-          image: img('/images/home/gallery-2-salon.jpg'),
-          alt: 'Salon contemporain aux tons naturels',
-          caption: 'Salon — Les Ateliers',
+          image: img('/images/library/f4-garden/07-jardin-1.jpg'),
+          alt: 'Jardin privatif et piscine du F4-Garden, vue aérienne',
+          caption: 'F4-Garden — Jardin et piscine',
         },
         {
-          image: img('/images/home/gallery-3-cuisine.jpg'),
-          alt: 'Cuisine ouverte sur la pièce de vie',
-          caption: 'Cuisine — Le Bosquet',
+          image: { src: '/images/library/f4-garden/10-chambre-1.jpg', x: 45, y: 50, zoom: 1 },
+          alt: 'Chambre du F4-Garden, tête de lit en arche',
+          caption: 'F4-Garden — Chambre',
         },
         {
-          image: img('/images/home/gallery-4-chambre.jpg'),
-          alt: 'Chambre principale aux finitions soignées',
-          caption: 'Suite parentale — Le Bosquet',
+          image: img('/images/library/sejour/f4-salon-2.jpg'),
+          alt: 'Salon du F4',
+          caption: 'F4 — Salon',
         },
         {
-          image: img('/images/home/gallery-5-salledebain.jpg'),
-          alt: 'Salle de bain en pierre naturelle',
-          caption: 'Salle de bain — Le Bosquet',
+          image: { src: '/images/library/f4-garden/01-salon-1.jpg', x: 22, y: 50, zoom: 1 },
+          alt: 'Salon du F4-Garden ouvert sur le patio',
+          caption: 'F4-Garden — Salon',
         },
         {
-          image: img('/images/home/gallery-6-terrasse.jpg'),
-          alt: 'Jardin privatif avec vue dégagée',
-          caption: 'Jardin privatif — Le Bosquet',
+          image: img('/images/library/duplex/10-cuisine-2.jpg'),
+          alt: 'Cuisine équipée du Duplex',
+          caption: 'Duplex — Cuisine',
+        },
+        {
+          image: img('/images/library/duplex/07-patios.jpg'),
+          alt: 'Patios du Duplex, vue aérienne',
+          caption: 'Duplex — Patios',
+        },
+        {
+          image: img('/images/library/chambre/f4-suite-2.jpg'),
+          alt: 'Suite parentale du F4',
+          caption: 'F4 — Suite parentale',
+        },
+        {
+          image: img('/images/library/duplex/05-salon-2.jpg'),
+          alt: 'Bibliothèque éclairée du Duplex',
+          caption: 'Duplex — Bibliothèque',
+        },
+        {
+          image: img('/images/library/f4-garden/03-cuisine-1.jpg'),
+          alt: 'Cuisine ouverte du F4-Garden',
+          caption: 'F4-Garden — Cuisine',
+        },
+        {
+          image: img('/images/library/duplex/15-chambre-1.jpg'),
+          alt: 'Chambre du Duplex',
+          caption: 'Duplex — Chambre',
+        },
+        {
+          image: { src: '/images/library/duplex/23-salle-de-bain-1.jpg', x: 35, y: 50, zoom: 1 },
+          alt: 'Salle de bain en marbre du Duplex',
+          caption: 'Duplex — Salle de bain',
         },
       ],
     },

@@ -237,11 +237,10 @@ const hasOwnText = (el) =>
   [...el.childNodes].some((n) => n.nodeType === Node.TEXT_NODE && n.textContent.trim())
 
 /**
- * The tagged element under a point. Looks through decorative layers (a
- * hero photo sits under a darkening veil) but stops at anything else the
- * visitor would click or read, such as a link or a fixed label, and stays
- * within the section under the pointer: the home hero is fixed behind every
- * later section, and must not answer clicks aimed at them.
+ * The tagged element under a point. Looks through decorative layers but
+ * stops at anything else the visitor would click or read, such as a link or
+ * a label, and stays within the section under the pointer, so a layer from
+ * another section can never answer a click aimed at this one.
  */
 function editTargetAt(x, y) {
   const stack = document.elementsFromPoint(x, y)

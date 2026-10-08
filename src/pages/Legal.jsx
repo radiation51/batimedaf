@@ -2,7 +2,6 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { LEGAL_DOCS, LEGAL_SLUGS } from '../data/legal'
 import { useReveal } from '../hooks/useReveal'
 import { usePageMeta } from '../hooks/usePageMeta'
-import '../styles/page.css'
 import './Legal.css'
 
 function Legal() {
@@ -19,22 +18,16 @@ function Legal() {
   if (!document) return <Navigate to="/" replace />
 
   return (
-    <main className={`pg lg${ready ? ' is-ready' : ''}`} ref={pageRef}>
-      <header className="lg-head" data-nav-tone="light">
-        <div className="pg-wrap">
-          <span className="pg-eyebrow lg-kicker">Informations légales</span>
-          <h1 className="lg-title">
-            <span className="pg-mask">
-              <span className="pg-mask-inner">{document.title}</span>
-            </span>
-          </h1>
-          <p className="lg-updated">{document.updated}</p>
-          <p className="lg-intro">{document.intro}</p>
-        </div>
+    <main className={`lg${ready ? ' is-ready' : ''}`} ref={pageRef}>
+      <header className="wrap lg-head" data-nav-tone="light">
+        <span className="label">Informations légales</span>
+        <h1 className="d2 lg-title">{document.title}</h1>
+        <p className="lg-updated">{document.updated}</p>
+        <p className="lead lg-intro">{document.intro}</p>
       </header>
 
-      <section className="lg-body" data-nav-tone="light">
-        <div className="pg-wrap lg-cols">
+      <section className="sec lg-body" data-nav-tone="light">
+        <div className="wrap lg-cols">
           {/* Sibling documents stay one click away. */}
           <nav className="lg-nav" aria-label="Documents légaux">
             <ul>
@@ -54,16 +47,9 @@ function Legal() {
 
           <div className="lg-content">
             {document.sections.map((section, i) => (
-              <article
-                className="lg-section"
-                key={section.title}
-                data-reveal
-                style={{ '--d': `${i * 50}ms` }}
-              >
+              <article className="lg-section" key={section.title} data-reveal>
                 <h2>
-                  <span className="lg-num">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
+                  <span className="num">{String(i + 1).padStart(2, '0')}</span>
                   {section.title}
                 </h2>
                 {section.body.map((paragraph) => (

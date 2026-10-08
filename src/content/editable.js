@@ -13,6 +13,9 @@ const EditModeContext = createContext(false)
 
 export const EditModeProvider = EditModeContext.Provider
 
+/** True inside the visual editor, for pages that must hold still there. */
+export const useEditMode = () => useContext(EditModeContext)
+
 const NONE = {}
 
 /**

@@ -1,27 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { useLocalizedResidence, useUI } from '../i18n/useLocalizedContent'
+import Arrow from '../components/Arrow'
 import Amenities from '../components/Amenities'
 import Lightbox from '../components/Lightbox'
-import { PlaceMap, TransportList, NearbyList } from '../components/Place'
+import ResidenceGallery from '../components/ResidenceGallery'
+import PlaceSection from '../components/PlaceSection'
 import { useReveal } from '../hooks/useReveal'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { normalizeImage, imageVars } from '../lib/imageStyle'
 import { useEdit, useResidencePath } from '../content/editable'
 import './ResidenceDetail.css'
 
-const Arrow = ({ size = 15 }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true">
-    <path
-      d="M3.5 8h9M8.5 3.5 13 8l-4.5 4.5"
-      stroke="currentColor"
-      strokeWidth="1.3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-)
-
+const pad = (n) => String(n).padStart(2, '0')
 
 function ResidenceDetail() {
   const { slug } = useParams()
@@ -37,33 +28,9 @@ function ResidenceDetail() {
   })
 
   const { ref: pageRef, ready } = useReveal([slug])
-  const heroBgRef = useRef(null)
-  const heroZoom = residence ? normalizeImage(residence.image).zoom : 1
 
   // Index of the gallery image shown full screen, or null.
   const [lightbox, setLightbox] = useState(null)
-
-  // Hero parallax: the image drifts slower than the page. The base 1.08
-  // scale is headroom for that drift, not the admin's own crop zoom — the
-  // two multiply so a picture zoomed in the crop tool stays zoomed here.
-  useEffect(() => {
-    let ticking = false
-    const update = () => {
-      ticking = false
-      const el = heroBgRef.current
-      if (!el) return
-      const y = window.scrollY || 0
-      el.style.transform = `translate3d(0, ${y * 0.25}px, 0) scale(${1.08 * heroZoom})`
-    }
-    const onScroll = () => {
-      if (ticking) return
-      ticking = true
-      requestAnimationFrame(update)
-    }
-    update()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [slug, heroZoom])
 
   // A different residence means a different gallery: never keep an index.
   useEffect(() => setLightbox(null), [slug])
@@ -82,99 +49,108 @@ function ResidenceDetail() {
       ? `${minSurface} m²`
       : `${minSurface} à ${maxSurface} m²`
 
+  // The page's contents, listed under the cover. Buttons rather than
+  // #anchors: the admin's preview would read a hash link as a page change.
+  const chapters = [
+    ['prestations', t.amenities],
+    ['appartements', t.availableApartments],
+    ['localisation', t.localisation],
+    ['galerie', t.gallery],
+  ]
+  const jumpTo = (id) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+
   return (
     <main className={`rd${ready ? ' is-ready' : ''}`} ref={pageRef}>
-      {/* ---------- Hero ---------- */}
-      <header className="rd-hero" data-nav-tone="dark">
-        <div
-          className="rd-hero-bg"
-          ref={heroBgRef}
-          style={{
-            backgroundImage: `url(${normalizeImage(residence.image).src})`,
-            ...imageVars(residence.image),
-          }}
-          {...edit('image')}
-        />
-        <div className="rd-hero-veil" />
-
-        <div className="rd-hero-inner">
-          <Link to="/residence" className="rd-back">
-            <span className="rd-back-icon">
-              <Arrow size={13} />
-            </span>
+      {/* ---------- Cover ---------- */}
+      <header className="rd-head" data-nav-tone="light">
+        <div className="wrap">
+          <Link to="/residence" className="back">
+            <Arrow size={16} />
             {t.allResidences}
           </Link>
 
-          <div className="rd-hero-text">
-            <span className="rd-hero-tagline" {...edit('tagline')}>
-              {residence.tagline}
-            </span>
-            <h1 className="rd-hero-name">
-              <span className="rd-mask">
-                <span className="rd-mask-inner" {...edit('name')}>
-                  {residence.name}
-                </span>
+          <div className="rd-head-grid">
+            <div className="rd-head-title">
+              <span className="label" {...edit('tagline')}>
+                {residence.tagline}
               </span>
-            </h1>
-            <p className="rd-hero-place" {...edit('location')}>
+              <h1 className="d1 rd-name" {...edit('name')}>
+                {residence.name}
+              </h1>
+            </div>
+            <p className="rd-place" {...edit('location')}>
               {residence.location}
             </p>
           </div>
         </div>
 
-        <span className="rd-scroll-cue" aria-hidden="true">
-          <span />
-        </span>
+        <div className="rd-cover-frame">
+          <div
+            className="rd-cover"
+            style={{
+              backgroundImage: `url(${normalizeImage(residence.image).src})`,
+              ...imageVars(residence.image),
+            }}
+            {...edit('image')}
+          />
+        </div>
+
+        <nav className="wrap rd-contents" aria-label={t.contents}>
+          {chapters.map(([id, label], i) => (
+            <button key={id} type="button" onClick={() => jumpTo(id)}>
+              <span className="num">{pad(i + 1)}</span>
+              {label}
+            </button>
+          ))}
+        </nav>
       </header>
 
       {/* ---------- Amenities ---------- */}
-      <section className="rd-block" id="prestations" data-nav-tone="light">
-        <div className="rd-wrap">
+      <section className="sec rd-sec" id="prestations" data-nav-tone="light">
+        {/* Label on top, then text and amenities across the whole width. */}
+        <div className="wrap">
+          <span className="label rd-prestations-label">{t.prestationsEyebrow}</span>
+          {residence.presentation && (
+            <p className="rd-lead" data-reveal {...edit('presentation')}>
+              {residence.presentation}
+            </p>
+          )}
           <Amenities
             items={residence.features}
             editPath={[...residencePath, 'features']}
           />
-
-          {residence.presentation && (
-            <div className="rd-presentation" data-reveal>
-              <span className="rd-eyebrow" data-reveal>
-                {t.prestationsEyebrow}
-              </span>
-              <p className="rd-text" {...edit('presentation')}>
-                {residence.presentation}
-              </p>
-            </div>
-          )}
         </div>
       </section>
 
       {/* ---------- Apartments ---------- */}
-      <section className="rd-block rd-apts" id="appartements" data-nav-tone="light">
-        <div className="rd-wrap">
-          <div className="rd-apts-head">
-            <span className="rd-eyebrow" data-reveal>
-              {t.apartmentsEyebrowPrefix}
-              {t.availableApartments}
-            </span>
-
-            <p className="rd-apts-summary" data-reveal style={{ '--d': '60ms' }}>
-              {residence.apartments.length} {t.lots}
-              {surfaceRange && ` · ${surfaceRange}`}
+      <section
+        className="sec sec--deep rd-sec"
+        id="appartements"
+        data-nav-tone="light"
+      >
+        <div className="wrap">
+          <div className="split rd-apts-head">
+            <div className="split-aside">
+              <span className="label">
+                {t.apartmentsEyebrowPrefix}
+                {t.availableApartments}
+              </span>
+            </div>
+            <p className="split-main d3" data-reveal>
+              {apartments.length} {t.lots}
+              {surfaceRange && <span className="rd-range"> · {surfaceRange}</span>}
             </p>
           </div>
 
-          <ul className="rd-cards">
+          <ul className="rd-lots">
             {apartments.map((apartment, i) => (
-              <li
-                key={apartment.id}
-                data-reveal
-                style={{ '--d': `${(i % 3) * 90}ms` }}
-              >
+              <li key={apartment.id} data-reveal>
                 <Link
                   to={`/residence/${residence.slug}/${apartment.id}`}
-                  className="rd-card"
+                  className="rd-lot"
                 >
-                  <span className="rd-card-media">
+                  <span className="plate rd-lot-media">
                     <img
                       src={normalizeImage(apartment.image).src}
                       alt=""
@@ -184,20 +160,20 @@ function ResidenceDetail() {
                     />
                   </span>
 
-                  <span className="rd-card-body">
-                    <span className="rd-card-top">
-                      <span
-                        className="rd-card-type"
-                        {...edit('apartments', i, 'type')}
-                      >
-                        {apartment.type}
-                      </span>
+                  <span className="rd-lot-num num">{pad(i + 1)}</span>
+
+                  <span className="rd-lot-body">
+                    <span
+                      className="d3 rd-lot-type"
+                      {...edit('apartments', i, 'type')}
+                    >
+                      {apartment.type}
                     </span>
 
-                    <span className="rd-card-facts">
+                    <span className="rd-lot-facts">
                       {Number(apartment.surface) > 0 && (
                         <span {...edit('apartments', i, 'surface')}>
-                          <b>{apartment.surface}</b> m²
+                          {apartment.surface} m²
                         </span>
                       )}
                       {apartment.floor && (
@@ -217,12 +193,19 @@ function ResidenceDetail() {
                       )}
                     </span>
 
-                    <span className="rd-card-foot">
-                      <span className="rd-card-cta">{t.seeLot}</span>
-                      <span className="rd-card-arrow">
-                        <Arrow size={16} />
+                    {apartment.description && (
+                      <span
+                        className="rd-lot-desc"
+                        {...edit('apartments', i, 'description')}
+                      >
+                        {apartment.description}
                       </span>
-                    </span>
+                    )}
+                  </span>
+
+                  <span className="rd-lot-cta">
+                    {t.seeLot}
+                    <Arrow />
                   </span>
                 </Link>
               </li>
@@ -232,111 +215,37 @@ function ResidenceDetail() {
       </section>
 
       {/* ---------- Location ---------- */}
-      <section className="rd-block rd-place" id="localisation" data-nav-tone="light">
-        <div className="rd-wrap">
-          <span className="rd-eyebrow rd-eyebrow--top" data-reveal>
-            {t.localisationEyebrow}
-          </span>
-
-          <p className="rd-place-lead" data-reveal {...edit('place', 'summary')}>
-            {residence.place.summary}
-          </p>
-
-          <div className="rd-place-layout">
-            {/* The map holds its position while the lists scroll past it. */}
-            <div className="rd-map-col" data-reveal>
-              <PlaceMap
-                address={residence.place.address}
-                title={residence.name}
-                editPath={[...residencePath, 'place', 'address']}
-              />
-            </div>
-
-            <div className="rd-place-info">
-              <div className="rd-place-block" data-reveal style={{ '--d': '80ms' }}>
-                <h3 className="pl-mini-title">{t.transports}</h3>
-                <TransportList
-                  transports={residence.place.transports}
-                  editPath={[...residencePath, 'place', 'transports']}
-                />
-              </div>
-
-              <div className="rd-place-block" data-reveal style={{ '--d': '160ms' }}>
-                <h3 className="pl-mini-title">{t.nearby}</h3>
-                <NearbyList
-                  items={residence.place.nearby}
-                  editPath={[...residencePath, 'place', 'nearby']}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PlaceSection
+        residence={residence}
+        residencePath={residencePath}
+        label={t.localisationEyebrow}
+        id="localisation"
+      />
 
       {/* ---------- Gallery ---------- */}
-      <section className="rd-block rd-gallery" id="galerie" data-nav-tone="light">
-        <div className="rd-wrap">
-          <span className="rd-eyebrow rd-eyebrow--top" data-reveal>
-            {t.galerieEyebrow}
-          </span>
-        </div>
-
-        {/* Full-bleed: the strip runs edge to edge, outside the page gutter. */}
-        <div className="rd-marquee" data-reveal>
-          {/* Rendered twice so the track loops seamlessly — the animation
-              shifts it by exactly one copy and restarts. */}
-          <div className="rd-track">
-            {[0, 1].map((copy) =>
-              residence.gallery.map((shot, i) => {
-                const shotImg = normalizeImage(shot.image)
-                return (
-                  <figure
-                    className="rd-slide"
-                    key={`${copy}-${i}`}
-                    aria-hidden={copy === 1 ? 'true' : undefined}
-                  >
-                    <button
-                      type="button"
-                      className="rd-shot"
-                      onClick={() => setLightbox(i)}
-                      tabIndex={copy === 1 ? -1 : undefined}
-                      aria-label={`${t.enlarge} : ${shot.alt}`}
-                      data-cursor={t.enlarge}
-                    >
-                      <img
-                        src={shotImg.src}
-                        alt={copy === 1 ? '' : shot.alt}
-                        loading="lazy"
-                        decoding="async"
-                        style={imageVars(shot.image)}
-                        {...edit('gallery', i, 'image')}
-                      />
-                    </button>
-                    <figcaption {...edit('gallery', i, 'alt')}>{shot.alt}</figcaption>
-                  </figure>
-                )
-              }),
-            )}
-          </div>
+      <section className="sec rd-sec rd-gallery" id="galerie" data-nav-tone="light">
+        <div className="wrap">
+          <ResidenceGallery
+            label={t.galerieEyebrow}
+            shots={residence.gallery}
+            onOpen={setLightbox}
+            editImage={(i) => edit('gallery', i, 'image')}
+          />
         </div>
       </section>
 
-      {/* ---------- CTA ---------- */}
-      <section className="rd-cta" data-nav-tone="dark">
-        <div className="rd-wrap rd-cta-inner">
-          <h2 className="rd-cta-title" data-reveal>
-            {t.wantToVisit}
-            <br />
-            {residence.name}&nbsp;?
+      {/* ---------- Invitation ---------- */}
+      <section className="band" data-nav-tone="dark">
+        <div className="wrap band-inner">
+          <h2 className="d2 band-title">
+            {t.wantToVisit} {residence.name}&nbsp;?
           </h2>
           <Link
-            className="rd-cta-btn"
+            className="btn btn--light"
             to={`/contact?sujet=visite&bien=${encodeURIComponent(residence.name)}`}
-            data-reveal
-            style={{ '--d': '120ms' }}
           >
             {t.bookCall}
-            <Arrow size={16} />
+            <Arrow />
           </Link>
         </div>
       </section>

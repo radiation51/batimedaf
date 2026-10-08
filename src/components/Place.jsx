@@ -3,21 +3,10 @@
  * map with its address plate, and the transport / nearby lists.
  */
 import { Bus, CarSimple, Subway, Tram } from '@phosphor-icons/react'
+import Arrow from './Arrow'
 import { useUI } from '../i18n/useLocalizedContent'
 import { useEdit } from '../content/editable'
 import './Place.css'
-
-const Arrow = ({ size = 15 }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true">
-    <path
-      d="M3.5 8h9M8.5 3.5 13 8l-4.5 4.5"
-      stroke="currentColor"
-      strokeWidth="1.3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-)
 
 /* Paris line colours, so a badge reads at a glance. Anything unlisted falls
    back to ink on cream rather than guessing a colour. */
@@ -59,30 +48,29 @@ function readableInk(hex) {
   return luminance > 0.45 ? '#0a0a0a' : '#fff'
 }
 
-/* A generic mode of transport rather than a numbered line — e.g. Algiers'
-   bus/tramway/car/metro network, which has no line colours to look up.
-   Each gets its own icon and a soft, muted tint (in the site's warm
-   palette rather than a generic transit app's primary colours). */
+/* A generic mode of transport rather than a numbered line, e.g. Algiers'
+   bus, tramway, car and metro, which have no line colours to look up. Each
+   gets its own hairline glyph, in ink like the rest of the page. */
 const MODES = {
-  bus: { Icon: Bus, color: '#9c9457' },
-  tramway: { Icon: Tram, color: '#6f9483' },
-  tram: { Icon: Tram, color: '#6f9483' },
-  voiture: { Icon: CarSimple, color: '#c79a49' },
-  car: { Icon: CarSimple, color: '#c79a49' },
-  métro: { Icon: Subway, color: '#b1798a' },
-  metro: { Icon: Subway, color: '#b1798a' },
+  bus: Bus,
+  tramway: Tram,
+  tram: Tram,
+  voiture: CarSimple,
+  car: CarSimple,
+  métro: Subway,
+  metro: Subway,
 }
 
 /** Renders 'Ligne 9' or 'RER C' as a coloured badge plus its network. */
 export function LineBadge({ line }) {
-  const mode = MODES[String(line).trim().toLowerCase()]
-  if (mode) {
-    const { Icon, color } = mode
+  const Icon = MODES[String(line).trim().toLowerCase()]
+  if (Icon) {
     return (
       <span className="pl-line" title={line}>
-        <span className="pl-mode-badge" style={{ background: color }}>
-          <Icon size={18} weight="fill" color="#fff7f0" />
+        <span className="pl-mode">
+          <Icon size={22} weight="light" />
         </span>
+        <span className="pl-mode-name">{line}</span>
       </span>
     )
   }
@@ -195,8 +183,8 @@ export function PlaceMap({ address, title, editPath = null }) {
           target="_blank"
           rel="noreferrer"
         >
-          <span>{t.directions}</span>
-          <Arrow size={15} />
+          {t.directions}
+          <Arrow />
         </a>
       </div>
     </div>

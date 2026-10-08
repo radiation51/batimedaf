@@ -1,0 +1,87 @@
+.sel {
+  position: relative;
+}
+
+/* Closed: the same tinted field as the inputs beside it. */
+.sel-button {
+  display: block;
+  width: 100%;
+  padding: 0.95rem 2.75rem 0.95rem 1rem;
+  border: 0;
+  border-radius: 0;
+  background: var(--paper-deep)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%231c1b18' stroke-width='1.2'/%3E%3C/svg%3E")
+    no-repeat right 1.1rem center;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Focused or open: the clay rule under the field, like the inputs. */
+.sel-button:focus-visible,
+.sel.is-open .sel-button {
+  outline: none;
+  background-color: #ded7ca;
+  box-shadow: inset 0 -2px 0 var(--clay);
+}
+
+.sel.is-open .sel-button {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 6.5l5-5 5 5' fill='none' stroke='%231c1b18' stroke-width='1.2'/%3E%3C/svg%3E");
+}
+
+/* Open: an ink panel under the field, like the site's dark buttons. */
+.sel-list {
+  position: absolute;
+  z-index: 20;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0.4rem 0;
+  list-style: none;
+  background: var(--ink);
+  color: var(--on-dark);
+  animation: sel-in 0.16s ease both;
+}
+
+.sel-list:focus {
+  outline: none;
+}
+
+@keyframes sel-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.sel-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--on-dark-soft);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sel-list li.is-active {
+  background: rgba(241, 237, 230, 0.08);
+  color: var(--on-dark);
+}
+
+/* The current choice: full strength, with a clay check. */
+.sel-list li[aria-selected='true'] {
+  color: var(--on-dark);
+}
+
+.sel-list li svg {
+  flex: none;
+  color: #e3a688;
+}

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { useLocalizedApartment, useUI } from '../i18n/useLocalizedContent'
+import Arrow from '../components/Arrow'
 import Lightbox from '../components/Lightbox'
-import { PlaceMap, TransportList, NearbyList } from '../components/Place'
+import PlaceSection from '../components/PlaceSection'
 import { useReveal } from '../hooks/useReveal'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { normalizeImage, imageVars } from '../lib/imageStyle'
-import '../styles/page.css'
 import { useEdit, useResidencePath } from '../content/editable'
 import './ApartmentDetail.css'
 
@@ -14,17 +14,7 @@ import './ApartmentDetail.css'
 // (t.all) shown in the UI, so the comparison never breaks on a language switch.
 const ALL = '__all__'
 
-const Arrow = ({ size = 15 }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true">
-    <path
-      d="M3.5 8h9M8.5 3.5 13 8l-4.5 4.5"
-      stroke="currentColor"
-      strokeWidth="1.3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-)
+const pad = (n) => String(n).padStart(2, '0')
 
 function ApartmentDetail() {
   const { slug, apartmentId } = useParams()
@@ -74,11 +64,9 @@ function ApartmentDetail() {
     `${residence.name} — ${apartment.type} (${apartment.reference})`,
   )
 
-  // The apartment ships one photograph; the residence gallery fills out the
-  // strip. A per-apartment `gallery` takes precedence when the data has one.
-  // The apartment ships one photograph; the residence gallery fills out the
-  // grid. When that photograph is already in the gallery, the gallery entry
-  // wins — it carries the room it belongs to.
+  // The apartment's own gallery when it has one; otherwise its photograph
+  // followed by the residence gallery. When that photograph is already in
+  // the gallery, the gallery entry wins — it carries the room it belongs to.
   const apartmentSrc = normalizeImage(apartment.image).src
   const inGallery = residence.gallery.some(
     (g) => normalizeImage(g.image).src === apartmentSrc,
@@ -111,7 +99,15 @@ function ApartmentDetail() {
   const visibleShots =
     room === ALL ? shots : shots.filter((shot) => shot.category === room)
 
-  // Rendered twice: above the grid, and inside the viewer's toolbar.
+  // The facts that are filled in, in reading order.
+  const facts = [
+    ['surface', t.factSurface, Number(apartment.surface) > 0 && `${apartment.surface} m²`],
+    ['floor', t.factFloor, apartment.floor],
+    ['orientation', t.factOrientation, apartment.orientation],
+    ['outdoor', t.factOutdoor, apartment.outdoor],
+  ].filter(([, , value]) => value)
+
+  // Rendered twice: above the images, and inside the viewer's top bar.
   const roomFilter = (
     <div className="ap-rooms">
       {[ALL, ...rooms].map((option) => (
@@ -127,183 +123,147 @@ function ApartmentDetail() {
           aria-pressed={room === option}
         >
           {option === ALL ? t.all : option}
-          <span className="ap-room-count">
+          <sup>
             {option === ALL
               ? shots.length
               : shots.filter((s) => s.category === option).length}
-          </span>
+          </sup>
         </button>
       ))}
     </div>
   )
 
   return (
-    <main className={`pg ap${ready ? ' is-ready' : ''}`} ref={pageRef}>
-      {/* ---------- Visual + copy ---------- */}
+    <main className={`ap${ready ? ' is-ready' : ''}`} ref={pageRef}>
+      {/* ---------- Particulars + photographs ---------- */}
       <section className="ap-main" data-nav-tone="light">
-        <div className="ap-wrap ap-cols">
-          <div className="ap-gallery">
-            {rooms.length > 1 && <div data-reveal>{roomFilter}</div>}
-
-            {/* Images: a plain grid, two per line. */}
-            <ul className="ap-shots" data-reveal>
-              {visibleShots.map((shot, i) => {
-                const shotImg = normalizeImage(shot.image)
-                return (
-                  <li key={i}>
-                    <button
-                      type="button"
-                      className="ap-shot"
-                      onClick={() => setLightbox(i)}
-                      aria-label={`${t.enlarge} : ${shot.alt}`}
-                      data-cursor={t.enlarge}
-                    >
-                      <img
-                        src={shotImg.src}
-                        alt={shot.alt}
-                        loading="lazy"
-                        decoding="async"
-                        style={imageVars(shot.image)}
-                        {...edit(...shot.editPath)}
-                      />
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-
-          {/* Holds its place while the images scroll past. */}
-          <aside className="ap-card" data-reveal style={{ '--d': '100ms' }}>
-            <Link to={`/residence/${residence.slug}`} className="ap-back">
-              <span className="ap-back-icon">
-                <Arrow size={13} />
-              </span>
+        <div className="wrap ap-cols">
+          {/* Holds its place while the photographs scroll past. */}
+          <aside className="ap-info">
+            <Link to={`/residence/${residence.slug}`} className="back">
+              <Arrow size={16} />
               {t.backToResidence}
             </Link>
 
-            <span className="ap-card-ref" {...edit(...residencePath, 'name')}>
+            <span className="label ap-residence" {...edit(...residencePath, 'name')}>
               {residence.name}
             </span>
-            <h1 className="ap-card-title">
-              <span className="pg-mask">
-                <span className="pg-mask-inner" {...edit(...ownPath, 'type')}>
-                  {apartment.type}
-                </span>
-              </span>
+            <h1 className="d2 ap-title" {...edit(...ownPath, 'type')}>
+              {apartment.type}
             </h1>
 
-            <p className="ap-card-lead" {...edit(...ownPath, 'description')}>
+            <p className="ap-lead" {...edit(...ownPath, 'description')}>
               {apartment.description}
             </p>
 
-            <h2 className="ap-mini-title">{t.amenities}</h2>
+            {facts.length > 0 && (
+              <dl className="ap-facts">
+                {facts.map(([key, label, value]) => (
+                  <div key={key}>
+                    <dt className="label">{label}</dt>
+                    <dd {...edit(...ownPath, key)}>{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+
+            <h2 className="label ap-features-title">{t.amenities}</h2>
             <ul className="ap-features">
               {apartment.features.map((feature, i) => (
-                <li key={i} {...edit(...ownPath, 'features', i)}>
-                  <span className="ap-feature-num">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  {feature}
+                <li key={i}>
+                  <span className="num">{pad(i + 1)}</span>
+                  <span {...edit(...ownPath, 'features', i)}>{feature}</span>
                 </li>
               ))}
             </ul>
 
             <div className="ap-actions">
               <Link
-                className="ap-btn"
+                className="btn"
                 to={`/contact?sujet=visite&bien=${contactAbout}`}
               >
                 {t.organizeVisit}
-                <Arrow size={16} />
+                <Arrow />
               </Link>
-              <Link className="ap-btn ap-btn--ghost" to={`/contact?bien=${contactAbout}`}>
+              <Link className="tlink" to={`/contact?bien=${contactAbout}`}>
                 {t.askQuestion}
               </Link>
             </div>
           </aside>
-        </div>
-      </section>
 
-      {/* ---------- Location ---------- */}
-      <section className="ap-place" data-nav-tone="light">
-        <div className="ap-wrap">
-          <span className="pg-eyebrow ap-place-eyebrow" data-reveal>
-            {t.localisation}
-          </span>
+          <div className="ap-gallery">
+            {rooms.length > 1 && roomFilter}
 
-          <p
-            className="ap-place-lead"
-            data-reveal
-            {...edit(...residencePath, 'place', 'summary')}
-          >
-            {residence.place.summary}
-          </p>
-
-          <div className="ap-place-grid">
-            <div data-reveal>
-              <PlaceMap
-                address={residence.place.address}
-                title={residence.name}
-                editPath={[...residencePath, 'place', 'address']}
-              />
-            </div>
-
-            <div className="ap-place-info">
-              <div data-reveal style={{ '--d': '80ms' }}>
-                <h2 className="pl-mini-title">{t.transports}</h2>
-                <TransportList
-                  transports={residence.place.transports}
-                  editPath={[...residencePath, 'place', 'transports']}
-                />
-              </div>
-
-              <div data-reveal style={{ '--d': '160ms' }}>
-                <h2 className="pl-mini-title">{t.nearby}</h2>
-                <NearbyList
-                  items={residence.place.nearby}
-                  editPath={[...residencePath, 'place', 'nearby']}
-                />
-              </div>
-            </div>
+            <ul className="ap-shots">
+              {visibleShots.map((shot, i) => (
+                <li key={`${room}-${i}`}>
+                  <button
+                    type="button"
+                    className="plate ap-shot"
+                    onClick={() => setLightbox(i)}
+                    aria-label={`${t.enlarge} : ${shot.alt}`}
+                  >
+                    <img
+                      src={normalizeImage(shot.image).src}
+                      alt={shot.alt}
+                      loading="lazy"
+                      decoding="async"
+                      style={imageVars(shot.image)}
+                      {...edit(...shot.editPath)}
+                    />
+                  </button>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
 
+      {/* ---------- Location ---------- */}
+      <PlaceSection
+        residence={residence}
+        residencePath={residencePath}
+        label={t.localisation}
+        deep
+        titleTag="h2"
+      />
+
       {/* ---------- Other apartments ---------- */}
       {others.length > 0 && (
-        <section className="pg-block" data-nav-tone="light">
-          <div className="ap-wrap">
-            <span className="pg-eyebrow pg-eyebrow--top" data-reveal>
-              {t.alsoAvailable}
-            </span>
+        <section className="sec" data-nav-tone="light">
+          <div className="wrap">
+            <span className="label ap-others-label">{t.alsoAvailable}</span>
 
             <ul className="ap-others">
-              {others.map((other, i) => (
-                <li key={other.id} data-reveal style={{ '--d': `${i * 70}ms` }}>
+              {others.map((other) => (
+                <li key={other.id} data-reveal>
                   <Link
                     className="ap-other"
                     to={`/residence/${residence.slug}/${other.id}`}
                   >
-                    <span className="ap-other-media">
+                    <span className="plate ap-other-media">
                       <img
                         src={normalizeImage(other.image).src}
                         alt=""
+                        loading="lazy"
                         style={imageVars(other.image)}
                         {...edit(...apartmentPath(other.id), 'image')}
                       />
                     </span>
-                    <span
-                      className="ap-other-type"
-                      {...edit(...apartmentPath(other.id), 'type')}
-                    >
-                      {other.type}
+                    <span className="ap-other-text">
+                      <span
+                        className="ap-other-type"
+                        {...edit(...apartmentPath(other.id), 'type')}
+                      >
+                        {other.type}
+                      </span>
+                      <span className="ap-other-facts">
+                        {[Number(other.surface) > 0 && `${other.surface} m²`, other.outdoor]
+                          .filter(Boolean)
+                          .join(' · ')}
+                      </span>
                     </span>
-                    <span className="ap-other-facts">
-                      {[Number(other.surface) > 0 && `${other.surface} m²`, other.outdoor]
-                        .filter(Boolean)
-                        .join(' · ')}
-                    </span>
+                    <Arrow />
                   </Link>
                 </li>
               ))}
@@ -311,6 +271,7 @@ function ApartmentDetail() {
           </div>
         </section>
       )}
+
       {lightbox !== null && (
         <Lightbox
           shots={visibleShots}

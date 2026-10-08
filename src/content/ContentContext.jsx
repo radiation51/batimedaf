@@ -20,6 +20,23 @@ const SAVE_DEBOUNCE_MS = 800
 
 const ContentContext = createContext(null)
 
+const isObject = (v) => v != null && typeof v === 'object' && !Array.isArray(v)
+
+/**
+ * Saved content over the defaults, two levels deep: a section added to the
+ * defaults later (home.apartments) still shows up under an older save, while
+ * everything the save holds wins.
+ */
+function withDefaults(saved) {
+  const merged = { ...DEFAULT_CONTENT, ...saved }
+  for (const [key, value] of Object.entries(DEFAULT_CONTENT)) {
+    if (isObject(value) && isObject(saved[key])) {
+      merged[key] = { ...value, ...saved[key] }
+    }
+  }
+  return merged
+}
+
 /** Returns a copy of `root` with `path` set to `value`. */
 function applyPath(root, path, value) {
   const clone = Array.isArray(root) ? [...root] : { ...root }
@@ -161,7 +178,7 @@ function loadLocal() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return DEFAULT_CONTENT
-    return { ...DEFAULT_CONTENT, ...JSON.parse(raw) }
+    return withDefaults(JSON.parse(raw))
   } catch {
     return DEFAULT_CONTENT
   }
@@ -217,7 +234,7 @@ export function ContentProvider({ children }) {
 
       if (data?.data) {
         // Merge so content added to the defaults later still shows up.
-        setContent({ ...DEFAULT_CONTENT, ...data.data })
+        setContent(withDefaults(data.data))
       }
       setStatus('remote')
       hydratedRef.current = true

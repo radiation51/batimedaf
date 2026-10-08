@@ -1,20 +1,22 @@
 import Hero from '../components/Hero'
 import Intro from '../components/Intro'
-import ScrollStory from '../components/ScrollStory'
-import Location from '../components/Location'
+import HomeResidences from '../components/HomeResidences'
+import HomeApartments from '../components/HomeApartments'
+import Story from '../components/Story'
 import Gallery from '../components/Gallery'
+import Location from '../components/Location'
 
 function Home() {
   return (
-    <>
+    <main className="home">
       <Hero />
-      {/* Reserves the scroll space the fixed hero occupies. */}
-      <div className="hero-spacer" />
       <Intro />
-      <ScrollStory />
-      <Location />
+      <HomeResidences />
+      <HomeApartments />
+      <Story />
       <Gallery />
-    </>
+      <Location />
+    </main>
   )
 }
 

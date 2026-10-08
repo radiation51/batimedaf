@@ -1,23 +1,35 @@
 /**
- * Global tokens and resets.
- * Optima carries every title; Rethink Sans carries body copy.
+ * Global tokens, resets and the shared page primitives.
+ *
+ * The site reads like a printed architecture monograph: a stone-paper ground,
+ * Newsreader for every title, Hanken Grotesk for information, photographs
+ * set as captioned plates on a 12-column grid. One strong colour (clay) and
+ * one dark (ink); no shadows, no outlines, no rounded corners — the home
+ * gallery's arches and rounds are the one exception.
  */
 
 :root {
-  /* Optima ships with macOS/iOS; the fallbacks keep the same humanist feel
-     elsewhere until a licensed webfont is added. */
-  --heading: 'Optima', 'Optima nova', 'Candara', 'Gill Sans',
-    'Gill Sans MT', 'Segoe UI', sans-serif;
-  --sans: 'Rethink Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+  --serif: 'Newsreader', 'Iowan Old Style', 'Palatino Linotype', Georgia,
+    serif;
+  --sans: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     sans-serif;
 
-  --cream: #fff7f0;
-  /* The warm near-black shared by the gallery, the full menu and the footer. */
-  --dark: #17120f;
-  /* Titles and main copy. Dark bands keep their own #0a0a0a ground. */
-  --ink: #7a5238;
-  --muted: #8a8178;
-  --line: #e4e4e4;
+  --paper: #f1ede6;
+  --paper-deep: #e7e1d6;
+  --ink: #1c1b18;
+  --ink-soft: #58534b;
+  --ink-faint: #6f695f;
+  --clay: #8f4a30;
+  --on-dark: #f1ede6;
+  --on-dark-soft: rgba(241, 237, 230, 0.68);
+
+  --max: 1520px;
+  --gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --col-gap: clamp(1rem, 2vw, 1.75rem);
+  --section: clamp(5rem, 10vw, 9rem);
+  --header-h: 72px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   color-scheme: light;
   -webkit-font-smoothing: antialiased;
@@ -30,6 +42,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* In-page jumps land below the sticky header, not under it. */
+  scroll-padding-top: var(--header-h);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -41,13 +55,11 @@ html {
 body {
   margin: 0;
   min-height: 100svh;
-  background: var(--cream);
+  background: var(--paper);
   color: var(--ink);
   font-family: var(--sans);
   font-size: 16px;
-  line-height: 1.5;
-  /* The fixed hero must never be revealed by an overscroll bounce. */
-  overscroll-behavior-y: none;
+  line-height: 1.6;
 }
 
 /* A line break typed in the admin shows as one on the site. Spaces still
@@ -61,8 +73,13 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: var(--heading);
+  font-family: var(--serif);
   font-weight: 400;
+  margin: 0;
+}
+
+p {
+  margin: 0;
 }
 
 img {
@@ -79,21 +96,461 @@ a {
 }
 
 ::selection {
+  background: var(--clay);
+  color: var(--on-dark);
+}
+
+:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 3px;
+}
+
+/* ---------- Layout ---------- */
+
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--col-gap);
+}
+
+/* Every page fades in on arrival: opacity only, nothing moves. */
+main {
+  display: block;
+  animation: page-in 0.6s ease both;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.sec {
+  padding: var(--section) 0;
+}
+
+.sec--deep {
+  background: var(--paper-deep);
+}
+
+.sec--dark {
   background: var(--ink);
-  color: var(--cream);
+  color: var(--on-dark);
 }
 
-/* ---------- Scrollbar ---------- */
-
-/* Hidden entirely — the page still scrolls normally by wheel, trackpad,
-   touch and keyboard; only the visible track/thumb is removed. */
-html {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* old Edge/IE */
+/* Section opening: the small label on the left, the copy from column 4. */
+.split {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--col-gap);
+  row-gap: 2rem;
 }
 
-::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-  display: none; /* Chrome, Safari, new Edge */
+.split-aside {
+  grid-column: 1 / span 3;
+}
+
+.split-main {
+  grid-column: 4 / -1;
+}
+
+@media (min-width: 900px) {
+  /* The label holds its place while the copy scrolls past. */
+  .split-aside--sticky {
+    position: sticky;
+    top: calc(var(--header-h) + 2rem);
+    align-self: start;
+  }
+}
+
+@media (max-width: 899px) {
+  .split-aside,
+  .split-main {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- Type ---------- */
+
+.label {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.sec--dark .label,
+.band .label {
+  color: var(--on-dark-soft);
+}
+
+.d1,
+.d2,
+.d3 {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-optical-sizing: auto;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.d1 {
+  font-size: clamp(3.25rem, 8.6vw, 9.25rem);
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+}
+
+.d2 {
+  font-size: clamp(2.5rem, 5.4vw, 5.5rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.d3 {
+  font-size: clamp(1.75rem, 2.9vw, 2.875rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.lead {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(1.375rem, 2.3vw, 2.125rem);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  max-width: 34ch;
+}
+
+.body {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  max-width: 58ch;
+}
+
+.sec--dark .body {
+  color: var(--on-dark-soft);
+}
+
+.num {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1rem;
+  letter-spacing: 0;
+  font-variant-numeric: lining-nums;
+}
+
+/* ---------- Actions ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2.5rem;
+  min-height: 56px;
+  padding: 0 1.5rem;
+  border: 0;
+  border-radius: 0;
+  background: var(--ink);
+  color: var(--on-dark);
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.btn:hover {
+  background: var(--clay);
+}
+
+.btn svg {
+  flex-shrink: 0;
+  transition: transform 0.3s var(--ease);
+}
+
+.btn:hover svg {
+  transform: translateX(3px);
+}
+
+.btn--light {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.btn--light:hover {
+  background: var(--ink);
+  color: var(--on-dark);
+}
+
+.btn[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* Text link: underlined, turns clay on hover. */
+.tlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.35em;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.tlink:hover {
+  color: var(--clay);
+}
+
+.sec--dark .tlink:hover,
+.band .tlink:hover {
+  color: var(--on-dark-soft);
+}
+
+/* Small "← Back" link above page titles. */
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.back:hover {
+  color: var(--ink);
+}
+
+.back svg {
+  transform: rotate(180deg);
+}
+
+/* ---------- Images ---------- */
+
+/* A cropped photograph honouring the admin's focal point and zoom. */
+.plate {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: var(--paper-deep);
+}
+
+.plate img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform: scale(var(--zoom, 1));
+  transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
+}
+
+.caption {
+  display: flex;
+  gap: 0.9rem;
+  margin-top: 0.85rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--ink-faint);
+}
+
+.sec--dark .caption {
+  color: var(--on-dark-soft);
+}
+
+/* ---------- Clay band (calls to action) ---------- */
+
+.band {
+  background: var(--clay);
+  color: var(--on-dark);
+  padding: clamp(4.5rem, 9vw, 8rem) 0;
+}
+
+.band-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2.5rem;
+}
+
+.band-title {
+  max-width: 16ch;
+}
+
+/* ---------- Accordion ---------- */
+
+.acc {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.acc-item {
+  transition: background-color 0.3s ease;
+}
+
+.acc-item.is-open {
+  background: var(--paper-deep);
+}
+
+.sec--deep .acc-item.is-open {
+  background: var(--paper);
+}
+
+.acc-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 1.5rem;
+  width: 100%;
+  padding: 1.6rem 1.5rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.acc-head:hover .acc-title {
+  color: var(--clay);
+}
+
+.acc-num {
+  color: var(--ink-faint);
+}
+
+.acc-title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(1.25rem, 2vw, 1.625rem);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  transition: color 0.2s ease;
+}
+
+/* A plus that turns into a minus: two strokes, one of them folding flat. */
+.acc-sign {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  align-self: center;
+}
+
+.acc-sign i {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  margin-top: -0.75px;
+  background: currentColor;
+  transition: transform 0.4s var(--ease);
+}
+
+.acc-sign i:last-child {
+  transform: rotate(90deg);
+}
+
+.acc-item.is-open .acc-sign i:last-child {
+  transform: rotate(0deg);
+}
+
+/* grid-template-rows animates cleanly to auto height. */
+.acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s var(--ease);
+}
+
+.acc-item.is-open .acc-panel {
+  grid-template-rows: 1fr;
+}
+
+.acc-panel > p {
+  overflow: hidden;
+  padding: 0 1.5rem;
+  color: var(--ink-soft);
+  line-height: 1.7;
+  max-width: 64ch;
+  opacity: 0;
+  transition: opacity 0.35s ease, padding 0.5s var(--ease);
+}
+
+.acc-item.is-open .acc-panel > p {
+  opacity: 1;
+  padding-bottom: 1.75rem;
+}
+
+/* Numbered items indent their answer under the question. */
+.acc-panel > p.is-indented {
+  padding-left: calc(1.5rem + 1.5rem + 1.6ch);
+}
+
+@media (max-width: 640px) {
+  .acc-head {
+    padding: 1.35rem 1rem;
+    gap: 1rem;
+  }
+
+  .acc-panel > p,
+  .acc-panel > p.is-indented {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* ---------- Reveals: opacity only, nothing slides or floats ---------- */
+
+.is-ready [data-reveal] {
+  opacity: 0;
+  transition: opacity 0.9s ease;
+  transition-delay: var(--d, 0ms);
+}
+
+.is-ready [data-reveal].is-visible {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main {
+    animation: none;
+  }
+
+  .is-ready [data-reveal] {
+    opacity: 1;
+    transition: none;
+  }
+
+  .acc-panel,
+  .acc-panel > p,
+  .acc-sign i {
+    transition: none;
+  }
 }

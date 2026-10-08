@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import Accordion from '../components/Accordion'
+import Arrow from '../components/Arrow'
+import Select from '../components/Select'
 import { useLocalizedContent, useUI } from '../i18n/useLocalizedContent'
 import { useReveal } from '../hooks/useReveal'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { sendMessage } from '../lib/messages'
-import '../styles/page.css'
 import { useEdit } from '../content/editable'
 import './Contact.css'
 
@@ -76,20 +77,16 @@ function Contact() {
   }
 
   return (
-    <main className={`pg ct${ready ? ' is-ready' : ''}`} ref={pageRef}>
+    <main className={`ct${ready ? ' is-ready' : ''}`} ref={pageRef}>
       {/* The form sits in the first screen: no scrolling to reach it. */}
       <section className="ct-top" data-nav-tone="light">
-        <div className="pg-wrap ct-cols">
+        <div className="wrap ct-cols">
           <div className="ct-aside">
-            <span className="pg-eyebrow ct-kicker" {...edit('kicker')}>
+            <span className="label" {...edit('kicker')}>
               {c.kicker}
             </span>
-            <h1 className="ct-title">
-              <span className="pg-mask">
-                <span className="pg-mask-inner" {...edit('title')}>
-                  {c.title}
-                </span>
-              </span>
+            <h1 className="d2 ct-title" {...edit('title')}>
+              {c.title}
             </h1>
             <p className="ct-sub" {...edit('sub')}>
               {c.sub}
@@ -97,7 +94,7 @@ function Contact() {
 
             <dl className="ct-details">
               <div>
-                <dt>{t.phone}</dt>
+                <dt className="label">{t.phone}</dt>
                 <dd>
                   <a href={`tel:${c.phone.replace(/\s/g, '')}`} {...edit('phone')}>
                     {c.phone}
@@ -105,7 +102,7 @@ function Contact() {
                 </dd>
               </div>
               <div>
-                <dt>{t.email}</dt>
+                <dt className="label">{t.email}</dt>
                 <dd>
                   <a href={`mailto:${c.email}`} {...edit('email')}>
                     {c.email}
@@ -113,28 +110,24 @@ function Contact() {
                 </dd>
               </div>
               <div>
-                <dt>{t.address}</dt>
-                <dd className="ct-pre" {...edit('address')}>
-                  {c.address}
-                </dd>
+                <dt className="label">{t.address}</dt>
+                <dd {...edit('address')}>{c.address}</dd>
               </div>
               <div>
-                <dt>{t.hours}</dt>
-                <dd className="ct-pre" {...edit('hours')}>
-                  {c.hours}
-                </dd>
+                <dt className="label">{t.hours}</dt>
+                <dd {...edit('hours')}>{c.hours}</dd>
               </div>
             </dl>
           </div>
 
-          <div className="ct-form-card">
+          <div className="ct-form-col">
             {sent ? (
               <div className="ct-sent" role="status">
-                <h2>{t.formSentTitle}</h2>
+                <h2 className="d3">{t.formSentTitle}</h2>
                 <p>{t.formSentThanks(form.name.split(' ')[0] || '')}</p>
                 <button
                   type="button"
-                  className="ct-reset"
+                  className="tlink"
                   onClick={() => {
                     setForm({ ...EMPTY, subject: c.subjects[0] })
                     setSent(false)
@@ -144,7 +137,7 @@ function Contact() {
                 </button>
               </div>
             ) : (
-              <form className="ct-form" onSubmit={handleSubmit} noValidate={false}>
+              <form className="ct-form" onSubmit={handleSubmit}>
                 <div className="ct-field">
                   <label htmlFor="ct-name">{t.formName}</label>
                   <input
@@ -182,26 +175,24 @@ function Contact() {
                 </div>
 
                 <div className="ct-field">
-                  <label htmlFor="ct-subject">{t.formSubject}</label>
-                  <select
+                  <label id="ct-subject-label" htmlFor="ct-subject">
+                    {t.formSubject}
+                  </label>
+                  <Select
                     id="ct-subject"
+                    labelId="ct-subject-label"
                     value={form.subject}
-                    onChange={set('subject')}
+                    options={c.subjects}
+                    onChange={(subject) => setForm((f) => ({ ...f, subject }))}
                     {...edit('subjects')}
-                  >
-                    {c.subjects.map((subject, i) => (
-                      <option key={i} value={subject}>
-                        {subject}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
 
                 <div className="ct-field">
                   <label htmlFor="ct-message">{t.formMessage}</label>
                   <textarea
                     id="ct-message"
-                    rows="5"
+                    rows="6"
                     required
                     value={form.message}
                     onChange={set('message')}
@@ -225,20 +216,13 @@ function Contact() {
                   </p>
                 )}
 
-                <button type="submit" className="ct-submit" disabled={sending}>
-                  {sending ? t.formSending : t.formSend}
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                    <path
-                      d="M3.5 8h9M8.5 3.5 13 8l-4.5 4.5"
-                      stroke="currentColor"
-                      strokeWidth="1.3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-
-                <p className="ct-legal">{t.formLegal}</p>
+                <div className="ct-submit-row">
+                  <button type="submit" className="btn" disabled={sending}>
+                    {sending ? t.formSending : t.formSend}
+                    <Arrow />
+                  </button>
+                  <p className="ct-legal">{t.formLegal}</p>
+                </div>
               </form>
             )}
           </div>
@@ -246,14 +230,14 @@ function Contact() {
       </section>
 
       {/* ---------- FAQ ---------- */}
-      <section className="pg-block" data-nav-tone="light">
-        <div className="pg-wrap pg-split">
-          <div className="pg-split-aside">
-            <span className="pg-eyebrow" data-reveal {...edit('faqTitle')}>
+      <section className="sec sec--deep" data-nav-tone="light">
+        <div className="wrap split">
+          <div className="split-aside split-aside--sticky">
+            <span className="label" {...edit('faqTitle')}>
               {c.faqTitle}
             </span>
           </div>
-          <div>
+          <div className="split-main">
             <Accordion items={c.faq} editPath={['contact', 'faq']} />
           </div>
         </div>

@@ -1,0 +1,58 @@
+.rg-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+/* One large photograph on the left, four small ones in a square beside it. */
+.rg {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: repeat(2, clamp(170px, 17vw, 280px));
+  gap: clamp(0.5rem, 1vw, 0.875rem);
+}
+
+.rg li:first-child {
+  grid-row: 1 / span 2;
+}
+
+/* Fewer than five photographs: the large one takes the full height alone. */
+.rg li:only-child {
+  grid-column: 1 / -1;
+}
+
+.rg-shot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  cursor: zoom-in;
+}
+
+.rg-shot img {
+  transition: opacity 0.3s ease;
+}
+
+.rg-shot:hover img {
+  opacity: 0.88;
+}
+
+@media (max-width: 640px) {
+  .rg {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: none;
+    grid-auto-rows: 130px;
+  }
+
+  .rg li:first-child {
+    grid-column: 1 / -1;
+    grid-row: span 2;
+  }
+}

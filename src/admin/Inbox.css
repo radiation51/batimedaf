@@ -93,7 +93,7 @@
 
 .ib-top h1 {
   margin: 0 0 0.35rem;
-  font-family: var(--heading);
+  font-family: var(--serif);
   font-weight: 400;
   font-size: clamp(2rem, 5vw, 2.75rem);
 }
@@ -308,7 +308,7 @@
 
 .ib-detail h2 {
   margin: 0.3rem 0 1.25rem;
-  font-family: var(--heading);
+  font-family: var(--serif);
   font-weight: 400;
   font-size: 1.8rem;
 }

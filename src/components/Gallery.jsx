@@ -1,106 +1,98 @@
-import { useEffect, useRef, useState } from 'react'
-import { useLocalizedContent } from '../i18n/useLocalizedContent'
+import { useState } from 'react'
+import Lightbox from './Lightbox'
+import { useLocalizedContent, useUI } from '../i18n/useLocalizedContent'
 import { normalizeImage, imageVars } from '../lib/imageStyle'
-import { useEdit } from '../content/editable'
+import { useEdit, useEditMode } from '../content/editable'
 import './Gallery.css'
 
+const pad = (n) => String(n).padStart(2, '0')
+
+/* The shapes the photographs are cut to, in turn: an arch, a landscape, a
+   round, an upright. */
+const SHAPES = ['arch', 'land', 'round', 'tall']
+
+/**
+ * The home page gallery: a slow band of photographs crossing the page,
+ * bottom-aligned like a street of façades. The list is drawn twice so the
+ * band loops without a seam; the copy is hidden from assistive tech.
+ * Hovering pauses it, a click opens the viewer. Reduced motion and the
+ * admin's editor get one still row that scrolls by hand instead.
+ */
 function Gallery() {
-  const content = useLocalizedContent()
-  const { eyebrow, title, images } = content.home.gallery
-  const edit = useEdit(['home', 'gallery'])
+  const { eyebrow, title, images } = useLocalizedContent().home.reel
+  const edit = useEdit(['home', 'reel'])
+  const still = useEditMode()
+  const t = useUI()
+  // Index of the photograph shown full screen, or null.
+  const [open, setOpen] = useState(null)
 
-  const sectionRef = useRef(null)
-  // The hidden start state is only applied once JS is running, so the gallery
-  // still renders normally if IntersectionObserver never fires.
-  const [animated, setAnimated] = useState(false)
-
-  useEffect(() => {
-    const root = sectionRef.current
-    if (!root || typeof IntersectionObserver === 'undefined') return
-
-    setAnimated(true)
-
-    const targets = root.querySelectorAll('[data-reveal]')
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return
-          entry.target.classList.add('is-visible')
-          observer.unobserve(entry.target) // reveal once, then stop watching
-        })
-      },
-      { rootMargin: '0px 0px -12% 0px', threshold: 0.15 },
-    )
-
-    targets.forEach((el) => observer.observe(el))
-
-    // Safety net: the reveal starts from opacity 0, so if the observer never
-    // reports (odd viewports, restored scroll position, embedded contexts)
-    // the gallery would stay invisible. Force it visible after a beat.
-    const fallback = setTimeout(() => {
-      targets.forEach((el) => el.classList.add('is-visible'))
-    }, 2500)
-
-    return () => {
-      clearTimeout(fallback)
-      observer.disconnect()
-    }
-  }, [images])
+  const row = (copy) => (
+    <ul className="reel-row" aria-hidden={copy || undefined}>
+      {images.map((shot, i) => (
+        <li key={i} className={`reel-item reel-item--${SHAPES[i % SHAPES.length]}`}>
+          <button
+            type="button"
+            className="plate reel-shot"
+            onClick={() => setOpen(i)}
+            tabIndex={copy ? -1 : undefined}
+            aria-label={`${t.enlarge}${shot.alt ? ` : ${shot.alt}` : ''}`}
+          >
+            <img
+              src={normalizeImage(shot.image).src}
+              alt={copy ? '' : (shot.alt ?? '')}
+              loading="lazy"
+              decoding="async"
+              style={imageVars(shot.image)}
+              {...(copy ? {} : edit('images', i, 'image'))}
+            />
+          </button>
+          <p className="caption">
+            <span className="num">{pad(i + 1)}</span>
+            {shot.caption && (
+              <span {...(copy ? {} : edit('images', i, 'caption'))}>
+                {shot.caption}
+              </span>
+            )}
+          </p>
+        </li>
+      ))}
+    </ul>
+  )
 
   return (
-    <section
-      className={`gallery${animated ? ' is-animated' : ''}`}
-      ref={sectionRef}
-      data-nav-tone="dark"
-    >
-      <div className="gallery-inner">
-        <header className="gallery-header">
-          <span className="gallery-eyebrow" data-reveal {...edit('eyebrow')}>
-            {eyebrow}
-          </span>
-          <h2 className="gallery-title" data-reveal {...edit('title')}>
+    <section className="sec reel" data-nav-tone="light">
+      <div className="wrap">
+        <div className="split reel-head">
+          <div className="split-aside">
+            <span className="label" {...edit('eyebrow')}>
+              {eyebrow}
+            </span>
+          </div>
+          <h2 className="split-main d2" {...edit('title')}>
             {title}
           </h2>
-        </header>
-      </div>
-
-      <div className="gallery-marquee" data-reveal>
-        {/* The list is rendered twice so the track can loop seamlessly: the
-            animation shifts it by exactly one copy and restarts. */}
-        <div className="gallery-track">
-          {[0, 1].map((copy) =>
-            images.map((item, i) => {
-              const img = normalizeImage(item.image)
-              return (
-                <figure
-                  className="gallery-item"
-                  key={`${copy}-${i}`}
-                  aria-hidden={copy === 1 ? 'true' : undefined}
-                >
-                  <div className="gallery-media">
-                    <img
-                      src={img.src}
-                      alt={copy === 1 ? '' : item.alt}
-                      loading="lazy"
-                      decoding="async"
-                      style={imageVars(item.image)}
-                      {...edit('images', i, 'image')}
-                    />
-                  </div>
-                  {item.caption && (
-                    <figcaption
-                      className="gallery-caption"
-                      {...edit('images', i, 'caption')}
-                    >
-                      {item.caption}
-                    </figcaption>
-                  )}
-                </figure>
-              )
-            }),
-          )}
         </div>
       </div>
+
+      <div className={`reel-view${still ? ' is-still' : ''}`}>
+        <div
+          className="reel-track"
+          style={{ '--reel-duration': `${images.length * 9}s` }}
+        >
+          {row(false)}
+          {!still && row(true)}
+        </div>
+      </div>
+
+      {open !== null && (
+        <Lightbox
+          shots={images}
+          index={open}
+          onIndex={setOpen}
+          onClose={() => setOpen(null)}
+          captionKey="caption"
+        />
+      )}
     </section>
   )
 }

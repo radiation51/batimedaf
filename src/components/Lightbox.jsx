@@ -1,33 +1,27 @@
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
+import Arrow from './Arrow'
 import { normalizeImage } from '../lib/imageStyle'
 import { useUI } from '../i18n/useLocalizedContent'
 import './Lightbox.css'
 
-const Arrow = ({ size = 18 }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true">
-    <path
-      d="M3.5 8h9M8.5 3.5 13 8l-4.5 4.5"
-      stroke="currentColor"
-      strokeWidth="1.3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-)
+const pad = (n) => String(n).padStart(2, '0')
 
 /**
- * Full-screen image viewer shared by the residence and apartment pages.
+ * Full-screen image viewer shared by the galleries.
  *
  * `index` is controlled by the caller so the gallery it came from stays the
- * single source of truth; `toolbar` renders above the image, for pages that
- * keep their filter reachable while the viewer is open.
+ * single source of truth; `toolbar` renders in the top bar, for pages that
+ * keep their filter reachable while the viewer is open. The caption reads
+ * `shot[captionKey]`, falling back to the alt text.
  */
-function Lightbox({ shots, index, onIndex, onClose, toolbar, label }) {
+function Lightbox({ shots, index, onIndex, onClose, toolbar, label, captionKey = 'alt' }) {
   const t = useUI()
   // Read inside the key handler, which must not re-bind on every render.
   const stateRef = useRef({ shots, index })
-  stateRef.current = { shots, index }
+  useEffect(() => {
+    stateRef.current = { shots, index }
+  })
 
   useEffect(() => {
     const onKey = (e) => {
@@ -50,73 +44,55 @@ function Lightbox({ shots, index, onIndex, onClose, toolbar, label }) {
   const shot = shots[index]
   if (!shot) return null
 
-  const step = (delta) => (e) => {
-    e.stopPropagation()
+  const caption = shot[captionKey] || shot.alt
+  const step = (delta) => () =>
     onIndex((index + delta + shots.length) % shots.length)
-  }
 
-  // Rendered into <body>: the page wrapper creates a stacking context at
-  // z-index 1, which would trap the viewer underneath the navbar.
+  // Rendered into <body>, above the sticky bar and every page layer.
   return createPortal(
-    <div
-      className="lb"
-      role="dialog"
-      aria-modal="true"
-      aria-label={label ?? t.gallery}
-      onClick={onClose}
-    >
-      {/* Controls sit above the backdrop but must not close it when used. */}
-      <div className="lb-bar" onClick={(e) => e.stopPropagation()}>
-        {toolbar}
-        <button
-          type="button"
-          className="lb-close"
-          aria-label={t.lightboxClose}
-          onClick={onClose}
-        >
-          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path
-              d="m4 4 8 8M12 4l-8 8"
-              stroke="currentColor"
-              strokeWidth="1.3"
-              strokeLinecap="round"
-            />
-          </svg>
+    <div className="lb" role="dialog" aria-modal="true" aria-label={label ?? t.gallery}>
+      <div className="lb-bar">
+        <span className="lb-count">
+          {pad(index + 1)} / {pad(shots.length)}
+        </span>
+        <div className="lb-tools">{toolbar}</div>
+        <button type="button" className="lb-close" onClick={onClose}>
+          {t.lightboxClose}
         </button>
       </div>
 
-      <figure className="lb-figure" onClick={(e) => e.stopPropagation()}>
-        {/* Full, uncropped photo — the admin's crop only shapes the
-            thumbnail, not the viewer that exists to show the whole thing. */}
-        <img src={normalizeImage(shot.image).src} alt={shot.alt} />
-        <figcaption>
-          <span>{shot.alt}</span>
-          <span className="lb-count">
-            {index + 1} / {shots.length}
-          </span>
-        </figcaption>
-      </figure>
+      {/* A click on the empty stage closes, a click on the photo does not. */}
+      <div className="lb-stage" onClick={onClose}>
+        {/* Full, uncropped photo: the admin's crop only shapes thumbnails. */}
+        <img
+          src={normalizeImage(shot.image).src}
+          alt={shot.alt ?? ''}
+          onClick={(e) => e.stopPropagation()}
+        />
+      </div>
 
-      {shots.length > 1 && (
-        <>
-          <button
-            type="button"
-            className="lb-nav lb-prev"
-            aria-label={t.lightboxPrev}
-            onClick={step(-1)}
-          >
-            <Arrow />
-          </button>
-          <button
-            type="button"
-            className="lb-nav lb-next"
-            aria-label={t.lightboxNext}
-            onClick={step(1)}
-          >
-            <Arrow />
-          </button>
-        </>
-      )}
+      <div className="lb-foot">
+        <p className="lb-caption">{caption}</p>
+        {shots.length > 1 && (
+          <div className="lb-nav">
+            <button
+              type="button"
+              className="lb-prev"
+              aria-label={t.lightboxPrev}
+              onClick={step(-1)}
+            >
+              <Arrow size={22} />
+            </button>
+            <button
+              type="button"
+              aria-label={t.lightboxNext}
+              onClick={step(1)}
+            >
+              <Arrow size={22} />
+            </button>
+          </div>
+        )}
+      </div>
     </div>,
     document.body,
   )

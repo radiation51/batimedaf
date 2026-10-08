@@ -1,38 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import Arrow from '../components/Arrow'
 import { useLocalizedContent, useUI } from '../i18n/useLocalizedContent'
-import { useReveal, useCountUp } from '../hooks/useReveal'
+import { useReveal } from '../hooks/useReveal'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { normalizeImage, imageVars } from '../lib/imageStyle'
 import { useEdit } from '../content/editable'
 import './About.css'
 
-const Arrow = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill="none" aria-hidden="true">
-    <path
-      d="M3.5 8h9M8.5 3.5 13 8l-4.5 4.5"
-      stroke="currentColor"
-      strokeWidth="1.3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-)
-
-function Figure({ figure, active, index }) {
-  const value = useCountUp(figure.value, active)
-  const edit = useEdit(['about', 'figures', index])
-  return (
-    <div className="ab-figure" data-reveal style={{ '--d': `${index * 90}ms` }}>
-      <span className="ab-figure-value" {...edit('value')}>
-        {value.toLocaleString('fr-FR')}
-      </span>
-      <span className="ab-figure-label" {...edit('label')}>
-        {figure.label}
-      </span>
-    </div>
-  )
-}
+const pad = (n) => String(n).padStart(2, '0')
 
 function About() {
   const content = useLocalizedContent()
@@ -46,151 +21,106 @@ function About() {
 
   const { ref: pageRef, ready } = useReveal([c])
 
-  const figuresRef = useRef(null)
-  const [figuresActive, setFiguresActive] = useState(false)
-
-  useEffect(() => {
-    const el = figuresRef.current
-    if (!el || typeof IntersectionObserver === 'undefined') {
-      setFiguresActive(true)
-      return
-    }
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setFiguresActive(true)
-          observer.disconnect()
-        }
-      },
-      { threshold: 0.3 },
-    )
-    observer.observe(el)
-    const fallback = setTimeout(() => setFiguresActive(true), 2500)
-    return () => {
-      clearTimeout(fallback)
-      observer.disconnect()
-    }
-  }, [])
-
   return (
     <main className={`ab${ready ? ' is-ready' : ''}`} ref={pageRef}>
-      {/* ---------- I. Ouverture — texte seul, aucune image ---------- */}
-      <header className="ab-open" data-nav-tone="light">
-        <div className="ab-wrap ab-open-inner">
-          <span className="ab-kicker" data-reveal {...edit('kicker')}>
-            {c.kicker}
-          </span>
-
-          <h1 className="ab-open-title">
-            {c.titleLines.map((line, i) => (
-              <span className="ab-mask" key={i}>
-                <span
-                  className="ab-mask-inner"
-                  style={{ '--md': `${0.25 + i * 0.12}s` }}
-                  {...edit('titleLines', i)}
-                >
-                  {line}
-                </span>
-              </span>
-            ))}
-          </h1>
-
-          <p className="ab-open-sub" data-reveal style={{ '--d': '520ms' }}>
-            {t.aboutSub}
-          </p>
-
-          <span className="ab-scroll-cue" data-reveal style={{ '--d': '700ms' }}>
-            <span className="ab-scroll-line" aria-hidden="true">
-              <span />
+      {/* ---------- Opening: words only ---------- */}
+      <header className="wrap ab-open" data-nav-tone="light">
+        <span className="label" {...edit('kicker')}>
+          {c.kicker}
+        </span>
+        <h1 className="d1 ab-title">
+          {c.titleLines.map((line, i) => (
+            <span className="ab-line" key={i} {...edit('titleLines', i)}>
+              {line}
             </span>
-            {t.scrollCue}
-          </span>
-        </div>
+          ))}
+        </h1>
+        <p className="lead ab-sub">{t.aboutSub}</p>
       </header>
 
-      {/* ---------- II. Méthode ---------- */}
-      <section className="ab-method" data-nav-tone="light">
-        <div className="ab-wrap">
-          <span className="ab-eyebrow" data-reveal>
-            {t.methodEyebrow}
-          </span>
-
-          <ol className="ab-rules">
+      {/* ---------- Method ---------- */}
+      <section className="sec ab-method" data-nav-tone="light">
+        <div className="wrap split">
+          <div className="split-aside">
+            <span className="label">{t.methodEyebrow}</span>
+          </div>
+          <ol className="split-main ab-rules">
             {c.principles.map((principle, i) => (
-              <li key={i} data-reveal style={{ '--d': `${i * 90}ms` }}>
-                <span className="ab-rule-num">0{i + 1}</span>
-                <h3 {...edit('principles', i, 'title')}>{principle.title}</h3>
-                <p {...edit('principles', i, 'text')}>{principle.text}</p>
+              <li key={i} data-reveal style={{ '--d': `${(i % 2) * 90}ms` }}>
+                <span className="num">{pad(i + 1)}</span>
+                <h2 className="ab-rule-title" {...edit('principles', i, 'title')}>
+                  {principle.title}
+                </h2>
+                <p className="body" {...edit('principles', i, 'text')}>
+                  {principle.text}
+                </p>
               </li>
             ))}
           </ol>
         </div>
       </section>
 
-      {/* ---------- III. Réalisations — les deux programmes en avant ---------- */}
-      <section className="ab-showcase" data-nav-tone="dark">
-        <div className="ab-wrap">
-          <span className="ab-kicker ab-showcase-kicker" data-reveal>
-            {t.realisationsEyebrow}
-          </span>
-          <h2 className="ab-showcase-title" data-reveal style={{ '--d': '80ms' }}>
-            {t.realisationsTitle}
-          </h2>
-
-          <div className="ab-showcase-grid">
-            {residences.map((residence, i) => (
-              <Link
-                key={residence.slug}
-                to={`/residence/${residence.slug}`}
-                className="ab-showcase-card"
-                data-reveal
-                style={{ '--d': `${180 + i * 120}ms` }}
-              >
-                <span className="ab-showcase-media">
-                  <img
-                    src={normalizeImage(residence.image).src}
-                    alt=""
-                    loading="lazy"
-                    style={imageVars(residence.image)}
-                    {...editRoot('residences', i, 'image')}
-                  />
-                </span>
-                <span className="ab-showcase-body">
-                  <span className="ab-showcase-num">0{i + 1}</span>
-                  <span
-                    className="ab-showcase-name"
-                    {...editRoot('residences', i, 'name')}
-                  >
-                    {residence.name}
-                  </span>
-                  <span
-                    className="ab-showcase-tagline"
-                    {...editRoot('residences', i, 'tagline')}
-                  >
-                    {residence.tagline}
-                  </span>
-                  <span className="ab-showcase-meta">
-                    {residence.meta.map((item, j) => (
-                      <span key={j} {...editRoot('residences', i, 'meta', j)}>
-                        {item}
-                      </span>
-                    ))}
-                  </span>
-                  <span className="ab-showcase-cta">
-                    {t.discover}
-                    <Arrow size={15} />
-                  </span>
-                </span>
-              </Link>
-            ))}
+      {/* ---------- Programmes ---------- */}
+      <section className="sec sec--dark" data-nav-tone="dark">
+        <div className="wrap">
+          <div className="split ab-show-head">
+            <div className="split-aside">
+              <span className="label">{t.realisationsEyebrow}</span>
+            </div>
+            <h2 className="split-main d2" data-reveal>
+              {t.realisationsTitle}
+            </h2>
           </div>
+
+          <ul className="ab-show">
+            {residences.map((residence, i) => (
+              <li key={residence.slug} data-reveal style={{ '--d': `${i * 120}ms` }}>
+                <Link to={`/residence/${residence.slug}`} className="ab-show-card">
+                  <span className="plate ab-show-media">
+                    <img
+                      src={normalizeImage(residence.image).src}
+                      alt=""
+                      loading="lazy"
+                      style={imageVars(residence.image)}
+                      {...editRoot('residences', i, 'image')}
+                    />
+                  </span>
+                  <span className="ab-show-body">
+                    <span className="num ab-show-num">{pad(i + 1)}</span>
+                    <span className="ab-show-text">
+                      <span
+                        className="d3 ab-show-name"
+                        {...editRoot('residences', i, 'name')}
+                      >
+                        {residence.name}
+                      </span>
+                      <span
+                        className="ab-show-tagline"
+                        {...editRoot('residences', i, 'tagline')}
+                      >
+                        {residence.tagline}
+                      </span>
+                      <span className="ab-show-meta">
+                        {residence.meta.map((item, j) => (
+                          <span key={j} {...editRoot('residences', i, 'meta', j)}>
+                            {item}
+                          </span>
+                        ))}
+                      </span>
+                    </span>
+                    <Arrow size={22} />
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
-      {/* ---------- IV. Portrait ---------- */}
-      <section className="ab-portrait" data-nav-tone="dark">
-        <div className="ab-wrap ab-portrait-grid">
-          <div className="ab-portrait-media" data-reveal>
+      {/* ---------- Studio ---------- */}
+      <section className="sec" data-nav-tone="light">
+        <div className="wrap ab-studio">
+          <div className="plate ab-studio-media" data-reveal>
             <img
               src={normalizeImage(c.image).src}
               alt=""
@@ -199,42 +129,25 @@ function About() {
               {...edit('image')}
             />
           </div>
-          <div className="ab-portrait-copy">
-            <span className="ab-eyebrow" data-reveal>
-              {t.atelierEyebrow}
-            </span>
-            <h2 className="ab-portrait-title" data-reveal style={{ '--d': '80ms' }}>
+          <div className="ab-studio-copy">
+            <span className="label">{t.atelierEyebrow}</span>
+            <h2 className="d3 ab-studio-title" data-reveal>
               {t.atelierTitle}
             </h2>
-            <p data-reveal style={{ '--d': '160ms' }}>
+            <p className="body" data-reveal>
               {t.atelierText}
             </p>
           </div>
         </div>
       </section>
 
-      {/* ---------- V. Chiffres ---------- */}
-      <section className="ab-figures" ref={figuresRef} data-nav-tone="light">
-        <div className="ab-wrap ab-figures-grid">
-          {c.figures.map((figure, i) => (
-            <Figure key={i} figure={figure} index={i} active={figuresActive} />
-          ))}
-        </div>
-      </section>
-
-      {/* ---------- VI. Sortie ---------- */}
-      <section className="ab-cta" data-nav-tone="dark">
-        <div className="ab-wrap ab-cta-inner">
-          <h2 className="ab-cta-title" data-reveal {...edit('ctaTitle')}>
+      {/* ---------- Invitation ---------- */}
+      <section className="band" data-nav-tone="dark">
+        <div className="wrap band-inner">
+          <h2 className="d2 band-title" {...edit('ctaTitle')}>
             {c.ctaTitle}
           </h2>
-          <Link
-            className="ab-cta-btn"
-            to="/residence"
-            data-reveal
-            style={{ '--d': '120ms' }}
-            {...edit('ctaLabel')}
-          >
+          <Link className="btn btn--light" to="/residence" {...edit('ctaLabel')}>
             {c.ctaLabel}
             <Arrow />
           </Link>

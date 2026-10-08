@@ -1,11 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import Arrow from './Arrow'
 import { useLocalizedContent, useUI } from '../i18n/useLocalizedContent'
 import { normalizeImage, imageVars } from '../lib/imageStyle'
 import { useEdit } from '../content/editable'
 import './Hero.css'
 
-const SLIDE_MS = 5000
+const SLIDE_MS = 6000
 
+const pad = (n) => String(n).padStart(2, '0')
+
+/**
+ * The cover of the site, set like the opening spread of a book: the title
+ * large on the paper, the pitch beside it, then one wide photograph whose
+ * slides cross-fade in place. Nothing zooms, drifts or overlaps.
+ */
 function Hero() {
   const content = useLocalizedContent()
   const t = useUI()
@@ -13,48 +22,16 @@ function Hero() {
   const edit = useEdit(['home', 'hero'])
   const slides = hero.images?.length ? hero.images : [hero.image].filter(Boolean)
 
-  const parallaxRef = useRef(null)
   const [active, setActive] = useState(0)
+  // Clamped: the admin can delete the slide that is on screen.
+  const shown = Math.min(active, Math.max(slides.length - 1, 0))
 
-  // Scroll parallax: applied to a wrapping layer so it never fights the
-  // per-slide zoom, which animates each image's own transform independently.
-  useEffect(() => {
-    let ticking = false
-
-    const compute = () => {
-      ticking = false
-      const y = window.scrollY || 0
-      const viewportHeight =
-        window.innerHeight || document.documentElement.clientHeight || 0
-      if (!viewportHeight || !parallaxRef.current) return
-
-      const progress = Math.min(Math.max(y / viewportHeight, 0), 1)
-      parallaxRef.current.style.transform = `translateY(${progress * 60}px)`
-    }
-
-    const handleScroll = () => {
-      if (ticking) return
-      ticking = true
-      requestAnimationFrame(compute)
-    }
-
-    compute()
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    window.addEventListener('resize', handleScroll)
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('resize', handleScroll)
-    }
-  }, [])
-
-  // Advances the carousel every 5s. Paused while the tab is hidden, so a
-  // backgrounded tab doesn't silently burn through every slide at once.
+  // Advances every 6s. Paused while the tab is hidden, and restarted after
+  // a manual choice so the picked slide gets its full time.
   useEffect(() => {
     if (slides.length < 2) return
 
-    const tick = () =>
-      setActive((i) => (i + 1) % slides.length)
-
+    const tick = () => setActive((i) => (i + 1) % slides.length)
     let timer = setInterval(tick, SLIDE_MS)
 
     const onVisibility = () => {
@@ -69,68 +46,65 @@ function Hero() {
       clearInterval(timer)
       document.removeEventListener('visibilitychange', onVisibility)
     }
-  }, [slides.length])
+  }, [slides.length, active])
 
   return (
-    <section className="hero" data-nav-tone="dark" data-nav-bare>
-      <div className="hero-parallax" ref={parallaxRef}>
-        {slides.map((slide, i) => {
-          const img = normalizeImage(slide)
-          return (
+    <section className="hero" data-nav-tone="light">
+      <div className="wrap hero-head">
+        <h1 className="d1 hero-title" {...edit('title')}>
+          {hero.title}
+        </h1>
+
+        <div className="hero-aside">
+          <p className="hero-description" {...edit('description')}>
+            {hero.description}
+          </p>
+          <div className="hero-actions">
+            <Link className="btn" to="/residence" {...edit('primaryCta')}>
+              {hero.primaryCta}
+              <Arrow />
+            </Link>
+            <Link className="tlink" to="/contact" {...edit('secondaryCta')}>
+              {hero.secondaryCta}
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="wrap">
+        <div className="hero-media">
+          {slides.map((slide, i) => (
             <div
               key={i}
-              className={`hero-slide${i === active ? ' is-active' : ''}`}
+              className={`hero-slide${i === shown ? ' is-active' : ''}`}
               {...(hero.images?.length ? edit('images', i) : edit('image'))}
               style={{
-                backgroundImage: `url(${img.src})`,
-                ...imageVars(img),
-                // Evenly offsets each slide's zoom cycle so they aren't all
-                // at the same zoom level when the carousel swaps to them.
-                animationDelay: `${-(i * (22 / slides.length))}s`,
+                backgroundImage: `url(${normalizeImage(slide).src})`,
+                ...imageVars(slide),
               }}
-            />
-          )
-        })}
-      </div>
-      <div className="hero-overlay" />
-
-      {slides.length > 1 && (
-        <div className="hero-dots" role="tablist" aria-label={t.slides}>
-          {slides.map((src, i) => (
-            <button
-              key={i}
-              type="button"
-              role="tab"
-              aria-selected={i === active}
-              aria-label={t.slideLabel(i + 1)}
-              className={`hero-dot${i === active ? ' is-active' : ''}`}
-              onClick={() => setActive(i)}
             />
           ))}
         </div>
-      )}
 
-      <div className="hero-content">
-        <h1 className="hero-title" {...edit('title')}>{hero.title}</h1>
-        <p className="hero-description" {...edit('description')}>
-          {hero.description}
-        </p>
-        <div className="hero-actions">
-          <button
-            type="button"
-            className="hero-btn hero-btn--primary"
-            {...edit('primaryCta')}
-          >
-            {hero.primaryCta}
-          </button>
-          <button
-            type="button"
-            className="hero-btn hero-btn--secondary"
-            {...edit('secondaryCta')}
-          >
-            {hero.secondaryCta}
-          </button>
-        </div>
+        {slides.length > 1 && (
+          <div className="hero-foot">
+            <div className="hero-steps" role="tablist" aria-label={t.slides}>
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === shown}
+                  aria-label={t.slideLabel(i + 1)}
+                  className={`hero-step${i === shown ? ' is-active' : ''}`}
+                  onClick={() => setActive(i)}
+                >
+                  {pad(i + 1)}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   )
