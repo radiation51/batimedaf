@@ -69,6 +69,11 @@ function ApartmentDetail() {
   ]
   const ownPath = apartmentPath(apartment.id)
 
+  // Tells the admin which apartment a visit request is about.
+  const contactAbout = encodeURIComponent(
+    `${residence.name} — ${apartment.type} (${apartment.reference})`,
+  )
+
   // The apartment ships one photograph; the residence gallery fills out the
   // strip. A per-apartment `gallery` takes precedence when the data has one.
   // The apartment ships one photograph; the residence gallery fills out the
@@ -205,11 +210,14 @@ function ApartmentDetail() {
             </ul>
 
             <div className="ap-actions">
-              <Link className="ap-btn" to="/contact?sujet=visite">
+              <Link
+                className="ap-btn"
+                to={`/contact?sujet=visite&bien=${contactAbout}`}
+              >
                 {t.organizeVisit}
                 <Arrow size={16} />
               </Link>
-              <Link className="ap-btn ap-btn--ghost" to="/contact">
+              <Link className="ap-btn ap-btn--ghost" to={`/contact?bien=${contactAbout}`}>
                 {t.askQuestion}
               </Link>
             </div>

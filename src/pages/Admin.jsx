@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import { useContent } from '../content/ContentContext'
 import { usePageMeta } from '../hooks/usePageMeta'
+import Inbox from '../admin/Inbox'
 import VisualEditor from '../admin/VisualEditor'
 import './Admin.css'
 
@@ -37,7 +38,11 @@ function Login({ onLocalUnlock }) {
     setBusy(false)
     if (authError) {
       setError(
-        /invalid login/i.test(authError) ? 'Mot de passe incorrect.' : authError,
+        /invalid login/i.test(authError)
+          ? 'Mot de passe incorrect.'
+          : /fetch|network|load failed/i.test(authError)
+            ? 'Impossible de joindre la base de données. Le projet Supabase est peut-être en pause : relancez-le depuis supabase.com.'
+            : authError,
       )
     }
   }
@@ -80,7 +85,10 @@ function Login({ onLocalUnlock }) {
 
 /* ---------------- Admin ---------------- */
 
-/** Login, then the "Modification" page: the site itself, edited in place. */
+/**
+ * Login, then the Messages page (contact requests). From there, the
+ * "Modification" page shows the site itself, edited in place.
+ */
 function Admin() {
   usePageMeta({ title: 'Administration', noindex: true })
 
@@ -91,13 +99,17 @@ function Admin() {
 
   if (!authed) return <Login onLocalUnlock={() => setLocalUnlocked(true)} />
 
+  const leave = () => {
+    signOut()
+    setLocalUnlocked(false)
+  }
+
   return (
-    <VisualEditor
-      onSignOut={() => {
-        signOut()
-        setLocalUnlocked(false)
-      }}
-    />
+    <Routes>
+      <Route index element={<Inbox onSignOut={leave} />} />
+      <Route path="modification/*" element={<VisualEditor onSignOut={leave} />} />
+      <Route path="*" element={<Navigate to="/admin" replace />} />
+    </Routes>
   )
 }
 

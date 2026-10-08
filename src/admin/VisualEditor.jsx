@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { Routes } from 'react-router-dom'
+import { Link, Routes } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { siteRoutes } from '../siteRoutes'
@@ -30,8 +30,8 @@ import './VisualEditor.css'
 /* The editor's own chrome: clicks there are never taken for clicks on the page. */
 const UI = '[data-editor-ui]'
 
-/* App mounts the admin at `/admin/*`; the preview's routes match below it. */
-const BASE = '/admin'
+/* Where the admin mounts this page; the preview's routes match below it. */
+const BASE = '/admin/modification'
 
 /* Lists whose items are not added, moved or deleted from a text: the
    residences, and the apartments, which have their own toolbar buttons. */
@@ -685,6 +685,23 @@ function Toolbar({ page, onPage, mode, onMode, onClearSelection, onSignOut, shif
 
   return (
     <div className={`ve-bar${shifted ? ' is-shifted' : ''}`} data-editor-ui>
+      <Link
+        to="/admin"
+        className="ve-bar-back"
+        onClick={(e) => {
+          if (
+            dirty &&
+            !window.confirm(
+              'Des modifications ne sont pas enregistrées. Revenir aux messages quand même ?',
+            )
+          ) {
+            e.preventDefault()
+          }
+        }}
+        title="Revenir aux messages"
+      >
+        ← Messages
+      </Link>
       <span className="ve-bar-brand">Modification</span>
 
       <label className="ve-bar-page">

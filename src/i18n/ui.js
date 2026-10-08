@@ -93,6 +93,9 @@ export const UI = {
     formSubject: 'Sujet',
     formMessage: 'Votre message',
     formSend: 'Envoyer',
+    formSending: 'Envoi…',
+    formError: (email) =>
+      `L’envoi n’a pas abouti. Réessayez dans un instant, ou écrivez-nous à ${email}.`,
     formLegal: 'Vos données sont utilisées uniquement pour traiter votre demande.',
     formSentTitle: 'Message envoyé.',
     formSentThanks: (name) =>
@@ -199,6 +202,9 @@ export const UI = {
     formSubject: 'Subject',
     formMessage: 'Your message',
     formSend: 'Send',
+    formSending: 'Sending…',
+    formError: (email) =>
+      `Your message could not be sent. Please try again shortly, or email us at ${email}.`,
     formLegal: 'Your data is used only to process your request.',
     formSentTitle: 'Message sent.',
     formSentThanks: (name) =>

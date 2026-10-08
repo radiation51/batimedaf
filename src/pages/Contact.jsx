@@ -4,6 +4,7 @@ import Accordion from '../components/Accordion'
 import { useLocalizedContent, useUI } from '../i18n/useLocalizedContent'
 import { useReveal } from '../hooks/useReveal'
 import { usePageMeta } from '../hooks/usePageMeta'
+import { sendMessage } from '../lib/messages'
 import '../styles/page.css'
 import { useEdit } from '../content/editable'
 import './Contact.css'
@@ -14,7 +15,13 @@ const EMPTY = {
   phone: '',
   subject: '',
   message: '',
+  // Honeypot: hidden from people, filled in by spam bots.
+  website: '',
 }
+
+/** 'Organiser une visite' → 'organiser une visite', for loose matching. */
+const fold = (text) =>
+  text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
 function Contact() {
   const content = useLocalizedContent()
@@ -28,22 +35,44 @@ function Contact() {
   const { ref: pageRef, ready } = useReveal([c])
   const [form, setForm] = useState({ ...EMPTY, subject: c.subjects[0] })
   const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [failed, setFailed] = useState(false)
 
-  // Links such as /contact?sujet=visite arrive from the residence pages.
+  // Links such as /contact?sujet=visite pick the matching subject (visite,
+  // collaboration, presse… in either language).
   useEffect(() => {
-    if (params.get('sujet') === 'visite') {
-      const match = c.subjects.find((s) => /visite/i.test(s))
-      if (match) setForm((f) => ({ ...f, subject: match }))
-    }
+    const wanted = fold(params.get('sujet') ?? '').slice(0, 5)
+    if (!wanted) return
+    const match = c.subjects.find((s) => fold(s).includes(wanted))
+    if (match) setForm((f) => ({ ...f, subject: match }))
   }, [params, c.subjects])
+
+  // The residence or apartment the visitor came from, shown to the admin.
+  const about = params.get('bien') ?? ''
 
   const set = (field) => (e) =>
     setForm((f) => ({ ...f, [field]: e.target.value }))
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // TODO: wire to a real endpoint (form service or Supabase function).
-    setSent(true)
+    if (sending) return
+    // A bot filled the hidden field: thank it and store nothing.
+    if (form.website) {
+      setSent(true)
+      return
+    }
+
+    setSending(true)
+    setFailed(false)
+    try {
+      await sendMessage({ ...form, about })
+      setSent(true)
+    } catch (error) {
+      console.warn('[contact] envoi impossible :', error.message)
+      setFailed(true)
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
@@ -179,8 +208,25 @@ function Contact() {
                   />
                 </div>
 
-                <button type="submit" className="ct-submit">
-                  {t.formSend}
+                <input
+                  className="ct-trap"
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  value={form.website}
+                  onChange={set('website')}
+                />
+
+                {failed && (
+                  <p className="ct-error" role="alert">
+                    {t.formError(c.email)}
+                  </p>
+                )}
+
+                <button type="submit" className="ct-submit" disabled={sending}>
+                  {sending ? t.formSending : t.formSend}
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                     <path
                       d="M3.5 8h9M8.5 3.5 13 8l-4.5 4.5"

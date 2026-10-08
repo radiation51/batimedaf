@@ -347,6 +347,23 @@
   }
 }
 
+.ve-bar-back {
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.85rem;
+  margin-left: -0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 247, 240, 0.1);
+  color: var(--ve-cream);
+  font: 500 0.82rem var(--sans);
+  text-decoration: none;
+}
+
+.ve-bar-back:hover {
+  background: rgba(255, 247, 240, 0.18);
+}
+
 .ve-bar-brand {
   font-size: 0.7rem;
   font-weight: 700;
@@ -526,15 +543,18 @@
   text-align: center;
 }
 
+/* The page name is the first thing to go when room runs out. */
+@media (max-width: 1100px) {
+  .ve-bar-brand {
+    display: none;
+  }
+}
+
 @media (max-width: 640px) {
   .ve-bar {
     bottom: 8px;
     padding: 0.5rem;
     border-radius: 14px;
-  }
-
-  .ve-bar-brand {
-    display: none;
   }
 
   .ve-bar-page select {

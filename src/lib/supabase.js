@@ -21,5 +21,8 @@ export const isSupabaseConfigured = Boolean(supabase)
 export const CONTENT_TABLE = 'site_content'
 export const CONTENT_ROW_ID = 'main'
 
+// Messages sent from the contact form: visitors write, admins read.
+export const MESSAGES_TABLE = 'contact_messages'
+
 // Public bucket holding pictures uploaded from the admin panel.
 export const MEDIA_BUCKET = 'media'

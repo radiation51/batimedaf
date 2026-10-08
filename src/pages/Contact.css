@@ -177,6 +177,27 @@
   gap: 0.95rem;
 }
 
+.ct-error {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #a3301f;
+}
+
+/* Spam trap: present for bots, invisible and unreachable for people. */
+.ct-trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.ct-submit:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
 .ct-legal {
   font-family: var(--sans);
   font-size: 0.8rem;

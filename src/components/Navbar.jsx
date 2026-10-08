@@ -108,9 +108,9 @@ function Navbar() {
               <span className="lang-current">{lang.toUpperCase()}</span>
             </button>
 
-            <button type="button" className="navbar-btn navbar-btn--cta">
+            <Link className="navbar-btn navbar-btn--cta" to="/contact?sujet=visite">
               Book a call
-            </button>
+            </Link>
 
             <button
               type="button"

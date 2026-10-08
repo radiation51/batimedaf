@@ -18,8 +18,16 @@ Il faut Node 20.19 ou plus récent (22 recommandé).
 
 Adresse : `/admin` (par exemple `https://votre-site.netlify.app/admin`).
 
-Une fois connecté, on arrive sur la page **Modification** : le site lui-même,
-tel que les visiteurs le voient, où tout se modifie sur place.
+Une fois connecté, on arrive sur la page **Messages** : les demandes envoyées
+depuis le formulaire de la page Contact (nom, e-mail, téléphone, sujet,
+message, et l’appartement ou la résidence concernés quand le visiteur vient
+d’un bouton « Organiser une visite »). Un point bleu signale les nouveaux
+messages ; on peut répondre par e-mail, appeler, marquer comme traité ou
+supprimer.
+
+Le bouton **Modification du site** ouvre la page **Modification** : le site
+lui-même, tel que les visiteurs le voient, où tout se modifie sur place
+(« ← Messages » pour revenir).
 
 - **Un texte** : le survoler l’encadre, cliquer dessus ouvre une petite fenêtre
   pour le réécrire ; le site se met à jour pendant la frappe. Dans une liste
@@ -47,8 +55,14 @@ restent dans le code (`src/i18n/`).
   enregistrées en ligne : tout le monde les voit sur le site quelques instants
   après.
 
-Les textes et photos modifiés depuis l'admin sont stockés dans Supabase, pas
-dans ce dépôt GitHub. Le dépôt ne sert qu'aux modifications de code.
+Les textes et photos modifiés depuis l'admin, comme les messages reçus, sont
+stockés dans Supabase, pas dans ce dépôt GitHub. Le dépôt ne sert qu'aux
+modifications de code.
+
+> Les messages ont besoin de la table `contact_messages`. Sur un projet
+> Supabase créé avant son ajout, réexécuter `supabase/schema.sql` dans le
+> **SQL Editor** : le fichier peut être relancé sans risque, il ne touche pas
+> au contenu déjà enregistré.
 
 > Une section enregistrée depuis l'admin prend le dessus sur le texte écrit
 > dans le code (`src/content/defaults.js`, `src/data/residences.js`…). Si on

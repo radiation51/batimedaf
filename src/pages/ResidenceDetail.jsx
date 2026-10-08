@@ -329,7 +329,12 @@ function ResidenceDetail() {
             <br />
             {residence.name}&nbsp;?
           </h2>
-          <Link className="rd-cta-btn" to="/contact?sujet=visite" data-reveal style={{ '--d': '120ms' }}>
+          <Link
+            className="rd-cta-btn"
+            to={`/contact?sujet=visite&bien=${encodeURIComponent(residence.name)}`}
+            data-reveal
+            style={{ '--d': '120ms' }}
+          >
             {t.bookCall}
             <Arrow size={16} />
           </Link>
