@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react'
 import { Link, Routes } from 'react-router-dom'
+import { ArrowClockwise, ArrowCounterClockwise, Trash } from '@phosphor-icons/react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { siteRoutes } from '../siteRoutes'
@@ -95,6 +96,14 @@ const LABELS = {
   faqTitle: 'Titre de la FAQ',
   figureValue: 'Chiffre',
   figureLabel: 'Légende du chiffre',
+  faq: 'Question',
+  slides: 'Diapositive',
+  principles: 'Principe',
+  commitments: 'Engagement',
+  steps: 'Étape',
+  profiles: 'Profil',
+  figures: 'Chiffre clé',
+  transports: 'Transport',
 }
 
 const HINTS = {
@@ -143,6 +152,32 @@ function copyOf(item) {
     copy.id = `${copy.id}-${Date.now().toString(36)}`
   }
   return copy
+}
+
+/**
+ * What the delete button does to the selected path: remove the list item it
+ * belongs to (a feature, a FAQ question, a photo…) or, for a lone text,
+ * empty it. Photo captions and descriptions are only emptied: removing them
+ * should not take the photo along. Null when there is nothing to delete.
+ */
+function deletionFor(content, path) {
+  const value = valueAt(content, path)
+  const list = listContext(content, path)
+  const isDetail = PHOTO_DETAILS.some(([key]) => key === path[path.length - 1])
+
+  if (list && !isDetail && list.length > 1) {
+    return {
+      label: `Supprimer : ${labelFor([...list.listPath, list.index])}`,
+      run: ({ removeItem }) => removeItem(list.listPath, list.index),
+    }
+  }
+  if (typeof value === 'string' && value) {
+    return { label: 'Effacer ce texte', run: ({ setPath }) => setPath(path, '') }
+  }
+  if (typeof value === 'number' && value) {
+    return { label: 'Effacer ce chiffre', run: ({ setPath }) => setPath(path, 0) }
+  }
+  return null
 }
 
 /* ---------------- Preview pages ---------------- */
@@ -635,13 +670,28 @@ function ImagePanel({ selection, onClose, onSelect }) {
 
 /* ---------------- Toolbar ---------------- */
 
-function Toolbar({ page, onPage, mode, onMode, onClearSelection, onSignOut, shifted }) {
+function Toolbar({
+  page,
+  onPage,
+  mode,
+  onMode,
+  onClearSelection,
+  onSignOut,
+  shifted,
+  hasSelection,
+  deletion,
+  onDelete,
+}) {
   const {
     content,
     dirty,
     save,
     discard,
     reset,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
     saveState,
     storageError,
     isSupabaseConfigured,
@@ -748,6 +798,45 @@ function Toolbar({ page, onPage, mode, onMode, onClearSelection, onSignOut, shif
         </button>
       </div>
 
+      <div className="ve-tools" role="group" aria-label="Historique et suppression">
+        <button
+          type="button"
+          className="ve-tool"
+          disabled={!canUndo}
+          onClick={undo}
+          title="Annuler la dernière modification (Ctrl + Z)"
+          aria-label="Annuler la dernière modification"
+        >
+          <ArrowCounterClockwise size={17} weight="bold" />
+        </button>
+        <button
+          type="button"
+          className="ve-tool"
+          disabled={!canRedo}
+          onClick={redo}
+          title="Rétablir (Ctrl + Y)"
+          aria-label="Rétablir"
+        >
+          <ArrowClockwise size={17} weight="bold" />
+        </button>
+        <button
+          type="button"
+          className="ve-tool ve-tool--danger"
+          disabled={!deletion}
+          onClick={onDelete}
+          title={
+            deletion
+              ? `${deletion.label} (Suppr)`
+              : hasSelection
+                ? 'Cet élément ne se supprime pas : modifiez-le ou remplacez-le'
+                : 'Sélectionnez un texte ou une image à supprimer'
+          }
+          aria-label={deletion ? deletion.label : 'Supprimer la sélection'}
+        >
+          <Trash size={17} weight="bold" />
+        </button>
+      </div>
+
       {onResidence && (
         <button
           type="button"
@@ -786,8 +875,9 @@ function Toolbar({ page, onPage, mode, onMode, onClearSelection, onSignOut, shif
               discard()
             }
           }}
+          title="Revenir à la dernière version enregistrée"
         >
-          Annuler
+          Tout annuler
         </button>
       )}
       <button
@@ -872,7 +962,8 @@ function Toolbar({ page, onPage, mode, onMode, onClearSelection, onSignOut, shif
 /* ---------------- Editor ---------------- */
 
 function Editor({ onSignOut }) {
-  const { content, dirty, save } = useContent()
+  const store = useContent()
+  const { content, dirty, save, undo, redo } = store
   const [page, setPage] = useState({ pathname: '/', search: '' })
   const [mode, setMode] = useState('edit')
   const [selected, setSelected] = useState(null) // { key, el }
@@ -891,10 +982,24 @@ function Editor({ onSignOut }) {
     setPage({ pathname, search })
   }, [])
 
+  const selectedValue = selected
+    ? valueAt(content, parsePath(selected.key))
+    : undefined
+  // A deleted item, or one undone: nothing left to edit.
+  const selection = selectedValue === undefined ? null : selected
+  const selectedIsImage = selection && hasImageShape(selectedValue)
+
+  const deletion = selection ? deletionFor(content, parsePath(selection.key)) : null
+  const deleteSelected = () => {
+    if (!deletion) return
+    deletion.run(store)
+    setSelected(null)
+  }
+
   // Read by the document listeners, which are bound once.
   const live = useRef({})
   useLayoutEffect(() => {
-    live.current = { mode, content, dirty, save, goTo }
+    live.current = { mode, content, dirty, save, goTo, undo, redo, deleteSelected }
   })
 
   /* Classes for the editor's styles: see VisualEditor.css. */
@@ -1009,9 +1114,23 @@ function Editor({ onSignOut }) {
     }
 
     const onKey = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+      const key = e.key.toLowerCase()
+      const command = e.ctrlKey || e.metaKey
+      // In a text field, Suppr deletes characters, not the selection.
+      const typing = e.target.closest?.('input, textarea, select, [contenteditable]')
+
+      if (command && key === 's') {
         e.preventDefault()
         if (live.current.dirty) live.current.save()
+      } else if (command && key === 'z' && !e.shiftKey) {
+        e.preventDefault()
+        live.current.undo()
+      } else if (command && (key === 'y' || (key === 'z' && e.shiftKey))) {
+        e.preventDefault()
+        live.current.redo()
+      } else if (key === 'delete' && !typing) {
+        e.preventDefault()
+        live.current.deleteSelected()
       } else if (e.key === 'Escape') {
         setSelected(null)
       }
@@ -1054,13 +1173,6 @@ function Editor({ onSignOut }) {
     }),
     [page],
   )
-
-  const selectedValue = selected
-    ? valueAt(content, parsePath(selected.key))
-    : undefined
-  // A deleted item, or one undone by "Annuler": nothing left to edit.
-  const selection = selectedValue === undefined ? null : selected
-  const selectedIsImage = selection && hasImageShape(selectedValue)
 
   const hoverKey = hovered?.getAttribute('data-edit')
   const hoverIsImage =
@@ -1119,6 +1231,9 @@ function Editor({ onSignOut }) {
         onClearSelection={() => setSelected(null)}
         onSignOut={onSignOut}
         shifted={Boolean(selectedIsImage)}
+        hasSelection={Boolean(selection)}
+        deletion={deletion}
+        onDelete={deleteSelected}
       />
     </>
   )

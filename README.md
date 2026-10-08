@@ -39,9 +39,13 @@ lui-même, tel que les visiteurs le voient, où tout se modifie sur place
 - **Changer de page** : la liste dans la barre du bas, ou simplement les liens du
   site. Le mode **Naviguer** utilise le site normalement (onglets, menus…)
   sans rien modifier.
+- **↶ / ↷** (ou `Ctrl + Z` / `Ctrl + Y`) annulent et rétablissent les
+  modifications une à une. **La corbeille** (ou `Suppr`) supprime l’élément
+  sélectionné : un élément de liste (prestation, question, photo…) disparaît,
+  un texte seul est vidé. Son infobulle dit ce qui sera supprimé.
 - **Enregistrer** publie toutes les modifications d’un coup (aussi
-  `Ctrl + S`) ; **Annuler** les abandonne. Rien n’est visible en ligne avant
-  l’enregistrement.
+  `Ctrl + S`) ; **Tout annuler** revient à la dernière version enregistrée.
+  Rien n’est visible en ligne avant l’enregistrement.
 
 Seuls les contenus gérés par l’admin se modifient ainsi : les textes fixes de
 l’interface (menu, pied de page, boutons communs) et la version anglaise

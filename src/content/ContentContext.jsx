@@ -39,6 +39,9 @@ const listAt = (root, path) => path.reduce((acc, k) => acc[k], root)
 /**
  * Every edit the admin can make, bound to the state that holds the tree:
  * the stored content, or the visual editor's unsaved draft.
+ *
+ * `update(change, key)` applies `change(prev)`; `key` names the field a
+ * setPath touched, so the draft can fold a burst of typing into one undo step.
  */
 function createMutations(update) {
   return {
@@ -52,7 +55,8 @@ function createMutations(update) {
      * Sets a value anywhere in the tree from a path such as
      * ['home', 'hero', 'title'] or ['about', 'milestones', 2, 'year'].
      */
-    setPath: (path, value) => update((prev) => applyPath(prev, path, value)),
+    setPath: (path, value) =>
+      update((prev) => applyPath(prev, path, value), path.join('.')),
 
     pushItem: (path, item) =>
       update((prev) => applyPath(prev, path, [...listAt(prev, path), item])),
@@ -264,7 +268,10 @@ export function ContentProvider({ children }) {
 
   /* ---------------- Mutations ---------------- */
 
-  const mutations = useMemo(() => createMutations(setContent), [])
+  const mutations = useMemo(
+    () => createMutations((change) => setContent(change)),
+    [],
+  )
 
   const replaceAll = useCallback((next) => setContent(next), [])
 
@@ -326,26 +333,86 @@ export function ContentProvider({ children }) {
   )
 }
 
+/* Undo steps kept by the visual editor. */
+const HISTORY_LIMIT = 100
+/* Edits of one field closer together than this (typing, dragging a crop)
+   make a single undo step. */
+const MERGE_MS = 1000
+
 /**
  * Wraps the admin's visual editor: everything inside reads and edits a draft
  * copy of the content, and nothing reaches the site (or Supabase) until
- * `save()` hands the draft to the real store.
+ * `save()` hands the draft to the real store. Every edit can be undone and
+ * redone.
  */
 export function DraftContentProvider({ children }) {
   const stored = useContext(ContentContext)
-  const [draft, setDraft] = useState(stored.content)
+  // Whole drafts, before and after the current one. The tree is copied on
+  // write, so a snapshot shares every branch an edit did not touch.
+  // `last` is the field and time of the latest edit, to merge a burst.
+  const [history, setHistory] = useState(() => ({
+    draft: stored.content,
+    past: [],
+    future: [],
+    last: null,
+  }))
   // The stored content the draft started from: an edit makes them differ.
   const [base, setBase] = useState(stored.content)
+  const { draft } = history
   const dirty = draft !== base
 
   // While nothing is pending, follow the store, e.g. the Supabase read
   // finishing after the editor opened on the local copy.
   if (!dirty && stored.content !== base) {
     setBase(stored.content)
-    setDraft(stored.content)
+    setHistory({ draft: stored.content, past: [], future: [], last: null })
   }
 
-  const mutations = useMemo(() => createMutations(setDraft), [])
+  /** Applies a change as a new undo step, or extends the step in progress
+      when the same field was edited a moment ago. */
+  const edit = useCallback((change, key = null) => {
+    const at = Date.now()
+    setHistory((h) => {
+      const next = change(h.draft)
+      if (next === h.draft) return h
+      const extend =
+        key !== null && h.last?.key === key && at - h.last.at < MERGE_MS
+      return {
+        draft: next,
+        past: extend ? h.past : [...h.past, h.draft].slice(-HISTORY_LIMIT),
+        future: [],
+        last: { key, at },
+      }
+    })
+  }, [])
+
+  const undo = useCallback(() => {
+    setHistory((h) =>
+      h.past.length
+        ? {
+            draft: h.past[h.past.length - 1],
+            past: h.past.slice(0, -1),
+            future: [h.draft, ...h.future],
+            last: null,
+          }
+        : h,
+    )
+  }, [])
+
+  const redo = useCallback(() => {
+    setHistory((h) =>
+      h.future.length
+        ? {
+            draft: h.future[0],
+            past: [...h.past, h.draft],
+            future: h.future.slice(1),
+            last: null,
+          }
+        : h,
+    )
+  }, [])
+
+  const mutations = useMemo(() => createMutations(edit), [edit])
   const { replaceAll: commit } = stored
 
   const save = useCallback(() => {
@@ -353,21 +420,30 @@ export function DraftContentProvider({ children }) {
     setBase(draft)
   }, [commit, draft])
 
-  const discard = useCallback(() => setDraft(base), [base])
-  const reset = useCallback(() => setDraft(DEFAULT_CONTENT), [])
+  // Both undoable, like any other edit.
+  const discard = useCallback(() => edit(() => base), [edit, base])
+  const reset = useCallback(() => edit(() => DEFAULT_CONTENT), [edit])
+  const replaceAll = useCallback((next) => edit(() => next), [edit])
+
+  const canUndo = history.past.length > 0
+  const canRedo = history.future.length > 0
 
   const value = useMemo(
     () => ({
       ...stored,
       ...mutations,
       content: draft,
-      replaceAll: setDraft,
+      replaceAll,
       reset,
       dirty,
       save,
       discard,
+      undo,
+      redo,
+      canUndo,
+      canRedo,
     }),
-    [stored, mutations, draft, reset, dirty, save, discard],
+    [stored, mutations, draft, replaceAll, reset, dirty, save, discard, undo, redo, canUndo, canRedo],
   )
 
   return (

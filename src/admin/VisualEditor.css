@@ -409,6 +409,41 @@
   color: var(--ve-dark);
 }
 
+.ve-tools {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 999px;
+  background: #1c1916;
+  border: 1px solid rgba(255, 247, 240, 0.18);
+}
+
+.ve-tool {
+  width: 32px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ve-cream);
+  cursor: pointer;
+}
+
+.ve-tool:hover:not(:disabled) {
+  background: rgba(255, 247, 240, 0.14);
+}
+
+.ve-tool:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.ve-tool--danger:not(:disabled) {
+  color: #f0a597;
+}
+
 .ve-bar-btn {
   height: 34px;
   padding: 0 0.9rem;
