@@ -6,9 +6,6 @@ import Inbox from '../admin/Inbox'
 import VisualEditor from '../admin/VisualEditor'
 import './Admin.css'
 
-/* Password used when Supabase is not configured — local editing only. */
-const LOCAL_PASSWORD = '1234'
-
 /* With Supabase, everyone shares one administrator account and only types the
    password. The e-mail is never asked for: it is this identifier, which never
    receives any message. To change the password, change it on that account in
@@ -17,8 +14,41 @@ const ADMIN_EMAIL = 'admin@batimedaf.netlify.app'
 
 /* ---------------- Login ---------------- */
 
-function Login({ onLocalUnlock }) {
-  const { signIn, isSupabaseConfigured } = useContent()
+/**
+ * Without Supabase (the site running on a developer's computer), there is no
+ * account to check and nothing to protect: edits and requests stay in this
+ * browser. A local password only got mistaken for the real one, so the
+ * preview just says what it is and lets the admin in.
+ */
+function LocalEntry({ onEnter }) {
+  return (
+    <div className="ad-login">
+      <div className="ad-login-card">
+        <span className="ad-login-brand">BATIMEDAF</span>
+        <h1>Administration</h1>
+        <p className="ad-login-sub">
+          Aperçu sur cet ordinateur : l’administration n’est pas reliée à la
+          base de données. Les modifications et les demandes restent dans ce
+          navigateur, rien n’est publié.
+        </p>
+        <p className="ad-login-sub">
+          Votre mot de passe administrateur sert sur le site en ligne.
+        </p>
+
+        <button type="button" className="ad-primary" onClick={onEnter}>
+          Entrer dans l’aperçu
+        </button>
+
+        <Link to="/" className="ad-login-back">
+          Retour au site
+        </Link>
+      </div>
+    </div>
+  )
+}
+
+function Login() {
+  const { signIn } = useContent()
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -26,13 +56,6 @@ function Login({ onLocalUnlock }) {
   const submit = async (e) => {
     e.preventDefault()
     setError('')
-
-    if (!isSupabaseConfigured) {
-      if (password === LOCAL_PASSWORD) onLocalUnlock()
-      else setError('Mot de passe incorrect.')
-      return
-    }
-
     setBusy(true)
     const { error: authError } = await signIn(ADMIN_EMAIL, password)
     setBusy(false)
@@ -52,11 +75,7 @@ function Login({ onLocalUnlock }) {
       <form className="ad-login-card" onSubmit={submit}>
         <span className="ad-login-brand">BATIMEDAF</span>
         <h1>Administration</h1>
-        <p className="ad-login-sub">
-          {isSupabaseConfigured
-            ? 'Entrez le mot de passe administrateur.'
-            : 'Mode local : les modifications restent sur cet appareil.'}
-        </p>
+        <p className="ad-login-sub">Entrez le mot de passe administrateur.</p>
 
         <label className="ad-field">
           <span className="ad-field-label">Mot de passe</span>
@@ -97,7 +116,13 @@ function Admin() {
 
   const authed = isSupabaseConfigured ? Boolean(session) : localUnlocked
 
-  if (!authed) return <Login onLocalUnlock={() => setLocalUnlocked(true)} />
+  if (!authed) {
+    return isSupabaseConfigured ? (
+      <Login />
+    ) : (
+      <LocalEntry onEnter={() => setLocalUnlocked(true)} />
+    )
+  }
 
   const leave = () => {
     signOut()

@@ -53,9 +53,11 @@ Seuls les contenus gérés par l’admin se modifient ainsi : les textes fixes d
 l’interface (menu, pied de page, boutons communs) et la version anglaise
 restent dans le code (`src/i18n/`).
 
-- **Sans Supabase** (état par défaut) : mot de passe local `1234`. Les
-  modifications restent **dans le navigateur de la personne qui les fait** :
-  personne d'autre ne les voit. Utile seulement pour essayer.
+- **Sans Supabase** (le site lancé en local avec `npm run dev`) : pas de mot
+  de passe, un bouton **Entrer dans l’aperçu**. Les modifications et les
+  demandes restent **dans le navigateur de la personne qui les fait** :
+  personne d'autre ne les voit, rien n’est publié. Utile seulement pour
+  essayer. Le mot de passe administrateur ne sert que sur le site en ligne.
 - **Avec Supabase** (à configurer une fois, voir plus bas) : un seul mot de
   passe administrateur partagé, sans e-mail à saisir, et les modifications sont
   enregistrées en ligne : tout le monde les voit sur le site quelques instants
