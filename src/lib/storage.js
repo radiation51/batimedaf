@@ -1,4 +1,4 @@
-import { supabase, MEDIA_BUCKET } from './supabase'
+import { getSupabase, isSupabaseConfigured, MEDIA_BUCKET } from './supabase'
 import { prepareImage, dataUriBytes, formatBytes } from './image'
 
 /**
@@ -32,7 +32,7 @@ function slugify(name) {
   )
 }
 
-export const canUseStorage = () => Boolean(supabase)
+export const canUseStorage = () => isSupabaseConfigured
 
 /**
  * Sends an already-prepared data URI to the bucket and returns its public URL.
@@ -40,6 +40,7 @@ export const canUseStorage = () => Boolean(supabase)
  * and say why.
  */
 export async function uploadImage(dataUri, originalName = 'image') {
+  const supabase = await getSupabase()
   if (!supabase) throw new Error('Supabase n’est pas configuré.')
 
   const {

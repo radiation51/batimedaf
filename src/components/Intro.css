@@ -1,16 +1,197 @@
-.intro-text {
+.intro-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--col-gap);
+  row-gap: 3rem;
+  align-items: center;
+}
+
+.intro-body {
+  grid-column: 1 / span 7;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.intro-say {
+  position: relative;
+  margin: 0;
   font-family: var(--serif);
   font-weight: 300;
-  font-size: clamp(1.75rem, 3.3vw, 3.25rem);
-  line-height: 1.2;
-  letter-spacing: -0.018em;
-  max-width: 27ch;
-  /* A first-line indent, as in a printed paragraph. */
-  text-indent: 2.2em;
+  font-size: clamp(2.5rem, 5.6vw, 5.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+/* The sentence as read aloud: the word on screen, not every letter. */
+.intro-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* The changing word: every word sits in the same cell, the widest sets its
+   width. The word leaving stays shown while its letters animate out. */
+.intro-words {
+  display: inline-grid;
+}
+
+.intro-words em {
+  grid-area: 1 / 1;
+  font-style: italic;
+  color: var(--clay);
+  opacity: 0;
+  /* Words not on screen let clicks through to the one that is. */
+  pointer-events: none;
+}
+
+.intro-words em.is-on {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.intro-words em.is-past {
+  opacity: 1;
+}
+
+.intro-ch {
+  display: inline-block;
+}
+
+.intro-text {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+
+/* The photograph of the word on screen. The one leaving stays underneath
+   while the new one arrives over it. */
+.intro-photo {
+  grid-column: 9 / -1;
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background: var(--paper-deep);
+}
+
+.intro-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--pos-x, 50%) var(--pos-y, 50%);
+  transform: scale(var(--zoom, 1));
+  transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
+  opacity: 0;
+}
+
+.intro-frame.is-on {
+  opacity: 1;
+  z-index: 2;
+}
+
+.intro-frame.is-past {
+  opacity: 1;
+  z-index: 1;
+}
+
+/* On each change (.is-moving: nothing runs before the first one, so the
+   page arrives still) the old word's letters lift away, the new ones rise
+   into place one after another, and the new photo is uncovered from the
+   bottom up over the old one. */
+
+.intro.is-moving .intro-words em.is-on .intro-ch {
+  animation: intro-rise-in 0.75s var(--ease) both;
+  animation-delay: calc(0.25s + var(--i) * 45ms);
+}
+
+.intro.is-moving .intro-words em.is-past .intro-ch {
+  animation: intro-rise-out 0.45s cubic-bezier(0.5, 0, 0.75, 0) both;
+  animation-delay: calc(var(--i) * 30ms);
+}
+
+.intro.is-moving .intro-frame.is-on {
+  animation: intro-uncover-up 1.1s var(--ease) 0.15s both;
+}
+
+@keyframes intro-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.45em);
+  }
+}
+
+@keyframes intro-rise-out {
+  to {
+    opacity: 0;
+    transform: translateY(-0.35em);
+  }
+}
+
+@keyframes intro-uncover-up {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+/* In the editor: every word in a row, every photo in a strip. */
+.intro-words.is-still {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0 0.4em;
+}
+
+.intro-words.is-still em {
+  grid-area: auto;
+}
+
+.intro-words.is-still em + em::before {
+  content: '/ ';
+  font-style: normal;
+  color: var(--ink-faint);
+}
+
+.intro-photo.is-still {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  aspect-ratio: auto;
+  overflow: visible;
+  background: none;
+}
+
+.intro-photo.is-still .intro-frame {
+  position: relative;
+  aspect-ratio: 4 / 5;
 }
 
 @media (max-width: 899px) {
-  .intro-text {
-    text-indent: 0;
+  .intro-body,
+  .intro-photo {
+    grid-column: 1 / -1;
+  }
+
+  /* Under the text the photo stays a picture, not a wall. */
+  .intro-photo {
+    width: min(100%, 28rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-words em,
+  .intro-ch,
+  .intro-frame {
+    animation: none !important;
   }
 }

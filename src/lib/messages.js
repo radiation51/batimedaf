@@ -1,4 +1,4 @@
-import { supabase, MESSAGES_TABLE } from './supabase'
+import { getSupabase, MESSAGES_TABLE } from './supabase'
 
 /**
  * Messages sent from the contact form, read in the admin's "Demandes" page.
@@ -45,6 +45,7 @@ export async function sendMessage({ name, email, phone, subject, about, message 
     message: message.trim(),
   }
 
+  const supabase = await getSupabase()
   if (!supabase) {
     writeLocal([
       {
@@ -66,6 +67,7 @@ export async function sendMessage({ name, email, phone, subject, about, message 
 
 /** Every message, newest first. */
 export async function listMessages() {
+  const supabase = await getSupabase()
   if (!supabase) return readLocal()
 
   const { data, error } = await supabase
@@ -78,6 +80,7 @@ export async function listMessages() {
 }
 
 export async function updateMessage(id, patch) {
+  const supabase = await getSupabase()
   if (!supabase) {
     writeLocal(readLocal().map((m) => (m.id === id ? { ...m, ...patch } : m)))
     return
@@ -87,6 +90,7 @@ export async function updateMessage(id, patch) {
 }
 
 export async function deleteMessage(id) {
+  const supabase = await getSupabase()
   if (!supabase) {
     writeLocal(readLocal().filter((m) => m.id !== id))
     return

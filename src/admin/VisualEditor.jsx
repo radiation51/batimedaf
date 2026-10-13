@@ -104,6 +104,11 @@ const LABELS = {
   profiles: 'Profil',
   figures: 'Chiffre clé',
   transports: 'Transport',
+  before: 'Début de la phrase',
+  after: 'Fin de la phrase',
+  word: 'Mot qui change',
+  statement: 'Phrase d’approche',
+  words: 'Mot',
 }
 
 const HINTS = {

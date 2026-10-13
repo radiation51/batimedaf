@@ -19,8 +19,8 @@ export const DEFAULT_CONTENT = {
       title: "L'art du savoir vivre",
       description:
         "Des résidences pensées dans le moindre détail, où l'élégance rencontre le confort pour créer un art de vivre unique.",
-      primaryCta: 'Start Exploring',
-      secondaryCta: 'Contact team',
+      primaryCta: 'Découvrir nos résidences',
+      secondaryCta: 'Nous contacter',
       images: [
         img('/images/home/hero-1-banniere.jpg'),
         img('/images/home/hero-2-salon.jpg'),
@@ -30,34 +30,39 @@ export const DEFAULT_CONTENT = {
     },
     intro: {
       logo: 'Batimedaf',
+      // "Chaque <word> / est pensée." — each word shows with its photo.
+      before: 'Chaque',
+      after: 'est pensée.',
+      words: [
+        { word: 'ligne', image: img('/images/library/duplex/03-double-hauteur-2.jpg') },
+        { word: 'matière', image: img('/images/library/f4-garden/05-cuisine-3.jpg') },
+        { word: 'lumière', image: img('/images/library/f4-garden/02-salon-2.jpg') },
+      ],
       description:
         "Batimedaf façonne des résidences d'exception où chaque ligne, chaque matière et chaque lumière sont pensées pour révéler un art de vivre intemporel, entre héritage architectural et confort contemporain.",
     },
-    story: {
-      slides: [
+    // "Notre approche": the client's own presentation and four principles
+    // (brochure "Présentation du groupe" / "ADN & valeurs").
+    approach: {
+      statement:
+        'Notre approche repose sur une conception maîtrisée, une exécution rigoureuse et une sélection stratégique des emplacements.',
+      text: "Chaque projet est développé comme une entité cohérente, où l'architecture, l'implantation et les finitions participent à une signature identifiable.",
+      principles: [
         {
-          title: 'Nos réalisations',
-          description:
-            "Chaque projet Batimedaf raconte une histoire d'exigence et d'élégance, façonnée pour ceux qui recherchent un cadre de vie d'exception.",
-          image: img('/images/home/story-1-realisations.jpg'),
+          title: 'Maîtrise',
+          text: 'Une architecture étudiée, des volumes équilibrés et une implantation optimisée.',
         },
         {
-          title: 'Une signature architecturale',
-          description:
-            'Des volumes sculptés, des matières nobles et une lumière travaillée pour révéler le caractère unique de chaque résidence.',
-          image: img('/images/home/story-2-architecture.jpg'),
+          title: 'Précision',
+          text: 'Un soin particulier accordé aux finitions, aux matériaux et aux détails techniques.',
         },
         {
-          title: 'Un art de vivre durable',
-          description:
-            'Des matériaux responsables et des performances énergétiques pensées pour préserver le confort autant que la planète.',
-          image: img('/images/home/story-3-durable.jpg'),
+          title: 'Clarté',
+          text: 'Une communication transparente et des engagements respectés à chaque étape.',
         },
         {
-          title: 'Un accompagnement sur-mesure',
-          description:
-            'De la conception à la livraison, notre équipe vous accompagne à chaque étape pour donner vie à votre projet.',
-          image: img('/images/home/story-4-accompagnement.jpg'),
+          title: 'Exigence',
+          text: 'Une sélection rigoureuse des partenaires, des équipements et des standards constructifs.',
         },
       ],
     },
@@ -161,7 +166,7 @@ export const DEFAULT_CONTENT = {
         year: '2014',
         image: img('/images/library/exterieur/exterieur-bosquet-card.jpg'),
         title: 'Première résidence livrée',
-        text: 'Douze logements dans le 11ᵉ arrondissement, livrés avec trois semaines d’avance. Les entreprises de ce premier chantier travaillent encore avec nous.',
+        text: 'Douze logements à Alger, livrés avec trois semaines d’avance. Les entreprises de ce premier chantier travaillent encore avec nous.',
       },
       {
         year: '2018',
@@ -179,7 +184,7 @@ export const DEFAULT_CONTENT = {
         year: '2026',
         image: img('/images/library/exterieur/exterieur-balcon.jpg'),
         title: 'Le Bosquet',
-        text: 'Vingt-quatre appartements autour d’un parc privatif de 2 000 m² dans le 16ᵉ : notre opération la plus ambitieuse à ce jour.',
+        text: 'Vingt-quatre appartements autour d’un parc privatif de 2 000 m² à Hussein Dey : notre opération la plus ambitieuse à ce jour.',
       },
     ],
     principles: [
@@ -244,7 +249,7 @@ export const DEFAULT_CONTENT = {
         text: 'Nous étudions chaque opportunité en interne et nous engageons sur une offre ferme, sans clause suspensive de commercialisation. Vous savez rapidement où vous allez.',
         criteria: [
           '300 m² de surface constructible minimum',
-          'Paris et première couronne',
+          'Alger et ses environs',
           'Réponse ferme sous 15 jours',
         ],
         figureValue: '15 j',
@@ -307,7 +312,7 @@ export const DEFAULT_CONTENT = {
     ],
     phone: '+33 1 00 00 00 00',
     email: 'contact@batimedaf.com',
-    address: '12 avenue des Bâtisseurs\n75008 Paris',
+    address: 'Hussein Dey\nAlger',
     hours: 'Lun — Ven, 9 h — 19 h\nSam, 10 h — 17 h',
     faqTitle: 'Questions fréquentes',
     faq: [

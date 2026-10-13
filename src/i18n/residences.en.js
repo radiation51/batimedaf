@@ -8,14 +8,16 @@ import { newImage as img } from '../lib/imageStyle'
 export const RESIDENCES_EN = [
   {
     slug: 'le-bosquet',
+    color: '#6c7f4c',
+    floorsTaken: [3],
     name: 'Le Bosquet',
     tagline: 'Live at the heart of greenery',
     description:
       'Generous volumes opening onto a wooded park, where light and nature set the pace of the day.',
-    meta: ['24 apartments', 'Paris 16th', 'Delivery 2026'],
+    meta: ['24 apartments', 'Hussein Dey, Algiers', 'Delivery 2026'],
     image: img('/images/library/exterieur/exterieur-bosquet-card.jpg'),
 
-    location: 'Paris 16th — Avenue Mozart',
+    location: 'Hussein Dey — Algiers',
     presentation:
       "In the heart of Hussein Dey, Le Bosquet invites you to discover a way of living that blends elegance, comfort and serenity. Ideally located close to major roads and amenities, the residence offers a privileged setting where every moment is savoured in calm and convenience. With apartments ranging from 130 m² to 333 m², Le Bosquet offers spaces designed to meet your standards of comfort and quality of life. The perfect balance between urban living, wellbeing and elegance.",
     intro:
@@ -47,9 +49,9 @@ export const RESIDENCES_EN = [
       { value: 2026, suffix: '', label: 'Delivery', raw: true },
     ],
     place: {
-      address: '18 avenue Mozart, 75016 Paris',
+      address: 'Hussein Dey, Algiers',
       summary:
-        'A quiet residential address between square Lamartine and the Bois de Boulogne, served by three metro lines.',
+        "At the heart of the Bay of Algiers, Hussein Dey has become one of the capital's most strategic and dynamic districts.",
       transports: [
         { line: 'Bus', detail: 'Urban transport network' },
         { line: 'Tramway', detail: 'Travel across Algiers' },
@@ -74,7 +76,7 @@ export const RESIDENCES_EN = [
         outdoor: 'Terrace, 24 m²',
         price: 1750000,
         status: 'Last opportunity',
-        image: img('/images/library/sejour/f4-salon-1.png'),
+        image: img('/images/library/sejour/f4-salon-1.jpg'),
         description:
           'A high floor with clear views over the treetops, and a corner terrace catching the morning sun.',
         features: [
@@ -85,7 +87,7 @@ export const RESIDENCES_EN = [
         ],
         gallery: [
           {
-            image: img('/images/library/sejour/f4-salon-1.png'),
+            image: img('/images/library/sejour/f4-salon-1.jpg'),
             alt: 'Living room of the F4',
             category: 'Living room',
           },
@@ -95,17 +97,17 @@ export const RESIDENCES_EN = [
             category: 'Living room',
           },
           {
-            image: img('/images/library/cuisine/f4-cuisine-1.png'),
+            image: img('/images/library/cuisine/f4-cuisine-1.jpg'),
             alt: 'Fitted kitchen of the F4',
             category: 'Kitchen',
           },
           {
-            image: img('/images/library/cuisine/f4-cuisine-2.png'),
+            image: img('/images/library/cuisine/f4-cuisine-2.jpg'),
             alt: 'Kitchen of the F4, another angle',
             category: 'Kitchen',
           },
           {
-            image: img('/images/library/exterieur/f4-piscine.png'),
+            image: img('/images/library/exterieur/f4-piscine.jpg'),
             alt: 'Private pool of the F4',
             category: 'Pool',
           },
@@ -115,22 +117,22 @@ export const RESIDENCES_EN = [
             category: 'Bedroom',
           },
           {
-            image: img('/images/library/chambre/f4-dressing.png'),
+            image: img('/images/library/chambre/f4-dressing.jpg'),
             alt: 'Dressing room of the primary suite',
             category: 'Bedroom',
           },
           {
-            image: img('/images/library/chambre/f4-chambre-1.png'),
+            image: img('/images/library/chambre/f4-chambre-1.jpg'),
             alt: 'Bedroom of the F4',
             category: 'Bedroom',
           },
           {
-            image: img('/images/library/chambre/f4-chambre-2.png'),
+            image: img('/images/library/chambre/f4-chambre-2.jpg'),
             alt: 'Bedroom of the F4, another angle',
             category: 'Bedroom',
           },
           {
-            image: img('/images/library/salle-de-bain/f4-sdb.png'),
+            image: img('/images/library/salle-de-bain/f4-sdb.jpg'),
             alt: 'Bathroom of the F4',
             category: 'Bathroom',
           },
@@ -456,14 +458,16 @@ export const RESIDENCES_EN = [
   },
   {
     slug: 'les-ateliers',
+    color: '#a5583a',
+    floorsTaken: [1],
     name: 'Les Ateliers',
     tagline: 'Industrial elegance, reinvented',
     description:
       'Skylights, raw materials and spectacular ceiling heights, for a resolutely contemporary way of living.',
-    meta: ['18 lofts', 'Paris 11th', 'Delivery 2025'],
+    meta: ['18 lofts', 'Algiers', 'Delivery 2025'],
     image: img('/images/library/exterieur/exterieur-ateliers-card.jpg'),
 
-    location: 'Paris 11th — Rue de la Roquette',
+    location: 'Algiers',
     intro:
       'A former metalworks converted into eighteen lofts, Les Ateliers keeps the original structure: riveted framework, exposed brick and zenithal skylights.',
     body: [
@@ -493,19 +497,18 @@ export const RESIDENCES_EN = [
       { value: 2025, suffix: '', label: 'Delivery', raw: true },
     ],
     place: {
-      address: '74 rue de la Roquette, 75011 Paris',
+      address: 'Algiers',
       summary:
-        'At the heart of the 11th, between Bastille and Père-Lachaise, in a neighbourhood of workshops, galleries and local bistros.',
+        'A former workshop district, among galleries, shops and neighbourhood restaurants.',
       transports: [
-        { line: 'Line 9', detail: 'Voltaire — 3 min walk' },
-        { line: 'Line 8', detail: 'Ledru-Rollin — 9 min walk' },
-        { line: 'Line 1', detail: 'Bastille — 12 min walk' },
+        { line: 'Bus', detail: 'Urban transport network' },
+        { line: 'Tramway', detail: 'Travel across Algiers' },
+        { line: 'Metro', detail: 'Metropolitan rail network' },
       ],
       nearby: [
-        'Bastille market — 7 min',
-        'Père-Lachaise — 10 min',
-        'Cirque d’Hiver — 8 min',
-        'Canal Saint-Martin — 15 min',
+        'Shops & amenities — Nearby',
+        'Galleries & workshops — Nearby',
+        'Algiers’ main roads — Nearby',
       ],
     },
     apartments: [

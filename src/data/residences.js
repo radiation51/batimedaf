@@ -5,14 +5,18 @@ import { newImage as img } from '../lib/imageStyle'
 export const RESIDENCES = [
   {
     slug: 'le-bosquet',
+    // The residence's own colour: its ground on the /residence model, its accents.
+    color: '#6c7f4c',
+    // Storeys already taken (0 = ground floor): grey on the /residence model.
+    floorsTaken: [3],
     name: 'Le Bosquet',
     tagline: 'Vivre au cœur de la verdure',
     description:
       "Des volumes généreux ouverts sur un parc arboré, où la lumière et la nature dictent le rythme des journées.",
-    meta: ['24 appartements', 'Paris 16ᵉ', 'Livraison 2026'],
+    meta: ['24 appartements', 'Hussein Dey, Alger', 'Livraison 2026'],
     image: img('/images/home/hero-2-salon.jpg'),
 
-    location: 'Paris 16ᵉ — Avenue Mozart',
+    location: 'Hussein Dey — Alger',
     presentation:
       "Au cœur de Hussein Dey, Le Bosquet vous invite à découvrir un art de vivre alliant élégance, confort et sérénité. Idéalement située à proximité des principaux axes et commodités, la résidence offre un cadre de vie privilégié, où chaque instant se savoure dans le calme et la proximité. Avec des appartements allant de 130 m² à 333 m², Le Bosquet propose des espaces pensés pour répondre à vos exigences de confort et de qualité de vie. L'équilibre parfait entre vie urbaine, bien-être et élégance.",
     intro:
@@ -44,9 +48,9 @@ export const RESIDENCES = [
       { value: 2026, suffix: '', label: 'Livraison', raw: true },
     ],
     place: {
-      address: '18 avenue Mozart, 75016 Paris',
+      address: 'Hussein Dey, Alger',
       summary:
-        "Une adresse résidentielle au calme, entre le square Lamartine et le bois de Boulogne, desservie par trois lignes de métro.",
+        "Situé au cœur de la baie d'Alger, Hussein Dey s'impose aujourd'hui comme l'un des secteurs les plus stratégiques et dynamiques de la capitale.",
       transports: [
         { line: 'Bus', detail: 'Réseau de transport urbain' },
         { line: 'Tramway', detail: 'Déplacements à travers Alger' },
@@ -71,7 +75,7 @@ export const RESIDENCES = [
         outdoor: 'Terrasse 24 m²',
         price: 1750000,
         status: 'Dernière opportunité',
-        image: img('/images/library/sejour/f4-salon-1.png'),
+        image: img('/images/library/sejour/f4-salon-1.jpg'),
         description:
           'Un étage élevé dégagé sur les frondaisons, avec une terrasse d’angle exposée au soleil du matin.',
         features: [
@@ -82,7 +86,7 @@ export const RESIDENCES = [
         ],
         gallery: [
           {
-            image: img('/images/library/sejour/f4-salon-1.png'),
+            image: img('/images/library/sejour/f4-salon-1.jpg'),
             alt: 'Salon du F4',
             category: 'Salon',
           },
@@ -92,17 +96,17 @@ export const RESIDENCES = [
             category: 'Salon',
           },
           {
-            image: img('/images/library/cuisine/f4-cuisine-1.png'),
+            image: img('/images/library/cuisine/f4-cuisine-1.jpg'),
             alt: 'Cuisine équipée du F4',
             category: 'Cuisine',
           },
           {
-            image: img('/images/library/cuisine/f4-cuisine-2.png'),
+            image: img('/images/library/cuisine/f4-cuisine-2.jpg'),
             alt: 'Cuisine du F4, autre angle',
             category: 'Cuisine',
           },
           {
-            image: img('/images/library/exterieur/f4-piscine.png'),
+            image: img('/images/library/exterieur/f4-piscine.jpg'),
             alt: 'Piscine privée du F4',
             category: 'Piscine',
           },
@@ -112,22 +116,22 @@ export const RESIDENCES = [
             category: 'Chambre',
           },
           {
-            image: img('/images/library/chambre/f4-dressing.png'),
+            image: img('/images/library/chambre/f4-dressing.jpg'),
             alt: 'Dressing de la suite parentale',
             category: 'Chambre',
           },
           {
-            image: img('/images/library/chambre/f4-chambre-1.png'),
+            image: img('/images/library/chambre/f4-chambre-1.jpg'),
             alt: 'Chambre du F4',
             category: 'Chambre',
           },
           {
-            image: img('/images/library/chambre/f4-chambre-2.png'),
+            image: img('/images/library/chambre/f4-chambre-2.jpg'),
             alt: 'Chambre du F4, autre angle',
             category: 'Chambre',
           },
           {
-            image: img('/images/library/salle-de-bain/f4-sdb.png'),
+            image: img('/images/library/salle-de-bain/f4-sdb.jpg'),
             alt: 'Salle de bain du F4',
             category: 'Salle de bain',
           },
@@ -453,14 +457,18 @@ export const RESIDENCES = [
   },
   {
     slug: 'les-ateliers',
+    // The residence's own colour: its ground on the /residence model, its accents.
+    color: '#a5583a',
+    // Storeys already taken (0 = ground floor): grey on the /residence model.
+    floorsTaken: [1],
     name: 'Les Ateliers',
     tagline: "L'élégance industrielle réinventée",
     description:
       'Verrières, matières brutes et hauteurs sous plafond spectaculaires, pour un art de vivre résolument contemporain.',
-    meta: ['18 lofts', 'Paris 11ᵉ', 'Livraison 2025'],
+    meta: ['18 lofts', 'Alger', 'Livraison 2025'],
     image: img('/images/library/exterieur/exterieur-ateliers-card.jpg'),
 
-    location: 'Paris 11ᵉ — Rue de la Roquette',
+    location: 'Alger',
     intro:
       "Ancienne manufacture de métallurgie reconvertie en dix-huit lofts, Les Ateliers conservent la structure d'origine : charpente rivetée, briques apparentes et verrières zénithales.",
     body: [
@@ -490,19 +498,18 @@ export const RESIDENCES = [
       { value: 2025, suffix: '', label: 'Livraison', raw: true },
     ],
     place: {
-      address: '74 rue de la Roquette, 75011 Paris',
+      address: 'Alger',
       summary:
-        "Au cœur du 11ᵉ, entre Bastille et Père-Lachaise, dans un quartier d'ateliers, de galeries et de tables de quartier.",
+        "Un ancien quartier d'ateliers, entre galeries, commerces et tables de quartier.",
       transports: [
-        { line: 'Ligne 9', detail: 'Voltaire — 3 min à pied' },
-        { line: 'Ligne 8', detail: 'Ledru-Rollin — 9 min à pied' },
-        { line: 'Ligne 1', detail: 'Bastille — 12 min à pied' },
+        { line: 'Bus', detail: 'Réseau de transport urbain' },
+        { line: 'Tramway', detail: 'Déplacements à travers Alger' },
+        { line: 'Métro', detail: 'Réseau de transport métropolitain' },
       ],
       nearby: [
-        'Marché Bastille — 7 min',
-        'Père-Lachaise — 10 min',
-        'Cirque d’Hiver — 8 min',
-        'Canal Saint-Martin — 15 min',
+        'Commerces & commodités — À proximité',
+        'Galeries & ateliers — À proximité',
+        'Principaux axes d’Alger — À proximité',
       ],
     },
     apartments: [

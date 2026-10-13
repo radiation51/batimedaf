@@ -1,0 +1,87 @@
+/* "Notre approche": the statement over the full width, the principles in
+   four columns underneath. */
+
+.apr-label {
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.apr-head {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--col-gap);
+  row-gap: 1.5rem;
+  align-items: end;
+}
+
+.apr-statement {
+  grid-column: 1 / span 8;
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(1.75rem, 3.2vw, 3.125rem);
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  max-width: 30ch;
+}
+
+.apr-head .apr-text {
+  grid-column: 9 / -1;
+  font-size: 1rem;
+  max-width: 44ch;
+}
+
+.apr-text {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--on-dark-soft);
+  max-width: 34ch;
+}
+
+.apr-cols {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--col-gap);
+  row-gap: 3rem;
+  margin: clamp(3.5rem, 7vw, 6rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.apr-num {
+  display: block;
+  margin-bottom: 0.75rem;
+  /* Upright: an italic I reads as a slash at this size. */
+  font-style: normal;
+  letter-spacing: 0.06em;
+  /* The clay, lifted to read on the ink ground. */
+  color: #c98a6c;
+}
+
+.apr-title {
+  margin: 0 0 0.75rem;
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(1.75rem, 2.4vw, 2.375rem);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+@media (max-width: 1100px) {
+  .apr-cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 899px) {
+  .apr-statement,
+  .apr-head .apr-text {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .apr-cols {
+    grid-template-columns: 1fr;
+  }
+}

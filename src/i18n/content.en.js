@@ -24,34 +24,36 @@ export const CONTENT_EN = {
     },
     intro: {
       logo: 'Batimedaf',
+      before: 'Every',
+      after: 'is considered.',
+      words: [
+        { word: 'line', image: img('/images/library/duplex/03-double-hauteur-2.jpg') },
+        { word: 'material', image: img('/images/library/f4-garden/05-cuisine-3.jpg') },
+        { word: 'light', image: img('/images/library/f4-garden/02-salon-2.jpg') },
+      ],
       description:
         'Batimedaf shapes exceptional residences where every line, every material and every ray of light is considered to reveal a timeless way of living, between architectural heritage and contemporary comfort.',
     },
-    story: {
-      slides: [
+    approach: {
+      statement:
+        'Our approach rests on controlled design, rigorous execution and a strategic choice of locations.',
+      text: 'Every project is developed as a coherent whole, where architecture, siting and finishes come together in a recognisable signature.',
+      principles: [
         {
-          title: 'Our developments',
-          description:
-            'Every Batimedaf project tells a story of rigour and elegance, shaped for those seeking an exceptional living environment.',
-          image: img('/images/home/story-1-realisations.jpg'),
+          title: 'Mastery',
+          text: 'Considered architecture, balanced volumes and optimised siting.',
         },
         {
-          title: 'An architectural signature',
-          description:
-            'Sculpted volumes, noble materials and carefully crafted light reveal the unique character of each residence.',
-          image: img('/images/home/story-2-architecture.jpg'),
+          title: 'Precision',
+          text: 'Particular care given to finishes, materials and technical details.',
         },
         {
-          title: 'A sustainable way of living',
-          description:
-            'Responsible materials and energy performance designed to preserve comfort as much as the planet.',
-          image: img('/images/home/story-3-durable.jpg'),
+          title: 'Clarity',
+          text: 'Transparent communication and commitments kept at every stage.',
         },
         {
-          title: 'Support, tailored to you',
-          description:
-            'From design to delivery, our team supports you at every step to bring your project to life.',
-          image: img('/images/home/story-4-accompagnement.jpg'),
+          title: 'Rigour',
+          text: 'A careful selection of partners, equipment and construction standards.',
         },
       ],
     },
@@ -152,7 +154,7 @@ export const CONTENT_EN = {
         year: '2014',
         image: img('/images/library/exterieur/exterieur-bosquet-card.jpg'),
         title: 'First residence delivered',
-        text: 'Twelve homes in the 11th arrondissement, delivered three weeks early. The contractors from that first site still work with us today.',
+        text: 'Twelve homes in Algiers, delivered three weeks early. The contractors from that first site still work with us today.',
       },
       {
         year: '2018',
@@ -170,7 +172,7 @@ export const CONTENT_EN = {
         year: '2026',
         image: img('/images/library/exterieur/exterieur-balcon.jpg'),
         title: 'Le Bosquet',
-        text: 'Twenty-four apartments around a 2,000 m² private park in the 16th arrondissement: our most ambitious project to date.',
+        text: 'Twenty-four apartments around a 2,000 m² private park in Hussein Dey: our most ambitious project to date.',
       },
     ],
     principles: [
@@ -234,7 +236,7 @@ export const CONTENT_EN = {
         text: 'We review every opportunity in-house and commit to a firm offer, with no marketing contingency clause. You know quickly where you stand.',
         criteria: [
           'At least 300 m² of buildable area',
-          'Paris and inner suburbs',
+          'Algiers and surrounding area',
           'Firm offer within 15 days',
         ],
         figureValue: '15 days',
@@ -296,7 +298,7 @@ export const CONTENT_EN = {
     ],
     phone: '+33 1 00 00 00 00',
     email: 'contact@batimedaf.com',
-    address: '12 avenue des Bâtisseurs\n75008 Paris',
+    address: 'Hussein Dey\nAlgiers',
     hours: 'Mon — Fri, 9am — 7pm\nSat, 10am — 5pm',
     faqTitle: 'Frequently asked questions',
     faq: [

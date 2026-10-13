@@ -126,8 +126,9 @@
   cursor: pointer;
 }
 
-/* Below this width the four links move into the menu. */
-@media (max-width: 960px) {
+/* Below this width the links move into the menu: wide enough for the links
+   and "Prendre rendez-vous" to sit side by side. */
+@media (max-width: 1080px) {
   .nav-inner {
     grid-template-columns: 1fr auto;
   }

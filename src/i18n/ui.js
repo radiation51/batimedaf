@@ -12,7 +12,7 @@ export const UI = {
       contact: 'Contact',
       collaboration: 'Collaboration',
     },
-    bookCall: 'Book a call',
+    bookCall: 'Prendre rendez-vous',
     menuTitleContact: 'Contact',
     menuTitleStudio: 'Studio',
     menuTitleFollow: 'Suivez-nous',

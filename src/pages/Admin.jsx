@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import { useContent } from '../content/ContentContext'
 import { usePageMeta } from '../hooks/usePageMeta'
@@ -111,8 +111,13 @@ function Login() {
 function Admin() {
   usePageMeta({ title: 'Administration', noindex: true })
 
-  const { session, isSupabaseConfigured, signOut } = useContent()
+  const { session, isSupabaseConfigured, signOut, requestAuth } = useContent()
   const [localUnlocked, setLocalUnlocked] = useState(false)
+
+  // The sign-in session is only started here, never for visitors.
+  useEffect(() => {
+    requestAuth()
+  }, [requestAuth])
 
   const authed = isSupabaseConfigured ? Boolean(session) : localUnlocked
 

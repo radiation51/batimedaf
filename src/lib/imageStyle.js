@@ -10,11 +10,18 @@ export const DEFAULT_IMAGE = { src: '', x: 50, y: 50, zoom: 1 }
 /** A freshly-authored image, centered with no zoom until someone crops it. */
 export const newImage = (src) => ({ src, x: 50, y: 50, zoom: 1 })
 
+/* The library photos shipped as PNG are now lighter JPEGs of the same name
+   (scripts/optimize-images.mjs); content saved before still names the PNG. */
+const shipped = (src) =>
+  typeof src === 'string' && src.startsWith('/images/library/') ? src.replace(/\.png$/i, '.jpg') : src
+
 /** Accepts the new object shape and, for safety, a bare src string. */
 export function normalizeImage(value) {
   if (!value) return { ...DEFAULT_IMAGE }
-  if (typeof value === 'string') return { ...DEFAULT_IMAGE, src: value }
-  return { ...DEFAULT_IMAGE, ...value }
+  if (typeof value === 'string') return { ...DEFAULT_IMAGE, src: shipped(value) }
+  const image = { ...DEFAULT_IMAGE, ...value }
+  image.src = shipped(image.src)
+  return image
 }
 
 /**

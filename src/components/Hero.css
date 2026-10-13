@@ -1,55 +1,42 @@
+/* The cover fills the window under the header, so the whole photograph,
+   the title and the actions are seen on arrival. */
+
 .hero {
-  padding-top: clamp(2.5rem, 7vw, 6.5rem);
-}
-
-.hero-head {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: var(--col-gap);
-  row-gap: 2.25rem;
-  align-items: end;
-  padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
-}
-
-.hero-title {
-  grid-column: 1 / span 8;
-  max-width: 11ch;
-}
-
-.hero-aside {
-  grid-column: 9 / -1;
-  padding-bottom: 0.6rem;
-}
-
-.hero-description {
-  font-size: 1.0625rem;
-  line-height: 1.65;
-  color: var(--ink-soft);
-  max-width: 36ch;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1.25rem 2rem;
-  margin-top: 2rem;
+  position: relative;
+  height: max(30rem, calc(100svh - var(--header-h)));
+  overflow: hidden;
+  color: var(--on-dark);
 }
 
 /* ---------- The photograph ---------- */
 
 .hero-media {
-  position: relative;
-  overflow: hidden;
-  height: clamp(320px, 64vh, 780px);
+  position: absolute;
+  inset: 0;
   background: var(--paper-deep);
+}
+
+/* A dark veil over the photograph so the paper-coloured type reads. */
+.hero-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    to top,
+    rgba(20, 19, 17, 0.62) 0%,
+    rgba(20, 19, 17, 0.28) 55%,
+    rgba(20, 19, 17, 0.18) 100%
+  );
 }
 
 .hero-slide {
   position: absolute;
   inset: 0;
-  background-size: cover;
-  background-position: var(--pos-x, 50%) var(--pos-y, 50%);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--pos-x, 50%) var(--pos-y, 50%);
   transform: scale(var(--zoom, 1));
   transform-origin: var(--pos-x, 50%) var(--pos-y, 50%);
   opacity: 0;
@@ -61,11 +48,40 @@
   z-index: 1;
 }
 
+/* ---------- Type set on the photograph ---------- */
+
+.hero-over {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  padding-bottom: clamp(1.5rem, 5vh, 3.5rem);
+}
+
+.hero-title {
+  color: var(--on-dark);
+  font-size: clamp(3rem, min(8.4vw, 16vh), 9.25rem);
+  max-width: 11ch;
+}
+
 .hero-foot {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  padding-top: 1rem;
+  align-items: flex-end;
+  gap: 1.5rem 3rem;
+  margin-top: clamp(1.5rem, 4vh, 2.75rem);
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem 2rem;
+}
+
+.hero .tlink:hover {
+  color: var(--paper-deep);
 }
 
 .hero-steps {
@@ -81,17 +97,17 @@
   font-family: var(--serif);
   font-style: italic;
   font-size: 1rem;
-  color: var(--ink-faint);
+  color: var(--on-dark-soft);
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .hero-step:hover,
 .hero-step.is-active {
-  color: var(--ink);
+  color: var(--on-dark);
 }
 
-/* The slide on screen: a clay stroke that fills as its time runs. */
+/* The slide on screen: a stroke that fills as its time runs. */
 .hero-step::after {
   content: '';
   position: absolute;
@@ -99,7 +115,7 @@
   bottom: 0;
   width: 100%;
   height: 1px;
-  background: var(--clay);
+  background: var(--on-dark);
   transform: scaleX(0);
   transform-origin: left;
 }
@@ -115,21 +131,13 @@
 }
 
 @media (max-width: 900px) {
-  .hero-title,
-  .hero-aside {
-    grid-column: 1 / -1;
+  .hero-foot {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .hero-media {
-    height: auto;
-    aspect-ratio: 4 / 5;
-    max-height: 72vh;
-  }
-}
-
-@media (min-width: 560px) and (max-width: 900px) {
-  .hero-media {
-    aspect-ratio: 4 / 3;
+  .hero-actions {
+    flex-wrap: wrap;
   }
 }
 

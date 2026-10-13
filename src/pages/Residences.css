@@ -6,8 +6,8 @@
   background: var(--paper);
 }
 
-/* Present for search engines and screen readers; the doors carry the
-   visible titles. */
+/* Present for search engines and screen readers; the models' captions
+   carry the visible titles. */
 .residences-heading {
   position: absolute;
   width: 1px;
@@ -19,7 +19,7 @@
   white-space: nowrap;
 }
 
-/* The way back home, above both halves. */
+/* The way back home, above the models. */
 .residences-back {
   position: fixed;
   top: 1.5rem;
@@ -46,179 +46,9 @@
   transform: translateX(-3px);
 }
 
-/* ---------- Two halves, a door in each ---------- */
-
-.doors {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  min-height: 100vh;
-}
-
-.door {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(1.25rem, 3vh, 2rem);
-  padding: clamp(5rem, 10vh, 7rem) clamp(1.5rem, 4vw, 4rem) clamp(2rem, 5vh, 3rem);
-  background: var(--paper);
-  color: var(--ink);
-  text-decoration: none;
-}
-
-.door + .door {
-  background: var(--paper-deep);
-}
-
-.door-way {
-  position: relative;
-  width: min(56%, 27vh);
-  aspect-ratio: 1 / 2;
-  background: var(--ink);
-  perspective: 1200px;
-}
-
-.door-room,
-.door-leaf {
-  position: absolute;
-  inset: 8px 8px 0 8px;
-}
-
-/* Left ajar; pointing at the half swings it wide open. */
-.door-leaf {
-  background: #2c2a26;
-  transform-origin: left center;
-  transform: rotateY(-24deg);
-  transition: transform 1.1s var(--ease);
-}
-
-.door-leaf--clay {
-  background: var(--clay);
-}
-
-/* The door's moulded panel. */
-.door-leaf::before {
-  content: '';
-  position: absolute;
-  inset: 9% 14%;
-  border: 1px solid rgba(241, 237, 230, 0.22);
-}
-
-.door-handle {
-  position: absolute;
-  top: 50%;
-  right: 9%;
-  width: 4px;
-  height: 16%;
-  border-radius: 2px;
-  background: var(--paper);
-  transform: translateY(-50%);
-}
-
-.door:hover .door-leaf,
-.door:focus-visible .door-leaf {
-  transform: rotateY(-108deg);
-}
-
-/* Phones: the door facing the reader opens a beat after the other has
-   started closing, and a little slower, so both swings are seen. */
-.door.is-open .door-leaf {
-  transform: rotateY(-108deg);
-  transition-duration: 1.4s;
-  transition-delay: 0.25s;
-}
-
-.door-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.45rem;
-  text-align: center;
-}
-
-.door-num {
-  font-family: var(--serif);
-  font-style: italic;
-  color: var(--clay);
-}
-
-.door-tagline {
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-
-.door-name {
-  font-family: var(--serif);
-  font-weight: 300;
-  font-size: clamp(2.5rem, 4.4vw, 4.25rem);
-  line-height: 1;
-  letter-spacing: -0.03em;
-  transition: color 0.3s ease;
-}
-
-.door:hover .door-name {
-  color: var(--clay);
-}
-
-.door-meta {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.25rem 1.25rem;
-  font-size: 0.875rem;
-  color: var(--ink-faint);
-}
-
-.door-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-top: 0.5rem;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.4em;
-}
-
-.door-cta svg {
-  transition: transform 0.3s var(--ease);
-}
-
-.door:hover .door-cta svg {
-  transform: translateX(4px);
-}
-
-/* Wider touch screens: both doors side by side, nothing to point with,
-   so they stand open. */
-@media (hover: none) and (min-width: 901px) {
-  .door-leaf {
-    transform: rotateY(-108deg);
-  }
-}
-
 @media (min-width: 900px) {
   .residences-back {
     top: 2rem;
     left: 2rem;
-  }
-}
-
-@media (max-width: 900px) {
-  .doors {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .door-way {
-    width: min(50%, 220px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .door-leaf {
-    transition: none;
   }
 }

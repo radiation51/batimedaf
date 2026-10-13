@@ -1,9 +1,11 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import Admin from './pages/Admin'
-import { siteRoutes } from './siteRoutes'
+import { prefetchPages, siteRoutes } from './siteRoutes'
+
+// The admin is only for the client's team: visitors never download it.
+const Admin = lazy(() => import('./pages/Admin'))
 
 function App() {
   const { pathname } = useLocation()
@@ -13,6 +15,11 @@ function App() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [pathname])
+
+  // Once the first page is up, the others download quietly in the background.
+  useEffect(() => {
+    if (!window.location.pathname.startsWith('/admin')) prefetchPages()
+  }, [])
 
   // The residences split-screen is a full-viewport chooser: no bar, no footer,
   // nothing to scroll past — it carries its own back-to-home control instead.
@@ -27,7 +34,14 @@ function App() {
       <Routes>
         {siteRoutes}
         {/* The visual editor previews the site pages below /admin. */}
-        <Route path="/admin/*" element={<Admin />} />
+        <Route
+          path="/admin/*"
+          element={
+            <Suspense fallback={null}>
+              <Admin />
+            </Suspense>
+          }
+        />
       </Routes>
       {!hideChrome && <Footer />}
     </>

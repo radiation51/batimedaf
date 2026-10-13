@@ -9,7 +9,8 @@ import {
 } from 'react'
 import { DEFAULT_CONTENT } from './defaults'
 import {
-  supabase,
+  getSupabase,
+  readPublicRow,
   isSupabaseConfigured,
   CONTENT_TABLE,
   CONTENT_ROW_ID,
@@ -23,15 +24,16 @@ const ContentContext = createContext(null)
 const isObject = (v) => v != null && typeof v === 'object' && !Array.isArray(v)
 
 /**
- * Saved content over the defaults, two levels deep: a section added to the
- * defaults later (home.apartments) still shows up under an older save, while
- * everything the save holds wins.
+ * Saved content over the defaults, object by object at every depth: a
+ * section or field added to the defaults later (home.apartments,
+ * home.intro.words) still shows up under an older save, while everything the
+ * save holds wins. Lists are taken whole from the save.
  */
-function withDefaults(saved) {
-  const merged = { ...DEFAULT_CONTENT, ...saved }
-  for (const [key, value] of Object.entries(DEFAULT_CONTENT)) {
+function withDefaults(saved, defaults = DEFAULT_CONTENT) {
+  const merged = { ...defaults, ...saved }
+  for (const [key, value] of Object.entries(defaults)) {
     if (isObject(value) && isObject(saved[key])) {
-      merged[key] = { ...value, ...saved[key] }
+      merged[key] = withDefaults(saved[key], value)
     }
   }
   return merged
@@ -192,6 +194,10 @@ export function ContentProvider({ children }) {
   )
   const [saveState, setSaveState] = useState('idle') // idle | saving | saved | error
   const [storageError, setStorageError] = useState(false)
+  // Signing in is only for the admin: visitors never load the auth client.
+  const [authWanted, setAuthWanted] = useState(() =>
+    window.location.pathname.startsWith('/admin'),
+  )
 
   // Skips the save that would otherwise fire from the initial server fetch.
   const hydratedRef = useRef(false)
@@ -200,26 +206,40 @@ export function ContentProvider({ children }) {
   /* ---------------- Auth ---------------- */
 
   useEffect(() => {
-    if (!supabase) return
-    supabase.auth.getSession().then(({ data }) => setSession(data.session))
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) =>
-      setSession(s),
-    )
-    return () => sub.subscription.unsubscribe()
-  }, [])
+    if (!isSupabaseConfigured || !authWanted) return
+    let cancelled = false
+    let sub = null
+    getSupabase().then((supabase) => {
+      if (cancelled) return
+      supabase.auth.getSession().then(({ data }) => {
+        if (!cancelled) setSession(data.session)
+      })
+      sub = supabase.auth.onAuthStateChange((_e, s) => setSession(s)).data
+    })
+    return () => {
+      cancelled = true
+      sub?.subscription.unsubscribe()
+    }
+  }, [authWanted])
+
+  /** Called by the admin pages: starts the sign-in session. */
+  const requestAuth = useCallback(() => setAuthWanted(true), [])
 
   /* ---------------- Initial read ---------------- */
 
   useEffect(() => {
-    if (!supabase) return
+    if (!isSupabaseConfigured) return
     let cancelled = false
 
     ;(async () => {
-      const { data, error } = await supabase
-        .from(CONTENT_TABLE)
-        .select('data')
-        .eq('id', CONTENT_ROW_ID)
-        .maybeSingle()
+      // A plain request: reading needs no client library.
+      let data = null
+      let error = null
+      try {
+        data = await readPublicRow(CONTENT_TABLE, CONTENT_ROW_ID, 'data')
+      } catch (e) {
+        error = e
+      }
 
       if (cancelled) return
 
@@ -261,13 +281,14 @@ export function ContentProvider({ children }) {
 
   // Push to Supabase, debounced so typing doesn't hammer the database.
   useEffect(() => {
-    if (!supabase || !session) return
+    if (!isSupabaseConfigured || !session) return
     if (!hydratedRef.current) return
 
     clearTimeout(saveTimer.current)
     setSaveState('saving')
 
     saveTimer.current = setTimeout(async () => {
+      const supabase = await getSupabase()
       const { error } = await supabase
         .from(CONTENT_TABLE)
         .upsert({ id: CONTENT_ROW_ID, data: content, updated_at: new Date() })
@@ -304,7 +325,9 @@ export function ContentProvider({ children }) {
   /* ---------------- Auth actions ---------------- */
 
   const signIn = useCallback(async (email, password) => {
-    if (!supabase) return { error: 'Supabase n’est pas configuré.' }
+    if (!isSupabaseConfigured) return { error: 'Supabase n’est pas configuré.' }
+    setAuthWanted(true)
+    const supabase = await getSupabase()
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -313,6 +336,7 @@ export function ContentProvider({ children }) {
   }, [])
 
   const signOut = useCallback(async () => {
+    const supabase = await getSupabase()
     if (supabase) await supabase.auth.signOut()
     setSession(null)
   }, [])
@@ -327,6 +351,7 @@ export function ContentProvider({ children }) {
       isSupabaseConfigured,
       signIn,
       signOut,
+      requestAuth,
       ...mutations,
       replaceAll,
       reset,
@@ -339,6 +364,7 @@ export function ContentProvider({ children }) {
       session,
       signIn,
       signOut,
+      requestAuth,
       mutations,
       replaceAll,
       reset,
