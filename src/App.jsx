@@ -21,12 +21,8 @@ function App() {
     if (!window.location.pathname.startsWith('/admin')) prefetchPages()
   }, [])
 
-  // The residences split-screen is a full-viewport chooser: no bar, no footer,
-  // nothing to scroll past — it carries its own back-to-home control instead.
-  const isSplitScreen = pathname === '/residence'
   // The admin panel is its own shell: no site chrome around it.
-  const isAdmin = pathname.startsWith('/admin')
-  const hideChrome = isSplitScreen || isAdmin
+  const hideChrome = pathname.startsWith('/admin')
 
   return (
     <>

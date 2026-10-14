@@ -1,183 +1,169 @@
 /* ---------- Opening ---------- */
 
-.ab-open {
-  padding-top: clamp(3rem, 8vw, 7rem);
+.ab-head {
+  padding-top: clamp(3rem, 7vw, 6rem);
 }
 
-.ab-title {
+.ab-head-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: end;
+  column-gap: var(--col-gap);
+  row-gap: 1.5rem;
   margin-top: 1.5rem;
 }
 
-.ab-line {
-  display: block;
-}
-
-/* The second line steps in, as a printed title sometimes does. */
-.ab-line:nth-child(2) {
-  padding-left: 1.4em;
-}
-
-.ab-sub {
-  margin: clamp(2.5rem, 5vw, 4rem) 0 0 auto;
-  max-width: 26ch;
-  color: var(--ink-soft);
-}
-
-@media (max-width: 760px) {
-  .ab-line:nth-child(2) {
-    padding-left: 0;
-  }
-
-  .ab-sub {
-    margin-left: 0;
-  }
-}
-
-/* ---------- Method ---------- */
-
-.ab-rules {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: var(--col-gap);
-  row-gap: clamp(3rem, 6vw, 4.5rem);
-}
-
-.ab-rules .num {
-  display: block;
-  margin-bottom: 1rem;
-  color: var(--ink-faint);
-}
-
-.ab-rule-title {
-  font-weight: 300;
-  font-size: clamp(1.625rem, 2.4vw, 2.25rem);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  margin-bottom: 1rem;
+.ab-heading {
+  grid-column: 1 / span 8;
   max-width: 16ch;
 }
 
-@media (max-width: 640px) {
-  .ab-rules {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ---------- Programmes ---------- */
-
-.ab-show-head {
-  margin-bottom: clamp(3rem, 6vw, 5rem);
-}
-
-.ab-show {
-  list-style: none;
+.ab-summary {
+  grid-column: 9 / -1;
   margin: 0;
-  padding: 0;
+}
+
+.ab-cover {
+  aspect-ratio: 16 / 7;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+/* ---------- Approach ---------- */
+
+.ab-statement {
+  max-width: 30ch;
+  margin: 0;
+}
+
+.ab-approach-text {
+  margin: 1.5rem 0 0;
+}
+
+/* The four principles as a plain list: the word, then what it means. */
+.ab-principles {
+  margin: clamp(3rem, 6vw, 4.5rem) 0 0;
+}
+
+.ab-principle {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 3fr) minmax(0, 6fr);
   column-gap: var(--col-gap);
-  row-gap: 4rem;
+  padding: 1.4rem 0;
+  border-top: 1px solid rgba(28, 27, 24, 0.14);
 }
 
-.ab-show-card {
-  display: block;
-  text-decoration: none;
-  color: inherit;
+.ab-principle:last-child {
+  border-bottom: 1px solid rgba(28, 27, 24, 0.14);
 }
 
-.ab-show-media {
-  aspect-ratio: 4 / 3;
-  background: #2a2925;
+.ab-principle dt {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2vw, 1.875rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
 }
 
-.ab-show-body {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 1.25rem;
-  padding-top: 1.35rem;
+.ab-principle dd {
+  max-width: 46ch;
+  margin: 0;
+  padding-top: 0.35rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
 }
 
-.ab-show-num {
-  padding-top: 0.55rem;
-  color: var(--on-dark-soft);
-}
+/* ---------- Residences ---------- */
 
-.ab-show-text {
+.ab-residences {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: clamp(3.5rem, 7vw, 6rem);
+  margin: clamp(2rem, 4vw, 3rem) 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-.ab-show-name {
-  transition: color 0.2s ease;
-}
-
-.ab-show-tagline {
-  color: var(--on-dark-soft);
-}
-
-.ab-show-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 1.25rem;
-  margin-top: 0.35rem;
-  font-size: 0.8125rem;
-  color: var(--on-dark-soft);
-}
-
-.ab-show-body svg {
-  margin-top: 0.75rem;
-  transition: transform 0.3s var(--ease);
-}
-
-.ab-show-card:hover .ab-show-name {
-  color: var(--on-dark-soft);
-}
-
-.ab-show-card:hover svg {
-  transform: translateX(4px);
-}
-
-@media (max-width: 760px) {
-  .ab-show {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ---------- Studio ---------- */
-
-.ab-studio {
+.ab-residence {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: var(--col-gap);
-  row-gap: 2.5rem;
   align-items: end;
+  column-gap: var(--col-gap);
+  row-gap: 1.5rem;
 }
 
-.ab-studio-media {
-  grid-column: 1 / span 6;
-  aspect-ratio: 4 / 5;
+.ab-residence-photo {
+  grid-column: 1 / span 7;
+  aspect-ratio: 4 / 3;
 }
 
-.ab-studio-copy {
-  grid-column: 8 / -1;
+.ab-residence-photo img {
+  transition: transform 0.8s var(--ease);
 }
 
-.ab-studio-title {
-  margin: 1.25rem 0 1.5rem;
-  max-width: 18ch;
+.ab-residence-photo:hover img {
+  transform: scale(calc(var(--zoom, 1) * 1.03));
 }
 
-@media (max-width: 900px) {
-  .ab-studio-media,
-  .ab-studio-copy {
+.ab-residence-text {
+  grid-column: 9 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+/* Every other residence the other way round. */
+.ab-residence:nth-child(even) .ab-residence-photo {
+  grid-column: 6 / -1;
+  grid-row: 1;
+}
+
+.ab-residence:nth-child(even) .ab-residence-text {
+  grid-column: 1 / span 4;
+  grid-row: 1;
+}
+
+.ab-residence-tagline {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.125rem;
+  color: var(--ink-soft);
+}
+
+.ab-residence-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0;
+  margin: 0 0 0.75rem;
+  font-size: 0.9375rem;
+}
+
+.ab-residence-meta > span + span::before {
+  content: '·';
+  margin: 0 0.7rem;
+  color: var(--ink-faint);
+}
+
+/* ---------- Narrow screens ---------- */
+
+@media (max-width: 899px) {
+  .ab-heading,
+  .ab-summary,
+  .ab-residence-photo,
+  .ab-residence-text,
+  .ab-residence:nth-child(even) .ab-residence-photo,
+  .ab-residence:nth-child(even) .ab-residence-text {
     grid-column: 1 / -1;
+    grid-row: auto;
   }
 
-  .ab-studio-media {
+  .ab-cover {
     aspect-ratio: 4 / 3;
+  }
+
+  .ab-principle {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.5rem;
   }
 }

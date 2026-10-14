@@ -8,8 +8,6 @@ import { newImage as img } from '../lib/imageStyle'
 export const RESIDENCES_EN = [
   {
     slug: 'le-bosquet',
-    color: '#6c7f4c',
-    floorsTaken: [3],
     name: 'Le Bosquet',
     tagline: 'Live at the heart of greenery',
     description:
@@ -458,8 +456,6 @@ export const RESIDENCES_EN = [
   },
   {
     slug: 'les-ateliers',
-    color: '#a5583a',
-    floorsTaken: [1],
     name: 'Les Ateliers',
     tagline: 'Industrial elegance, reinvented',
     description:

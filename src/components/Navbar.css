@@ -1,5 +1,6 @@
 /* A plain bar on paper: wordmark, four links, language, one action. It stays
-   put at the top of the window and never changes colour or hides. */
+   put at the top of the window and never hides; only over full-window photos
+   does it change colour (see the end of this file). */
 
 .nav {
   position: sticky;
@@ -160,4 +161,45 @@
   .nav-cta {
     display: none;
   }
+}
+
+/* ---------- Over photos ---------- */
+
+/* A page that opens on photos filling the window (the residences) sets
+   <html data-nav="over"> while it is open: the bar then has no paper of its
+   own and lies over the top of the photos, in light text on a soft shade,
+   and scrolls away with them. */
+:root[data-nav='over'] .nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(rgba(20, 19, 17, 0.55), rgba(20, 19, 17, 0.28) 70%, rgba(20, 19, 17, 0));
+}
+
+:root[data-nav='over'] .nav-logo,
+:root[data-nav='over'] .nav-link:hover,
+:root[data-nav='over'] .nav-link.is-current,
+:root[data-nav='over'] .nav-menu-btn,
+:root[data-nav='over'] .lang .is-on {
+  color: var(--on-dark);
+}
+
+:root[data-nav='over'] .nav-link,
+:root[data-nav='over'] .lang {
+  color: rgba(241, 237, 230, 0.85);
+}
+
+:root[data-nav='over'] .nav-link.is-current::after {
+  background: var(--on-dark);
+}
+
+:root[data-nav='over'] .nav-cta {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+:root[data-nav='over'] .nav-cta:hover {
+  background: var(--clay);
+  color: var(--on-dark);
 }

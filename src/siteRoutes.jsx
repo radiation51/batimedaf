@@ -13,8 +13,6 @@ const loaders = {
   contact: () => import('./pages/Contact'),
   collaboration: () => import('./pages/Collaboration'),
   legal: () => import('./pages/Legal'),
-  // The 3D models of the residences page.
-  maquettes: () => import('./maquette/MaquetteViews'),
 }
 
 const Residences = lazy(loaders.residences)

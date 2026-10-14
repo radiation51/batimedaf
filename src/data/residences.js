@@ -5,10 +5,6 @@ import { newImage as img } from '../lib/imageStyle'
 export const RESIDENCES = [
   {
     slug: 'le-bosquet',
-    // The residence's own colour: its ground on the /residence model, its accents.
-    color: '#6c7f4c',
-    // Storeys already taken (0 = ground floor): grey on the /residence model.
-    floorsTaken: [3],
     name: 'Le Bosquet',
     tagline: 'Vivre au cœur de la verdure',
     description:
@@ -457,10 +453,6 @@ export const RESIDENCES = [
   },
   {
     slug: 'les-ateliers',
-    // The residence's own colour: its ground on the /residence model, its accents.
-    color: '#a5583a',
-    // Storeys already taken (0 = ground floor): grey on the /residence model.
-    floorsTaken: [1],
     name: 'Les Ateliers',
     tagline: "L'élégance industrielle réinventée",
     description:

@@ -144,69 +144,13 @@ export const DEFAULT_CONTENT = {
   /* ---------------- À propos ---------------- */
   about: {
     kicker: 'À propos',
-    titleLines: ['Bâtir ce qui traverse', 'le temps.'],
-    intro:
-      "Batimedaf conçoit et construit des résidences d'exception depuis quinze ans. Une maison familiale devenue promoteur, sans jamais changer de méthode.",
-    image: img('/images/library/about/atelier.jpg'),
-    figures: [
-      { value: 15, label: "Ans d'expertise" },
-      { value: 42, label: 'Résidences livrées' },
-      { value: 1200, label: 'Logements' },
-      { value: 5, label: 'Villes' },
-    ],
-    timelineTitle: 'Quinze ans, cinq étapes.',
-    milestones: [
-      {
-        year: '2010',
-        image: img('/images/library/about/atelier.jpg'),
-        title: 'Deux associés, un atelier',
-        text: "Un maître d'œuvre et une architecte fondent Batimedaf autour d'une conviction : la qualité se joue sur des arbitrages invisibles une fois les murs finis.",
-      },
-      {
-        year: '2014',
-        image: img('/images/library/exterieur/exterieur-bosquet-card.jpg'),
-        title: 'Première résidence livrée',
-        text: 'Douze logements à Alger, livrés avec trois semaines d’avance. Les entreprises de ce premier chantier travaillent encore avec nous.',
-      },
-      {
-        year: '2018',
-        image: img('/images/library/exterieur/exterieur-ateliers-card.jpg'),
-        title: 'Ouverture régionale',
-        text: 'Le modèle s’étend à quatre métropoles, sans grossir la structure : toujours deux à trois opérations par an, suivies par les mêmes équipes.',
-      },
-      {
-        year: '2022',
-        image: img('/images/library/salle-de-bain/sdb-2.jpg'),
-        title: 'Le tournant matière',
-        text: 'Réemploi structurel, matériaux biosourcés et performances au-delà de la RE2020 deviennent la norme sur l’ensemble de nos programmes.',
-      },
-      {
-        year: '2026',
-        image: img('/images/library/exterieur/exterieur-balcon.jpg'),
-        title: 'Le Bosquet',
-        text: 'Vingt-quatre appartements autour d’un parc privatif de 2 000 m² à Hussein Dey : notre opération la plus ambitieuse à ce jour.',
-      },
-    ],
-    principles: [
-      {
-        title: 'Nous construisons peu.',
-        text: 'Deux à trois opérations par an. Assez pour maîtriser chaque décision, trop peu pour en déléguer une seule.',
-      },
-      {
-        title: 'Nous ne sous-traitons pas la qualité.',
-        text: 'Lots séparés, entreprises contractualisées directement, suivi hebdomadaire sur site du terrassement à la remise des clés.',
-      },
-      {
-        title: 'Nous dessinons depuis l’intérieur.',
-        text: 'Lumière, circulation, rangements : les plans partent de la façon dont on habite, pas de la surface constructible.',
-      },
-      {
-        title: 'Nous restons après la livraison.',
-        text: 'Garantie décennale suivie en interne et service dédié pendant dix ans. La relation ne s’arrête pas à la remise des clés.',
-      },
-    ],
-    ctaTitle: 'Découvrir nos résidences ?',
-    ctaLabel: 'Voir les résidences',
+    heading: 'Batimedaf, promoteur immobilier à Alger.',
+    summary:
+      'Nous concevons et réalisons des résidences à Alger, de la sélection du terrain à la remise des clés.',
+    cover: img('/images/library/exterieur/exterieur-rooftop-sunset.jpg'),
+    approachLabel: 'Notre démarche',
+    residencesLabel: 'Nos résidences',
+    visitTitle: 'Venir découvrir une résidence.',
   },
 
   /* ---------------- Collaboration ---------------- */

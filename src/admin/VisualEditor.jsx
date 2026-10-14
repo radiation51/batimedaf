@@ -81,6 +81,7 @@ const LABELS = {
   nearby: 'À proximité',
   subjects: 'Sujets du formulaire',
   type: 'Typologie',
+  status: 'Statut',
   surface: 'Surface (m²)',
   floor: 'Étage',
   orientation: 'Orientation',
@@ -109,6 +110,12 @@ const LABELS = {
   word: 'Mot qui change',
   statement: 'Phrase d’approche',
   words: 'Mot',
+  heading: 'Titre',
+  summary: 'Introduction',
+  cover: 'Photo',
+  approachLabel: 'Sur-titre de la démarche',
+  residencesLabel: 'Sur-titre des résidences',
+  visitTitle: 'Titre du bloc final',
 }
 
 const HINTS = {
@@ -1219,16 +1226,14 @@ function Editor({ onSignOut }) {
   const hoverIsImage =
     hoverKey && hasImageShape(valueAt(content, parsePath(hoverKey)))
 
-  // The residences chooser is a full-screen page with no bar or footer.
-  const bare = page.pathname === '/residence'
   const select = (key) => setSelected({ key, el: null })
 
   return (
     <>
       <EditModeProvider value={mode === 'edit'}>
-        {!bare && <Navbar />}
+        <Navbar />
         <Routes location={location}>{siteRoutes}</Routes>
-        {!bare && <Footer />}
+        <Footer />
       </EditModeProvider>
 
       {mode === 'edit' && hovered && hoverKey !== selection?.key && (

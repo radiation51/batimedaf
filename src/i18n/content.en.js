@@ -132,69 +132,12 @@ export const CONTENT_EN = {
 
   about: {
     kicker: 'About',
-    titleLines: ['Building what', 'stands the test of time.'],
-    intro:
-      'Batimedaf has been designing and building exceptional residences for fifteen years. A family business turned developer, without ever changing its method.',
-    image: img('/images/library/about/atelier.jpg'),
-    figures: [
-      { value: 15, label: 'Years of expertise' },
-      { value: 42, label: 'Residences delivered' },
-      { value: 1200, label: 'Homes' },
-      { value: 5, label: 'Cities' },
-    ],
-    timelineTitle: 'Fifteen years, five milestones.',
-    milestones: [
-      {
-        year: '2010',
-        image: img('/images/library/about/atelier.jpg'),
-        title: 'Two partners, one studio',
-        text: 'A site manager and an architect found Batimedaf on a simple conviction: quality is decided in the invisible trade-offs made before the walls are ever finished.',
-      },
-      {
-        year: '2014',
-        image: img('/images/library/exterieur/exterieur-bosquet-card.jpg'),
-        title: 'First residence delivered',
-        text: 'Twelve homes in Algiers, delivered three weeks early. The contractors from that first site still work with us today.',
-      },
-      {
-        year: '2018',
-        image: img('/images/library/exterieur/exterieur-ateliers-card.jpg'),
-        title: 'Regional expansion',
-        text: 'The model expands to four cities without growing the structure: always two to three projects a year, followed by the same teams.',
-      },
-      {
-        year: '2022',
-        image: img('/images/library/salle-de-bain/sdb-2.jpg'),
-        title: 'The material turning point',
-        text: 'Structural reuse, bio-sourced materials and performance beyond RE2020 become the standard across all our programmes.',
-      },
-      {
-        year: '2026',
-        image: img('/images/library/exterieur/exterieur-balcon.jpg'),
-        title: 'Le Bosquet',
-        text: 'Twenty-four apartments around a 2,000 m² private park in Hussein Dey: our most ambitious project to date.',
-      },
-    ],
-    principles: [
-      {
-        title: 'We build little.',
-        text: 'Two to three projects a year. Enough to master every decision, too few to delegate a single one.',
-      },
-      {
-        title: 'We never outsource quality.',
-        text: 'Separate trade contracts, directly contracted companies, weekly on-site follow-up from groundwork to handover.',
-      },
-      {
-        title: 'We design from the inside out.',
-        text: 'Light, circulation, storage: the layouts start from how a home is lived in, not from the buildable area.',
-      },
-      {
-        title: 'We stay after handover.',
-        text: 'A ten-year structural warranty followed in-house, and a dedicated service for ten years. The relationship does not end at handover.',
-      },
-    ],
-    ctaTitle: 'Discover our residences?',
-    ctaLabel: 'See the residences',
+    heading: 'Batimedaf, a property developer in Algiers.',
+    summary: 'We design and build residences in Algiers, from choosing the plot to handing over the keys.',
+    cover: img('/images/library/exterieur/exterieur-rooftop-sunset.jpg'),
+    approachLabel: 'Our approach',
+    residencesLabel: 'Our residences',
+    visitTitle: 'Come and see a residence.',
   },
 
   collaboration: {
