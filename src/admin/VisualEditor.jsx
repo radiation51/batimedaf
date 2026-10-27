@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { Link, Routes } from 'react-router-dom'
+import { Link, Routes, useNavigate } from 'react-router-dom'
 import { ArrowClockwise, ArrowCounterClockwise, Trash } from '@phosphor-icons/react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -18,6 +18,7 @@ import { hasImageShape, newImage, normalizeImage } from '../lib/imageStyle'
 import { storeImage } from '../lib/storage'
 import ImageField from './ImageField'
 import CreatePanel from './CreatePanel'
+import { confirmAsk } from './confirm'
 import './VisualEditor.css'
 
 /**
@@ -738,6 +739,7 @@ function Toolbar({
     status,
   } = useContent()
   const [menuOpen, setMenuOpen] = useState(false)
+  const navigate = useNavigate()
 
   const groups = useMemo(() => pageGroups(content), [content])
   const known = groups.some((g) => g.pages.some(([p]) => p === page.pathname))
@@ -771,14 +773,16 @@ function Toolbar({
       <Link
         to="/admin"
         className="ve-bar-back"
-        onClick={(e) => {
+        onClick={async (e) => {
+          if (!dirty) return
+          e.preventDefault()
           if (
-            dirty &&
-            !window.confirm(
+            await confirmAsk(
               'Des modifications ne sont pas enregistrées. Revenir aux demandes quand même ?',
+              { yes: 'Revenir aux demandes' },
             )
           ) {
-            e.preventDefault()
+            navigate('/admin')
           }
         }}
         title="Revenir aux demandes"
@@ -923,8 +927,13 @@ function Toolbar({
         <button
           type="button"
           className="ve-bar-btn"
-          onClick={() => {
-            if (window.confirm('Annuler toutes les modifications non enregistrées ?')) {
+          onClick={async () => {
+            if (
+              await confirmAsk('Annuler toutes les modifications non enregistrées ?', {
+                yes: 'Tout annuler',
+                danger: true,
+              })
+            ) {
               onClearSelection()
               discard()
             }
@@ -968,10 +977,11 @@ function Toolbar({
             </a>
             <button
               type="button"
-              onClick={() => {
+              onClick={async () => {
                 if (
-                  window.confirm(
+                  await confirmAsk(
                     'Remettre tout le contenu du site tel qu’il était à l’origine ? Rien ne change en ligne tant que vous n’avez pas cliqué sur Enregistrer.',
+                    { yes: 'Revenir à l’origine', danger: true },
                   )
                 ) {
                   onClearSelection()
@@ -983,12 +993,13 @@ function Toolbar({
             </button>
             <button
               type="button"
-              onClick={() => {
+              onClick={async () => {
                 if (
                   !dirty ||
-                  window.confirm(
+                  (await confirmAsk(
                     'Des modifications ne sont pas enregistrées. Se déconnecter quand même ?',
-                  )
+                    { yes: 'Se déconnecter' },
+                  ))
                 ) {
                   onSignOut()
                 }

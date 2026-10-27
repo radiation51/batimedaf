@@ -450,7 +450,12 @@ export function DraftContentProvider({ children }) {
   // The stored content the draft started from: an edit makes them differ.
   const [base, setBase] = useState(stored.content)
   const { draft } = history
-  const dirty = draft !== base
+  // An edit undone by hand (an addition cancelled, a duplicate deleted)
+  // leaves a new tree with the same content: that is nothing to save.
+  const dirty = useMemo(
+    () => draft !== base && JSON.stringify(draft) !== JSON.stringify(base),
+    [draft, base],
+  )
 
   // While nothing is pending, follow the store, e.g. the Supabase read
   // finishing after the editor opened on the local copy.

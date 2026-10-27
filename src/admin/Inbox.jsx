@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listMessages, updateMessage, deleteMessage } from '../lib/messages'
 import { usePageMeta } from '../hooks/usePageMeta'
+import { confirmAsk } from './confirm'
 import './Inbox.css'
 
 /**
@@ -88,7 +89,11 @@ function Inbox({ onSignOut }) {
   }
 
   const remove = async (message) => {
-    if (!window.confirm(`Supprimer définitivement la demande de ${message.name} ?`)) return
+    const sure = await confirmAsk(`Supprimer définitivement la demande de ${message.name} ?`, {
+      yes: 'Supprimer',
+      danger: true,
+    })
+    if (!sure) return
     setOpenId(null)
     setMessages((list) => list.filter((m) => m.id !== message.id))
     try {

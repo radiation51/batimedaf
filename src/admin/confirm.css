@@ -1,0 +1,66 @@
+/* The admin's yes/no dialog (see confirm.jsx). */
+
+.cf-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(23, 18, 15, 0.42);
+  animation: cf-in 0.18s ease;
+}
+
+.cf {
+  width: min(420px, 100%);
+  box-sizing: border-box;
+  padding: 1.4rem 1.4rem 1.2rem;
+  border-radius: 14px;
+  background: #fffdfa;
+  box-shadow: 0 24px 60px rgba(23, 18, 15, 0.28);
+  font-family: var(--sans);
+}
+
+.cf-message {
+  margin: 0 0 1.25rem;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: #2a231d;
+}
+
+.cf-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.cf-no,
+.cf-yes {
+  height: 36px;
+  padding: 0 1rem;
+  border-radius: 999px;
+  font: 600 0.85rem var(--sans);
+  cursor: pointer;
+}
+
+.cf-no {
+  border: 1px solid #ded5cb;
+  background: #fff;
+  color: #3d342c;
+}
+
+.cf-yes {
+  border: 0;
+  background: #17120f;
+  color: #fffdfa;
+}
+
+.cf-yes.is-danger {
+  background: #a5562f;
+}
+
+@keyframes cf-in {
+  from {
+    opacity: 0;
+  }
+}

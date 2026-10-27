@@ -4,6 +4,7 @@ import { useContent } from '../content/ContentContext'
 import { usePageMeta } from '../hooks/usePageMeta'
 import Inbox from '../admin/Inbox'
 import VisualEditor from '../admin/VisualEditor'
+import { ConfirmHost } from '../admin/confirm'
 import './Admin.css'
 
 /* With Supabase, everyone shares one administrator account and only types the
@@ -135,11 +136,15 @@ function Admin() {
   }
 
   return (
-    <Routes>
-      <Route index element={<Inbox onSignOut={leave} />} />
-      <Route path="modification/*" element={<VisualEditor onSignOut={leave} />} />
-      <Route path="*" element={<Navigate to="/admin" replace />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route index element={<Inbox onSignOut={leave} />} />
+        <Route path="modification/*" element={<VisualEditor onSignOut={leave} />} />
+        <Route path="*" element={<Navigate to="/admin" replace />} />
+      </Routes>
+      {/* The yes/no dialog of every admin button that asks first. */}
+      <ConfirmHost />
+    </>
   )
 }
 

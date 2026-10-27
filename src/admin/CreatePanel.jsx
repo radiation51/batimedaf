@@ -3,6 +3,7 @@ import { useContent } from '../content/ContentContext'
 import { newImage, normalizeImage } from '../lib/imageStyle'
 import { storeImage } from '../lib/storage'
 import ImageField from './ImageField'
+import { confirmAsk } from './confirm'
 
 /** "Les Jardins d'Hydra" → "les-jardins-d-hydra", made unique among `taken`. */
 export function uniqueSlug(name, taken, fallback = 'residence') {
@@ -77,16 +78,9 @@ export const draftApartment = (id, image) => ({
   gallery: [],
 })
 
-/* Some embedded browsers refuse dialogs: then the answer is yes. */
-const ask = (message) => {
-  try {
-    return window.confirm(message)
-  } catch {
-    return true
-  }
-}
-
-const filled = (value) => (typeof value === 'number' ? value > 0 : Boolean(value?.trim()))
+// A number field (the surface) counts only with a value above zero.
+const filled = (value, kind) =>
+  kind === 'number' ? Number(value) > 0 : Boolean(String(value ?? '').trim())
 
 /**
  * The photos of the new entry: one main photo (required), then as many more
@@ -335,7 +329,9 @@ function AddPanel({ creating, setCreating, goTo, requestSave }) {
 
   const fields = isResidence ? RESIDENCE_FIELDS : APARTMENT_FIELDS
   const missing = [
-    ...fields.filter(([key, , required]) => required && !filled(values[key])).map(([, label]) => label),
+    ...fields
+      .filter(([key, , required, kind]) => required && !filled(values[key], kind))
+      .map(([, label]) => label),
     ...(main ? [] : ['Photo principale']),
   ]
   const touched = Object.keys(values).length > 1 || main || extras.length
@@ -410,8 +406,15 @@ function AddPanel({ creating, setCreating, goTo, requestSave }) {
     )
   }
 
-  const cancel = () => {
-    if (touched && !ask('Abandonner cet ajout ? Ce qui a été rempli sera perdu.')) return
+  const cancel = async () => {
+    if (
+      touched &&
+      !(await confirmAsk('Abandonner cet ajout ? Ce qui a été rempli sera perdu.', {
+        yes: 'Abandonner',
+        danger: true,
+      }))
+    )
+      return
     if (isResidence && residence) {
       removeResidence(creating.slug)
       goTo('/residence')
