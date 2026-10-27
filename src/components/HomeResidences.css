@@ -21,27 +21,105 @@
   align-items: start;
 }
 
-/* Alternating shapes: a wide plate, then a tall one. */
-.hres-item:nth-child(odd) {
-  grid-column: 1 / span 7;
+/* Two equal plates, side by side. */
+.hres-item {
+  grid-column: span 6;
 }
 
-.hres-item:nth-child(even) {
-  grid-column: 9 / -1;
-}
-
-.hres-item:nth-child(odd) .hres-media {
+.hres-media {
   aspect-ratio: 5 / 4;
-}
-
-.hres-item:nth-child(even) .hres-media {
-  aspect-ratio: 4 / 5;
 }
 
 .hres-link {
   display: block;
   text-decoration: none;
   color: inherit;
+}
+
+/* Hover: the photo draws slowly closer under a light shade, and a small
+   "Découvrir" tag rises in its corner. */
+.hres-media img {
+  transition: transform 1s var(--ease);
+}
+
+.hres-link:hover .hres-media img {
+  transform: scale(calc(var(--zoom, 1) * 1.05));
+}
+
+/* The same layer draws a hairline round the photo, so its corners stay
+   square even where the picture is as pale as the paper. */
+.hres-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 19, 17, 0);
+  box-shadow: inset 0 0 0 1px rgba(28, 27, 24, 0.14);
+  pointer-events: none;
+  transition: background-color 0.5s ease;
+}
+
+.hres-link:hover .hres-media::after {
+  background: rgba(20, 19, 17, 0.16);
+}
+
+.hres-cue {
+  position: absolute;
+  left: clamp(1rem, 2vw, 1.5rem);
+  bottom: clamp(1rem, 2vw, 1.5rem);
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.4s ease, transform 0.5s var(--ease);
+}
+
+.hres-link:hover .hres-cue,
+.hres-link:focus-visible .hres-cue {
+  opacity: 1;
+  transform: none;
+}
+
+@media (hover: none) {
+  .hres-cue {
+    display: none;
+  }
+}
+
+/* On wide screens a pair of residences fits the window under the bar: both
+   photos and their text in one look, without scrolling. The heading row and
+   a little air take the rest. (More residences wrap onto rows instead.) */
+@media (min-width: 761px) {
+  .hres-list.is-pair {
+    grid-template-rows: minmax(0, 1fr);
+    align-items: stretch;
+    height: calc(100svh - var(--header-h) - 6rem);
+    min-height: 30rem;
+    max-height: 60rem;
+  }
+
+  .is-pair .hres-item,
+  .is-pair .hres-link {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .is-pair .hres-link {
+    flex: 1 1 0;
+  }
+
+  .is-pair .hres-media {
+    flex: 1 1 0;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
 }
 
 .hres-body {
@@ -94,12 +172,7 @@
 }
 
 @media (max-width: 760px) {
-  .hres-item:nth-child(odd),
-  .hres-item:nth-child(even) {
+  .hres-item {
     grid-column: 1 / -1;
-  }
-
-  .hres-item:nth-child(even) .hres-media {
-    aspect-ratio: 5 / 4;
   }
 }

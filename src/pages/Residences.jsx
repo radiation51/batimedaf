@@ -33,7 +33,7 @@ function Residences() {
   // The bar lives outside the page: while we are here, it lies over the photos.
   useEffect(() => {
     const root = document.documentElement
-    root.dataset.nav = 'over'
+    root.dataset.nav = 'over shade'
     return () => delete root.dataset.nav
   }, [])
 

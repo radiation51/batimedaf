@@ -3,12 +3,10 @@ import { useReveal } from '../hooks/useReveal'
 import { useEdit } from '../content/editable'
 import './Approach.css'
 
-const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII']
-const roman = (i) => ROMAN[i] ?? String(i + 1)
-
 /**
- * "Notre approche", on the ink ground: the client's statement of how they
- * work, then their principles side by side. Words only, no photographs.
+ * "Notre approche" on the home page, kept short: the client's principles in
+ * a row on the paper, each with its line. The full statement lives on the
+ * about page.
  */
 function Approach() {
   const content = useLocalizedContent()
@@ -18,27 +16,13 @@ function Approach() {
   const { ref, ready } = useReveal([approach.principles.length])
 
   return (
-    <section
-      className={`sec sec--dark apr${ready ? ' is-ready' : ''}`}
-      ref={ref}
-      data-nav-tone="dark"
-    >
+    <section className={`sec apr${ready ? ' is-ready' : ''}`} ref={ref} data-nav-tone="light">
       <div className="wrap">
         <span className="label apr-label">{t.approachEyebrow}</span>
-
-        <div className="apr-head">
-          <p className="apr-statement" data-reveal {...edit('statement')}>
-            {approach.statement}
-          </p>
-          <p className="apr-text" data-reveal {...edit('text')}>
-            {approach.text}
-          </p>
-        </div>
 
         <ol className="apr-cols">
           {approach.principles.map((p, i) => (
             <li key={i} data-reveal style={{ '--d': `${i * 90}ms` }}>
-              <span className="num apr-num">{roman(i)}</span>
               <h3 className="apr-title" {...edit('principles', i, 'title')}>
                 {p.title}
               </h3>

@@ -17,6 +17,7 @@ import { EditModeProvider, parsePath, valueAt } from '../content/editable'
 import { hasImageShape, newImage, normalizeImage } from '../lib/imageStyle'
 import { storeImage } from '../lib/storage'
 import ImageField from './ImageField'
+import CreatePanel from './CreatePanel'
 import './VisualEditor.css'
 
 /**
@@ -193,6 +194,7 @@ function deletionFor(content, path) {
 }
 
 /* ---------------- Preview pages ---------------- */
+
 
 function pageExists(content, pathname) {
   const [section, slug, apartmentId] = pathname.split('/').filter(Boolean)
@@ -718,6 +720,8 @@ function Toolbar({
   onDelete,
   onSave,
   justSaved,
+  creating,
+  onCreate,
 }) {
   const {
     content,
@@ -732,8 +736,6 @@ function Toolbar({
     storageError,
     isSupabaseConfigured,
     status,
-    addApartment,
-    removeApartment,
   } = useContent()
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -762,7 +764,10 @@ function Toolbar({
   }
 
   return (
-    <div className={`ve-bar${shifted ? ' is-shifted' : ''}`} data-editor-ui>
+    <div
+      className={`ve-bar${shifted ? ' is-shifted' : ''}${creating ? ' is-creating' : ''}`}
+      data-editor-ui
+    >
       <Link
         to="/admin"
         className="ve-bar-back"
@@ -865,27 +870,48 @@ function Toolbar({
         </button>
       </div>
 
-      {onResidence && (
-        <button
-          type="button"
-          className="ve-bar-btn"
-          onClick={() => onPage(`/residence/${slug}/${addApartment(slug)}`)}
-        >
-          + Appartement
-        </button>
-      )}
-      {onApartment && (
+      {/* Always at hand, from any page: each opens its form. */}
+      <button
+        type="button"
+        className="ve-bar-btn"
+        disabled={Boolean(creating)}
+        onClick={() => onCreate('residence')}
+        title="Ajouter une nouvelle résidence"
+      >
+        + Résidence
+      </button>
+      <button
+        type="button"
+        className="ve-bar-btn"
+        disabled={Boolean(creating)}
+        onClick={() => onCreate('apartment')}
+        title="Ajouter un appartement à une résidence"
+      >
+        + Appartement
+      </button>
+      {/* Deleting asks in a panel: the residence, the apartment, then a yes. */}
+      <button
+        type="button"
+        className="ve-bar-btn ve-bar-btn--danger"
+        disabled={Boolean(creating)}
+        onClick={() =>
+          onCreate('remove-apartment', {
+            slug: onResidence || onApartment ? slug : undefined,
+            id: onApartment ? apartmentId : undefined,
+          })
+        }
+        title="Retirer un appartement d’une résidence"
+      >
+        − Appartement
+      </button>
+      {onResidence && content.residences.length > 1 && (
         <button
           type="button"
           className="ve-bar-btn ve-bar-btn--danger"
-          onClick={() => {
-            if (window.confirm('Supprimer cet appartement ?')) {
-              onPage(`/residence/${slug}`)
-              removeApartment(slug, apartmentId)
-            }
-          }}
+          disabled={Boolean(creating)}
+          onClick={() => onCreate('remove-residence', { slug })}
         >
-          Supprimer l’appartement
+          Supprimer la résidence
         </button>
       )}
 
@@ -893,7 +919,7 @@ function Toolbar({
         {statusText}
       </span>
 
-      {dirty && (
+      {dirty && !creating && (
         <button
           type="button"
           className="ve-bar-btn"
@@ -911,9 +937,9 @@ function Toolbar({
       <button
         type="button"
         className="ve-save"
-        disabled={!dirty}
+        disabled={!dirty || Boolean(creating)}
         onClick={onSave}
-        title="Ctrl + S"
+        title={creating ? 'Terminez ou annulez d’abord l’ajout en cours' : 'Ctrl + S'}
       >
         Enregistrer
       </button>
@@ -993,6 +1019,8 @@ function Editor({ onSignOut }) {
   const [mode, setMode] = useState('edit')
   const [selected, setSelected] = useState(null) // { key, el }
   const [hovered, setHovered] = useState(null)
+  // A residence or an apartment being added through its form, or null.
+  const [creating, setCreating] = useState(null)
 
   // A page whose apartment was just deleted (or discarded) must not render:
   // the detail pages redirect when their data is missing, which would take
@@ -1012,11 +1040,12 @@ function Editor({ onSignOut }) {
   useEffect(() => {
     if (saveRequest === handledSave.current) return
     handledSave.current = saveRequest
-    if (dirty) {
+    // Half-filled entries are never saved: the form has to finish first.
+    if (dirty && !creating) {
       save()
       setJustSaved(true)
     }
-  }, [saveRequest, dirty, save])
+  }, [saveRequest, dirty, save, creating])
 
   useEffect(() => {
     if (!justSaved) return
@@ -1047,7 +1076,16 @@ function Editor({ onSignOut }) {
   // Read by the document listeners, which are bound once.
   const live = useRef({})
   useLayoutEffect(() => {
-    live.current = { mode, content, requestSave, goTo, undo, redo, deleteSelected }
+    // While a form is open, the page behind is a preview: nothing to pick.
+    live.current = {
+      mode: creating ? 'browse' : mode,
+      content,
+      requestSave,
+      goTo,
+      undo,
+      redo,
+      deleteSelected,
+    }
   })
 
   /* Classes for the editor's styles: see VisualEditor.css. */
@@ -1228,6 +1266,23 @@ function Editor({ onSignOut }) {
 
   const select = (key) => setSelected({ key, el: null })
 
+  // A new residence goes into the draft at once, so its page shows behind
+  // the form; a new apartment first asks for its residence.
+  const startCreating = (kind, extra = {}) => {
+    if (kind.startsWith('remove')) {
+      setSelected(null)
+      setCreating({ kind, ...extra })
+    } else if (kind === 'residence') {
+      const slug = `nouvelle-${Date.now().toString(36)}`
+      store.addResidence(slug, 'Nouvelle résidence')
+      goTo(`/residence/${slug}`)
+      setCreating({ kind, slug })
+    } else {
+      setSelected(null)
+      setCreating({ kind })
+    }
+  }
+
   return (
     <>
       <EditModeProvider value={mode === 'edit'}>
@@ -1236,7 +1291,17 @@ function Editor({ onSignOut }) {
         <Footer />
       </EditModeProvider>
 
-      {mode === 'edit' && hovered && hoverKey !== selection?.key && (
+      {creating && (
+        <CreatePanel
+          key={creating.kind + (creating.id ?? creating.slug ?? '')}
+          creating={creating}
+          setCreating={setCreating}
+          goTo={goTo}
+          requestSave={requestSave}
+        />
+      )}
+
+      {!creating && mode === 'edit' && hovered && hoverKey !== selection?.key && (
         <Outline
           el={hovered}
           variant="hover"
@@ -1244,11 +1309,11 @@ function Editor({ onSignOut }) {
         />
       )}
 
-      {selection && (
+      {!creating && selection && (
         <Outline el={selection.el} editKey={selection.key} variant="selected" />
       )}
 
-      {selection && !selectedIsImage && (
+      {!creating && selection && !selectedIsImage && (
         <TextEditor
           key={selection.key}
           selection={selection}
@@ -1258,7 +1323,7 @@ function Editor({ onSignOut }) {
         />
       )}
 
-      {selection && selectedIsImage && (
+      {!creating && selection && selectedIsImage && (
         <ImagePanel
           selection={selection}
           onClose={() => setSelected(null)}
@@ -1278,12 +1343,14 @@ function Editor({ onSignOut }) {
         }}
         onClearSelection={() => setSelected(null)}
         onSignOut={onSignOut}
-        shifted={Boolean(selectedIsImage)}
+        shifted={Boolean(selectedIsImage) || Boolean(creating)}
         hasSelection={Boolean(selection)}
         deletion={deletion}
         onDelete={deleteSelected}
         onSave={requestSave}
         justSaved={justSaved}
+        creating={creating}
+        onCreate={startCreating}
       />
     </>
   )

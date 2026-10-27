@@ -1,9 +1,9 @@
-/* The cover fills the window under the header, so the whole photograph,
+/* The cover fills the window, the bar lying on it, so the whole photograph,
    the title and the actions are seen on arrival. */
 
 .hero {
   position: relative;
-  height: max(30rem, calc(100svh - var(--header-h)));
+  height: max(30rem, 100svh);
   overflow: hidden;
   color: var(--on-dark);
 }
@@ -16,7 +16,8 @@
   background: var(--paper-deep);
 }
 
-/* A dark veil over the photograph so the paper-coloured type reads. */
+/* A dark veil over the photograph so the paper-coloured type reads: the
+   title at the foot, the bar at the top. */
 .hero-media::after {
   content: '';
   position: absolute;
@@ -26,7 +27,8 @@
     to top,
     rgba(20, 19, 17, 0.62) 0%,
     rgba(20, 19, 17, 0.28) 55%,
-    rgba(20, 19, 17, 0.18) 100%
+    rgba(20, 19, 17, 0.16) 75%,
+    rgba(20, 19, 17, 0.5) 100%
   );
 }
 
@@ -62,8 +64,14 @@
 
 .hero-title {
   color: var(--on-dark);
-  font-size: clamp(3rem, min(8.4vw, 16vh), 9.25rem);
+  font-size: clamp(2.5rem, min(6.6vw, 13vh), 7.25rem);
   max-width: 11ch;
+}
+
+/* What the site is and where, small, right under the title. */
+.hero-sub {
+  margin: clamp(0.9rem, 2vh, 1.25rem) 0 0;
+  color: var(--on-dark);
 }
 
 .hero-foot {

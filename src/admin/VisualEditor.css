@@ -603,3 +603,154 @@
     max-width: 150px;
   }
 }
+
+/* ---------- Adding a residence or an apartment ---------- */
+
+.ve-create-note {
+  margin: 0 0 1.25rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #7c746b;
+}
+
+.ve-create-choices {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ve-create-choices button {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid var(--ve-line);
+  border-radius: 10px;
+  background: #fff;
+  font-family: var(--sans);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.ve-create-choices button:hover {
+  border-color: var(--ve-dark);
+}
+
+.ve-create-choices img {
+  width: 72px;
+  height: 56px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.ve-create-choices span {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.ve-create-choices strong {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 1.15rem;
+  color: var(--ve-dark);
+}
+
+.ve-create-choices small {
+  font-size: 0.8rem;
+  color: #8a8178;
+}
+
+.ve-create-photos {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.ve-create-shots {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ve-create-shots li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.ve-create-shots img {
+  width: 64px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.ve-create-shots select,
+.ad-field select {
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  padding: 0 0.5rem;
+  border: 1px solid #ded5cb;
+  border-radius: 6px;
+  background: #fffdfa;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+}
+
+.ad-field select {
+  height: 40px;
+}
+
+/* Stays in view at the foot of the drawer: what is missing, and the button. */
+.ve-create-foot {
+  position: sticky;
+  bottom: 0;
+  margin: 1.5rem -1.25rem 0;
+  padding: 1rem 1.25rem 1.25rem;
+  border-top: 1px solid var(--ve-line);
+  background: #fffdfa;
+}
+
+.ve-create-missing {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #a5562f;
+}
+
+.ve-create-buttons {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* On narrow screens the form covers the page: its own buttons take over
+   from the toolbar until it is done. */
+@media (max-width: 899px) {
+  .ve-bar.is-creating {
+    display: none;
+  }
+}
+
+.ve-optional {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: #a79d92;
+}
+
+.ve-save--danger {
+  background: #a5562f;
+}
+
+.ve-create-back {
+  margin-top: 0.9rem;
+}

@@ -172,6 +172,54 @@ function createMutations(update) {
             : { ...r, apartments: r.apartments.filter((a) => a.id !== id) },
         ),
       })),
+
+    /**
+     * A new residence named `name` at `/residence/<slug>`, with every section
+     * of the page in place, stand-in texts and no apartment yet: the admin's
+     * form fills it in. The first residence's cover stands in as its photo.
+     */
+    addResidence: (slug, name) =>
+      update((prev) => {
+        const model = prev.residences[0]
+        const residence = {
+          slug,
+          name,
+          tagline: 'Accroche à compléter',
+          description: 'Description à compléter.',
+          meta: ['Nombre de logements', 'Lieu à compléter', 'Livraison à venir'],
+          image: model.image,
+          location: 'Lieu à compléter',
+          presentation: 'Présentation de la résidence à compléter.',
+          intro: '',
+          body: [],
+          specs: [],
+          features: ['Prestation à compléter'],
+          stats: [],
+          place: {
+            address: 'Adresse à compléter',
+            summary: 'Le quartier, en quelques mots.',
+            transports: [{ line: 'Bus', detail: 'À compléter' }],
+            nearby: ['Commerces & commodités — À proximité'],
+          },
+          apartments: [],
+          gallery: [{ image: model.image, alt: '', category: 'Extérieur' }],
+        }
+        return { ...prev, residences: [...prev.residences, residence] }
+      }),
+
+    /** Removes a residence, and the home page's picks among its apartments. */
+    removeResidence: (slug) =>
+      update((prev) => ({
+        ...prev,
+        residences: prev.residences.filter((r) => r.slug !== slug),
+        home: {
+          ...prev.home,
+          apartments: {
+            ...prev.home.apartments,
+            list: prev.home.apartments.list.filter((ref) => !ref.startsWith(`${slug}/`)),
+          },
+        },
+      })),
   }
 }
 

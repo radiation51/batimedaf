@@ -17,6 +17,7 @@ export const DEFAULT_CONTENT = {
   home: {
     hero: {
       title: "L'art du savoir vivre",
+      sub: 'Promoteur immobilier · Résidences à Hussein Dey, Alger',
       description:
         "Des résidences pensées dans le moindre détail, où l'élégance rencontre le confort pour créer un art de vivre unique.",
       primaryCta: 'Découvrir nos résidences',

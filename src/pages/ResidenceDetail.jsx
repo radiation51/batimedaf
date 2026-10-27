@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { useLocalizedResidence, useUI } from '../i18n/useLocalizedContent'
 import Arrow from '../components/Arrow'
@@ -7,6 +7,7 @@ import Lightbox from '../components/Lightbox'
 import ResidenceGallery from '../components/ResidenceGallery'
 import PlaceSection from '../components/PlaceSection'
 import { useReveal } from '../hooks/useReveal'
+import { useBarOver } from '../hooks/useBarOver'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { normalizeImage, imageVars } from '../lib/imageStyle'
 import { useEdit, useResidencePath } from '../content/editable'
@@ -28,6 +29,10 @@ function ResidenceDetail() {
   })
 
   const { ref: pageRef, ready } = useReveal([slug])
+
+  // The cover fills the window and the bar lies on it, as on the home page.
+  const coverRef = useRef(null)
+  useBarOver(coverRef)
 
   // Index of the gallery image shown full screen, or null.
   const [lightbox, setLightbox] = useState(null)
@@ -62,30 +67,9 @@ function ResidenceDetail() {
 
   return (
     <main className={`rd${ready ? ' is-ready' : ''}`} ref={pageRef}>
-      {/* ---------- Cover ---------- */}
-      <header className="rd-head" data-nav-tone="light">
-        <div className="wrap">
-          <Link to="/residence" className="back">
-            <Arrow size={16} />
-            {t.allResidences}
-          </Link>
-
-          <div className="rd-head-grid">
-            <div className="rd-head-title">
-              <span className="label" {...edit('tagline')}>
-                {residence.tagline}
-              </span>
-              <h1 className="d1 rd-name" {...edit('name')}>
-                {residence.name}
-              </h1>
-            </div>
-            <p className="rd-place" {...edit('location')}>
-              {residence.location}
-            </p>
-          </div>
-        </div>
-
-        <div className="rd-cover-frame">
+      {/* ---------- Cover: the photo fills the window, the name on it ---------- */}
+      <header className="rd-head" data-nav-tone="dark">
+        <div className="rd-cover-frame" ref={coverRef}>
           <div
             className="rd-cover"
             style={{
@@ -94,6 +78,27 @@ function ResidenceDetail() {
             }}
             {...edit('image')}
           />
+
+          <div className="wrap rd-cover-text">
+            <Link to="/residence" className="back">
+              <Arrow size={16} />
+              {t.allResidences}
+            </Link>
+
+            <div className="rd-head-grid">
+              <div className="rd-head-title">
+                <span className="label" {...edit('tagline')}>
+                  {residence.tagline}
+                </span>
+                <h1 className="d1 rd-name" {...edit('name')}>
+                  {residence.name}
+                </h1>
+              </div>
+              <p className="rd-place" {...edit('location')}>
+                {residence.location}
+              </p>
+            </div>
+          </div>
         </div>
 
         <nav className="wrap rd-contents" aria-label={t.contents}>

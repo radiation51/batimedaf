@@ -165,41 +165,71 @@
 
 /* ---------- Over photos ---------- */
 
-/* A page that opens on photos filling the window (the residences) sets
-   <html data-nav="over"> while it is open: the bar then has no paper of its
-   own and lies over the top of the photos, in light text on a soft shade,
-   and scrolls away with them. */
-:root[data-nav='over'] .nav {
+/* A page that opens on a photo filling the window sets <html data-nav>
+   while it is open, as a set of words:
+   - "over": the bar has no paper of its own and lies on the photo in light
+     text; the photo comes up under it.
+   - "shade": a soft shade behind that text, for photos bright at the top
+     (the residences).
+   - "fixed": the bar stays at the top of the window and takes its paper
+     back once the photo has gone by (the home page, see useBarOver).
+   Without "fixed" the bar scrolls away with the photo. */
+:root[data-nav~='over'] .nav {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
+  background: transparent;
+}
+
+:root[data-nav~='shade'] .nav {
   background: linear-gradient(rgba(20, 19, 17, 0.55), rgba(20, 19, 17, 0.28) 70%, rgba(20, 19, 17, 0));
 }
 
-:root[data-nav='over'] .nav-logo,
-:root[data-nav='over'] .nav-link:hover,
-:root[data-nav='over'] .nav-link.is-current,
-:root[data-nav='over'] .nav-menu-btn,
-:root[data-nav='over'] .lang .is-on {
+:root[data-nav~='fixed'] .nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  transition: background-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+/* Back on its paper, a hairline keeps it apart from the page under it. */
+:root[data-nav='fixed'] .nav {
+  box-shadow: 0 1px 0 rgba(28, 27, 24, 0.08);
+}
+
+:root[data-nav~='over'] .nav-logo,
+:root[data-nav~='over'] .nav-link:hover,
+:root[data-nav~='over'] .nav-link.is-current,
+:root[data-nav~='over'] .nav-menu-btn,
+:root[data-nav~='over'] .lang .is-on {
   color: var(--on-dark);
 }
 
-:root[data-nav='over'] .nav-link,
-:root[data-nav='over'] .lang {
+:root[data-nav~='over'] .nav-link,
+:root[data-nav~='over'] .lang {
   color: rgba(241, 237, 230, 0.85);
 }
 
-:root[data-nav='over'] .nav-link.is-current::after {
+/* A faint glow under the light text keeps it readable on bright photos. */
+:root[data-nav~='over'] .nav-logo,
+:root[data-nav~='over'] .nav-link,
+:root[data-nav~='over'] .nav-menu-btn,
+:root[data-nav~='over'] .lang {
+  text-shadow: 0 1px 14px rgba(20, 19, 17, 0.45);
+}
+
+:root[data-nav~='over'] .nav-link.is-current::after {
   background: var(--on-dark);
 }
 
-:root[data-nav='over'] .nav-cta {
+:root[data-nav~='over'] .nav-cta {
   background: var(--paper);
   color: var(--ink);
 }
 
-:root[data-nav='over'] .nav-cta:hover {
+:root[data-nav~='over'] .nav-cta:hover {
   background: var(--clay);
   color: var(--on-dark);
 }

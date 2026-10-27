@@ -8,7 +8,7 @@ import './HomeResidences.css'
 
 const pad = (n) => String(n).padStart(2, '0')
 
-/** The programmes on the home page: one wide plate, one tall, side by side. */
+/** The programmes on the home page: two equal plates, side by side. */
 function HomeResidences() {
   const content = useLocalizedContent()
   const t = useUI()
@@ -30,7 +30,7 @@ function HomeResidences() {
           </Link>
         </div>
 
-        <ul className="hres-list">
+        <ul className={`hres-list${residences.length <= 2 ? ' is-pair' : ''}`}>
           {residences.map((residence, i) => (
             <li key={residence.slug} className="hres-item" data-reveal>
               <Link to={`/residence/${residence.slug}`} className="hres-link">
@@ -42,6 +42,10 @@ function HomeResidences() {
                     style={imageVars(residence.image)}
                     {...edit(i, 'image')}
                   />
+                  <span className="hres-cue" aria-hidden="true">
+                    {t.discover}
+                    <Arrow />
+                  </span>
                 </span>
 
                 <span className="hres-body">

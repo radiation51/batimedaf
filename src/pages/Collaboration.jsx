@@ -29,94 +29,97 @@ function Collaboration() {
 
   return (
     <main className={`co${ready ? ' is-ready' : ''}`} ref={pageRef}>
-      {/* ---------- "You are…" and the profiles to choose from ---------- */}
-      <header className="wrap co-head" data-nav-tone="light">
-        <span className="label" {...edit('kicker')}>
-          {c.kicker}
-        </span>
-        <h1 className="d1 co-title" {...edit('title')}>
-          {c.title}
-        </h1>
+      {/* The head and the chosen profile share the first screen. */}
+      <div className="co-first">
+        {/* ---------- "You are…" and the profiles to choose from ---------- */}
+        <header className="wrap co-head" data-nav-tone="light">
+          <span className="label" {...edit('kicker')}>
+            {c.kicker}
+          </span>
+          <h1 className="d1 co-title" {...edit('title')}>
+            {c.title}
+          </h1>
 
-        <div className="co-tabs" role="tablist" aria-label={t.profilesAriaLabel}>
-          {c.profiles.map((item, i) => (
-            <button
-              key={item.id}
-              type="button"
-              role="tab"
-              id={`co-tab-${item.id}`}
-              aria-selected={shown === i}
-              aria-controls={`co-panel-${item.id}`}
-              className={`co-tab${shown === i ? ' is-active' : ''}`}
-              onClick={() => setActive(i)}
-            >
-              <span className="num">{pad(i + 1)}</span>
-              <span {...edit('profiles', i, 'label')}>{item.label}</span>
-            </button>
-          ))}
-        </div>
-      </header>
-
-      {/* ---------- The chosen profile ---------- */}
-      <section
-        className="co-panel"
-        role="tabpanel"
-        id={`co-panel-${profile.id}`}
-        aria-labelledby={`co-tab-${profile.id}`}
-        data-nav-tone="light"
-      >
-        {/* The key restarts the fade whenever the profile changes. */}
-        <div className="wrap co-panel-grid" key={profile.id}>
-          <div className="co-copy">
-            <h2 className="d3 co-headline" {...edit('profiles', shown, 'headline')}>
-              {profile.headline}
-            </h2>
-            <p className="body co-text" {...edit('profiles', shown, 'text')}>
-              {profile.text}
-            </p>
-
-            <h3 className="label co-mini-title">{t.whatWeLookFor}</h3>
-            <ul className="co-criteria">
-              {profile.criteria.map((criterion, i) => (
-                <li key={i}>
-                  <span className="num">{pad(i + 1)}</span>
-                  <span {...edit('profiles', shown, 'criteria', i)}>{criterion}</span>
-                </li>
-              ))}
-            </ul>
-
-            <Link className="btn" to="/contact?sujet=collaboration">
-              {t.apply}
-              <Arrow />
-            </Link>
+          <div className="co-tabs" role="tablist" aria-label={t.profilesAriaLabel}>
+            {c.profiles.map((item, i) => (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                id={`co-tab-${item.id}`}
+                aria-selected={shown === i}
+                aria-controls={`co-panel-${item.id}`}
+                className={`co-tab${shown === i ? ' is-active' : ''}`}
+                onClick={() => setActive(i)}
+              >
+                <span className="num">{pad(i + 1)}</span>
+                <span {...edit('profiles', i, 'label')}>{item.label}</span>
+              </button>
+            ))}
           </div>
+        </header>
 
-          <figure className="co-media">
-            <span className="plate co-media-frame">
-              <img
-                src={normalizeImage(profile.image).src}
-                alt=""
-                style={imageVars(profile.image)}
-                {...edit('profiles', shown, 'image')}
-              />
-            </span>
-            <figcaption className="co-figure">
-              <span
-                className="co-figure-value"
-                {...edit('profiles', shown, 'figureValue')}
-              >
-                {profile.figureValue}
+        {/* ---------- The chosen profile ---------- */}
+        <section
+          className="co-panel"
+          role="tabpanel"
+          id={`co-panel-${profile.id}`}
+          aria-labelledby={`co-tab-${profile.id}`}
+          data-nav-tone="light"
+        >
+          {/* The key restarts the fade whenever the profile changes. */}
+          <div className="wrap co-panel-grid" key={profile.id}>
+            <div className="co-copy">
+              <h2 className="d3 co-headline" {...edit('profiles', shown, 'headline')}>
+                {profile.headline}
+              </h2>
+              <p className="body co-text" {...edit('profiles', shown, 'text')}>
+                {profile.text}
+              </p>
+
+              <h3 className="label co-mini-title">{t.whatWeLookFor}</h3>
+              <ul className="co-criteria">
+                {profile.criteria.map((criterion, i) => (
+                  <li key={i}>
+                    <span className="num">{pad(i + 1)}</span>
+                    <span {...edit('profiles', shown, 'criteria', i)}>{criterion}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <Link className="btn" to="/contact?sujet=collaboration">
+                {t.apply}
+                <Arrow />
+              </Link>
+            </div>
+
+            <figure className="co-media">
+              <span className="plate co-media-frame">
+                <img
+                  src={normalizeImage(profile.image).src}
+                  alt=""
+                  style={imageVars(profile.image)}
+                  {...edit('profiles', shown, 'image')}
+                />
               </span>
-              <span
-                className="co-figure-label"
-                {...edit('profiles', shown, 'figureLabel')}
-              >
-                {profile.figureLabel}
-              </span>
-            </figcaption>
-          </figure>
-        </div>
-      </section>
+              <figcaption className="co-figure">
+                <span
+                  className="co-figure-value"
+                  {...edit('profiles', shown, 'figureValue')}
+                >
+                  {profile.figureValue}
+                </span>
+                <span
+                  className="co-figure-label"
+                  {...edit('profiles', shown, 'figureLabel')}
+                >
+                  {profile.figureLabel}
+                </span>
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+      </div>
 
       {/* ---------- Commitments ---------- */}
       <section className="sec sec--deep" data-nav-tone="light">

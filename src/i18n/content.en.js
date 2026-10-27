@@ -11,6 +11,7 @@ export const CONTENT_EN = {
   home: {
     hero: {
       title: 'The art of fine living',
+      sub: 'Property developer · Residences in Hussein Dey, Algiers',
       description:
         'Residences designed down to the smallest detail, where elegance meets comfort to create a unique way of living.',
       primaryCta: 'Start Exploring',

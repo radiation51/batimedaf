@@ -1,16 +1,61 @@
 /* ---------- Cover ---------- */
 
-.rd-head {
-  padding-top: clamp(1.75rem, 3vw, 2.5rem);
+/* Edge to edge and from the top of the window, the bar lying on it: the
+   residence is seen at once. The contents line peeks just under it. */
+.rd-cover-frame {
+  position: relative;
+  height: max(30rem, calc(100svh - 4rem));
+  overflow: hidden;
+  background: var(--paper-deep);
+}
+
+/* A veil so the light type reads: the name at the foot, the bar at the top. */
+.rd-cover-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to top,
+    rgba(20, 19, 17, 0.62) 0%,
+    rgba(20, 19, 17, 0.24) 45%,
+    rgba(20, 19, 17, 0.14) 75%,
+    rgba(20, 19, 17, 0.48) 100%
+  );
+  pointer-events: none;
+}
+
+.rd-cover-text {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: calc(var(--header-h) + 1.25rem);
+  padding-bottom: clamp(1.5rem, 5vh, 3rem);
+  color: var(--on-dark);
+}
+
+.rd-cover-text .back {
+  align-self: flex-start;
+  color: rgba(241, 237, 230, 0.85);
+}
+
+.rd-cover-text .back:hover {
+  color: var(--on-dark);
+}
+
+.rd-cover-text .label {
+  color: rgba(241, 237, 230, 0.85);
 }
 
 .rd-head-grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--col-gap);
-  row-gap: 1.5rem;
+  row-gap: 1rem;
   align-items: end;
-  padding: clamp(3rem, 7vw, 6rem) 0 clamp(2.5rem, 5vw, 4rem);
 }
 
 .rd-head-title {
@@ -18,7 +63,8 @@
 }
 
 .rd-name {
-  margin-top: 1.25rem;
+  margin-top: 1rem;
+  font-size: clamp(3rem, min(8vw, 15vh), 8rem);
 }
 
 .rd-place {
@@ -28,15 +74,8 @@
   font-family: var(--serif);
   font-style: italic;
   font-size: 1.25rem;
-  color: var(--ink-soft);
+  color: rgba(241, 237, 230, 0.9);
   text-align: right;
-}
-
-/* Edge to edge: the one photograph on the site that leaves the margins. */
-.rd-cover-frame {
-  height: clamp(340px, 78vh, 900px);
-  overflow: hidden;
-  background: var(--paper-deep);
 }
 
 .rd-cover {
@@ -213,10 +252,6 @@
   .rd-lot-body,
   .rd-lot-cta {
     grid-column: 1 / -1;
-  }
-
-  .rd-cover-frame {
-    height: 62vh;
   }
 }
 
